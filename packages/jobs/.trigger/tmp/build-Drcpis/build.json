@@ -1,0 +1,104 @@
+{
+  "contentHash": "577eab86df1612c49c5049a50369d717",
+  "runtime": "node",
+  "environment": "dev",
+  "packageVersion": "4.0.6",
+  "cliPackageVersion": "4.0.6",
+  "target": "dev",
+  "files": [
+    {
+      "entry": "src/tasks/invoice/scheduler/invoice-scheduler.ts",
+      "out": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\scheduler\\invoice-scheduler.mjs"
+    },
+    {
+      "entry": "src/tasks/transactions/import.ts",
+      "out": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\transactions\\import.mjs"
+    },
+    {
+      "entry": "src/tasks/invoice/operations/check-status.ts",
+      "out": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\operations\\check-status.mjs"
+    },
+    {
+      "entry": "src/tasks/invoice/operations/send-invoice.ts",
+      "out": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\operations\\send-invoice.mjs"
+    },
+    {
+      "entry": "src/tasks/invoice/operations/send-reminder.ts",
+      "out": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\operations\\send-reminder.mjs"
+    },
+    {
+      "entry": "src/tasks/invoice/scheduler/invoice-reminders-scheduler.ts",
+      "out": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\scheduler\\invoice-reminders-scheduler.mjs"
+    },
+    {
+      "entry": "src/tasks/invoice/scheduler/invoice-scheduled-send.ts",
+      "out": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\scheduler\\invoice-scheduled-send.mjs"
+    }
+  ],
+  "sources": {
+    "src/tasks/invoice/scheduler/invoice-scheduler.ts": {
+      "contents": "eJx1UsGO0zAUvOcr3vrkoNQpcEsUhEDVqkgUqbvighBy7bet1dSO/JwA6vbfUVynLaxQfBrPmzczsTl0zgc4Aqkd6r5FghM8eXcA9j54s92iFxqHkvS+HN6yOjPTgPIoA35ym4e+kxtJ+LE1aMNlXIjyfFTEqaTEuxVJKz7IoHYvJ/tgWioTZ7YZSX852KHaL+3gjMKHIENPtxKuQy+DcZbKSJxRpLA6y/BXVFDOUgCTBFJ+D821CxEk7fkxAzC6Apaos+nesyIDUN7ZCtgc5sXrN/Bq/CLue1uBpN9WAc+heQejDoB5At55p5BIoB3E43p5f79Y/1isvi7XX1afF6tHuGsaYJ13uldjApaDx9B7W2dR4mx86hOa//0Lntc3/CNoGWQ1BR7LakD+lOYqFdkAYiyRT3GJ5RNO2KIKnBl9xYzlLFVbwDdGaAMrgLkBve6RfU8exth3l9XPzxcbokW7DTtomgbm/wQ9u7t9JDytvUwfZMe5if3y4wQvdQVGGA2nPC/SxMvXcr6J/k5Fdsrr7A+dY/fk",
+      "contentHash": "9cf01dab25c9fbc8a8cf6b83135564f4"
+    },
+    "src/tasks/transactions/import.ts": {
+      "contents": "eJyNV19T20YQf/en2GjycGrFmYRJHgSGJpBO6aQkU5hOp4EhZ2ltLkh36t0JYxy997kfsZ+kc38kS8akhQfsvd/+dm//3C68rKQysAKd3WDJLpi+hQZmSpYQ/WAUn89R0Rzvxjq/Hd/tRfsj3mo8dMAHma8PPrKKBXnF7K/S2FfLFDKDP8vpeV2xKdN4XHAUpiOjdEzpOHNCPdYBFO2PRpkU2oAnOnfuwgQeqJx+wcyQ1QjAICtP8xQeqDaKizmJaV3znMTJCGDKxO2bLJO1ME9islopFNlycFxyQfZiWrJ7sudQM17gR2ZuLIopxZZkjXYALu5QGXRWplIWyASJqawMl4IVJKY5zlhdGDJjhUanUrKq4mKu096NgJXW274zCeTM4IYEdaa4I+8fQBMnoybeH43w3sW+H78LxYRmmdXRMOll38WR5ylEHrhjesjIeuqx6SAR/gb3J7Vi3o0XL3et7M8aa0xt1qVoY/uel9yk8Aoai1C1SIHppciArEICk2Guki4tSRf6pAtY0kUbmhgmh2AvAOGybfnA5Km6I/F+D7+y4WWpM3PCDEsAlZIKGpgAWzC+ZqTaSMXmSG3VkujOpjOKaS4XopAsJ62j9IvkgkTjKA6G+AyIJ/36FZ61hmIwN0ouQOAC3tlTEv3IeIE5GAktKRyf/+a7JBiPBs5nUhjbSa2rLTc1eN/d05p/FpBbjL4rK7N0dgLGmujZePvm4vin6/PTP97BBF7t7vbt15VGZd4yk91YH3xOlVzoFJhYfrrqZSf4YQ9pgWJubmJQaGol9sN5m4+n4h9gACEBgzKN16feKedGAiuQ4liKWcEzYytcGFSCFdc8jxLgcyEVntRVwTNmUKdgVI3Q9Mg0FrYxI563ke/ls42m++JPmxC7WS2cZzArzRvX00Sn4Bs1TkHU5RRVFxp/dSFVaTuTKqwKliEZ//PX3+N5AtHO0LgFUi6yos5RkyiJ4jaW8L076wguqdOP4k4UJVECER0Sji/pZb562TwfU4PaOAPf4CRHk8t8tdfEgbyl6uNDOPqVZOQJM/hBFEuYwCAc/gN8hVrkOOMC837hGLXsPrdcOUxcEVtGojsPQpWdufBSrs/YGcnpHM0FL5HE6zvl1MjT8w/n7YuvC54h2U3gxW5H1kDmKnvVDO/XOTlMeYEGpvVshipUP0zg05XH+Eq2Dn9UsuQaD+4kzw8JUahlcYcJKLQTYNAwdq5SN00PfsVMqvzAxykJ8To8JKFlk158bpDl1gVbykkn1be8cp3+nou20NenC6lurY4bTmtxdlOL2+6tdt8ScA6pgaP2x4tpxWqNpJePdXEvYOLSRYVcDBEzqYB4mG0nOfOWae6eyb6Vlk2xhe8qmFiVT+1ooH5+Xu1v17HmNzXsdN2Kt0P2EXg9eK/g6AiiaKhpq6/n2wREXRT22e+Me1HsHlsuatxm2V/irLavwfr9CLXa0cfxY9uDwu9o4m+by31U1u3ZM2VF2ww9s0rfptV87hp5Pa2Pejf7DnZeQLoWbGMwy8o6FogOYBeOIML7CoXGCFK7bi5LO7G2BnGquxL5xY5lNtXEU8Xb8O1oOLUuf+ZltfN85ZeTZuf5arCeWIGQCyd3DR8mWvN56y3Wc+o6vPsT+Hzx+5rEuaeYyGVJYmpkCP/e6/ZdepnA63iTPZiuan1Dhj3i1+Jru9OF9WrjmPmbOMRw8doEhnW0C+YmoNvTNuS2PB7J+lur/bIJEKxEf2Jb5nHcNvG9aZ728rcJ+28ibZipdQpRJsuqQIN5tAkpmahZsflwBgPL6rGsZ9Qv8N24ioezZ1MT791gv7ZbzjUTrFganulHj7P9abZ05qAi4XDSW+A239J2LvXWuKC+wdsWW2+idS6Mtn/+X8xPsIZZolDX5WCYNL3ZFDKVAnGzKAzSfjjdWpYCwQBw/2JhB2iD5/82/j+nfwEPhoJo",
+      "contentHash": "632c5f578f3d5ea108e4e0ad34cb4e14"
+    },
+    "src/tasks/invoice/operations/check-status.ts": {
+      "contents": "eJydVF1r2zAUffevuNVDsMG1W/rmzGPQMugY9CHbc1DkW0erLbv6SJem/u9DluWPNWUwCEksnXt0zzlX5nXbSA0nUGZ3R48KOniUTQ2koBovH4Ui64B7zOu4+9oU8w3F9ljTH1Q9jYgvWvKyRJkUeEhV8ZQebuYVTCLV+K3ZbUxLd1ThbcVR6LE8SVL3Yf26StWAm5OY1nZ5Lw4NZ7jRVBv1nsBoXqnUQS+5w5J1EODvnoU1Qmlge2RPS6J8pio8BQC8yID0QE9zqXooiQMYwBm8Js3uFzLdlwAMyPvC7igtuSjDKDGGF2Fky7r++9mgwcza0ghmpETBjt95zXUG11fQWYg0IgOqjoJBeJpooYsg/wzuMKfFOwX5Ry6H0TqYFZygoJpmnhQ6yIG+UD5R9WCAxFobkgGnSOTXFVZWMuFFDM6TGAqDW+t5DF5RDLRujNAxaKT11oIHqq0w9Q7lRIjPlozEk9Bxq6bHHW64KCscdfBHCC98+29v4P8n7sDFku9mseibjQYnASRqI8W6f+rcKWkKX7koQCKzo6olFYoyzRuhoKaa7bkoRxO91Jl4UXjh87S4YDaq4f6FAl/gjmoMoxhuokQ395uHjZ8bVXGG4VUM11fR+kyCi5b+FeMcfC7KZRpD51MkybCyQDnVM5BbWGC8IySGQdjf0VjZP9sW5S1VGEZjdakx7F9MJHa+LXj9ZQTCmrqtUGNB5gOyMGe1WpiVVChKvYc8z+F6GgJn35nXzPwK+pHPgLS0d8j+bKnOYApzGSR0Q3xn58xlytXDAWVh7HCMPO/n9dPskPWodSpercYsXJtwkedDpx9tMioYVpX177+taNz5ZJTa2bddHNjHP4G6EP0=",
+      "contentHash": "58f3920089f1671b6c2f3e8cb8c64da6"
+    },
+    "src/tasks/invoice/operations/send-invoice.ts": {
+      "contents": "eJyVVW1v2zYQ/u5fcSGyQkJVucW+yfCyLGlXD4UTzEGLAQEUmjwnXCRSJSm7jq3/PlCiZMZLO8wwbPHuueO9PHcSZaW0hR0Y9oAlvaHmERpYaVUC+dVqcX+POuW4Hhv+OF7/TCYj0Vs8DcAnxUMF00gt/qGWi7qiS2rwohAo7QBP03H3Za3cjI3HkclohN9aL0xJY8Gg5DO5VoLhXG1gGkQZ7UYAgmdAHOiN6FBvpNqQZAQemMFTqpZ/I7PRDjxkxp3UWC3kfRSndS14FEMTO6uvNdaYuRSUZLXWKNn2kyiFzeDdW2gcRNcyA2q2kkHoE5oYpr+ACwr64H1WMP1eRaJ4MmoNxmP4gJY99P7gNSjNUfsKwWuwWFYFtQirgt6b4JYdcGppBlptoIEp0A0Vh7tbIEDqCh8R792QuJcbLFxx/BGACJ6ARVrm7sHjc1mXS9QJ0FLV0ibQl+aAqHWRDDEmXfBZ+2tO+lvz9pwLnq8ecRu5C7r0Ms+Dk84g744DUNISE9g8UGtoVcVx21/3GbLArxERnCSHdgyqkm6XuBDyvsCw2jeaSiOsUBKscjSzreb/Fa+uOLUY7cBYamvTUdGSpPWXU5uBxA1cOkycWjVbXC0866D5Uew+TLGC6ESrTQwaba2lF3dtt1UBU4gi13ZqgMptnA4c8QLY72HXTAIrIVlRc7zmqwyWShVIJUzht+4pslWRHhBxaOhm7EJV2++Z9fqgxH+iUcUaQSMTVcvi6Ivr4XlVxYHnvq8umzCZlgtnaceFs3SAUQPd7MIeaslxJSTyMFTKmGPpf4wCU2VZS8Go40Dubf49GK41z1rlZ4MkbuBSfxoQohCPGJFKq7XgqEkCpA/8p+d+Oso4AFNSIrMYXFS4lRO9+yGJD325US7XbiNZlfnyBOtoqEzpCzNv59mVO/Wy/R7eOo5+UowW2NN08sy8n3qYggc4B4N0vwfy+8cFObIqhHyEaVutYFnAGdzdys8CNxmc7o6UzR1kQMhzPxVfzZV1y/RAUXj16gXH5FZG15cfgK6pKOiyQFgL2sYRkxccMyUttmW586+ao4i67dfcyvO2Vi7gPukGTnddBZvTnbuhOd35QJu7/ho3x55gqdvVZ6ng8dCa46XzIj9VbZfqG4lTIQ1qGx2Mod/WWUjIJND7q1tIGEb6HDaMaQZWhQpfn1A07Lv2fcnJQdcM3W/a/ybYZcMG7zNuuXsQTwbksE2OCMxUtW3ZXmnF0JgU5TqdzT9fzS7e54v388v84ur6r/zLx/Obxfn1taNkiJxf3cw+HNRhfzrPR5F5YYdz+TTJyCX4D79M5u0=",
+      "contentHash": "1b5a8ba18eac3cc6e10e734c44886405"
+    },
+    "src/tasks/invoice/operations/send-reminder.ts": {
+      "contents": "eJylVW1v2zYQ/u5fcSEyQEIVOUG/KfC8IE1XD4UTzGmLYRgUmmRiLhKpkpRdR9F/H0iRktxlC4YZhiDxnnt97o68rKQy0IAmG1biW6wfoYV7JUtAPxnFHx6YSinbTjV9nG7fovMJDxpPPfBJ0rGAKIYN+0WuV3WF11izy4IzYXp4mk67P3Hneqo9Dp1PJuybs0Kk0AY0E3QhtpIT9isruaBMwWwUatRMADjNAFnkCe+gJ8pjUTIBj87gKZXrPxkxTgfAYxfUSrRRXDxEcVrXnEaxVWvd82vNapbZnKQgtVJMkP1HXnKTwdkptBaiapEB1ntBIGoGs9DGMPsROmc+G58mzP6pRFF8PnEK0ym8Z4Zsgj3YcbMBqWwBsKDQVW5kuwGKDc5AyR20MAO8w3zw6IAAqa1/hLxNjeJwrllhK+M/ARCnCRiGy9y+eHwu6nLNVAK4lLUwCYSCJEBrllNsWAKh9DnpMAXWJveHNMfGmi2rwmFdOpl76qMQVO6+c07z+0e2j6z/LtnMd8tRp5B3nz1Q4JIlsNtgo3FVxbHj3v76JNnXCHGKkoGjXlTi/ZqtuHgomKXA9cc9REdK7mJQzNRKeGK6agc3MIPIVhxrwGIfpy60edqFNk97GNbQtRg8Qy0ou+eC0ZGfPuzgzDbAUoJihFeO6dAVN5w8AoYvVuHCWiau0HAvlSPshZYIkNfagsiyrAUn2HApcq/19yaxNTyoqe8TlNjmS/1Xj+AFf2QRqpTccjeSgEK2Pxza0QabWlsAkUIwYtjIUWGHLjp7lTEf9ous0dqOng0y9CvMQbAdvMOGRePzGDIQdVGcH2qvjF0/tA6Fm9v31MiPkuCCWSurbpEgJk4+rVACDZRSmI1dUBupDEqA4n0GSNQlU5wgaENGFiKlQGOX3aDBDJZu8lyI/uz5GU7j3rV3G4+Vw3TCDLzYqvenz8+Afv6wQgc6JdMaP9gq3YV9m4FfwHDcWAOHy6AFrl1dj5uuPm0KFy7CDI6b4KyF46aLu03vhg13Jdx6HZo5uN9yDLI2a/nNQQ+b9sVu7dAoTrnQTIUdD2GHZePWDIvBt4oT+/d0kPajl/XTHkRECuMEPt5w3jVwBsilRf0Gakc7/bqy0eICiKz2o7qbqvCrJA3rMewUS1TTDh1uqiK1l92lrPYxNENIlnJZ7W8lzKBSkjCtUya26WL5+XpxeZWvrpbv8svrm9/yLx8ublcXNzfW9Bi5vL5dvB/E59629dpZHvz9L1JeI+Z1cr4jqItuLOwpuvvdpvwHHDeerPZujHuZskCbf+to7En8VLnVEW46cMExpUd8CrmD2bBa7KAuVteHU/rfbujaOR2V8PCizbrmOTyE+RxOY3gDZ0Na39/HmY01iNt/uytt1G0ysXX5C7MgMuE=",
+      "contentHash": "e4c69b767d8c29e3635426ee6c8415ee"
+    },
+    "src/tasks/invoice/scheduler/invoice-reminders-scheduler.ts": {
+      "contents": "eJx9VV1v2zgQfNevmPChkHKK5Da9A86ukvtIWuSApkAa3MvhYDDi2iEikwJJ2TVi//cDJVGW0+ZgQQ/U7OzuzFiSq1obh2fY8pFEU5HFHgujV2C/OSOXSzKZoHVuxVO+PmezSIaC0hB39Jd++NrU/IFb+rOSpNxQnmV5d5Xtuc1tjxuT9C3+4K58/L6ycbKyeY85e/CgcbElJW7UWsuS7mgllSAz5tA1Ge6kVjb3yDPTY9gsiuhby1FqZR3kMYf92kthUBxkyRy3T/FzBEgxBetrBlJ7FpCGpRFQGq2mYBP8mr79Gaf+x1LkOdxGlgQOwbcRYBo1BbdbVSJOUFzANwDkAnFtdEnWZqTW2f3dzadP13fz69u/b+6+3H6+vr3HSVGA1UaLpvRLsgSGXGPULGoputWC5ihe8ytOZi0+z/GRvAslV0IK7shOvcIO2qDmxklejYifIbjj06CdT00BvuHy0LNFA5k3JA6CWZaEc0sVlS5mUqQQDc19zxTWcdfYFBW3bt6rK+bcpQhSz0vdKHfgkSpmXRVL8Q/zM7MUrJ+52s5rLgX7N/ErHpbDQpuB0g5cNmaCKnJtT5ZCNVU1dKrkSrr47WQySXqVvVEngwa73aBHVpFaukcURYHJD61ReoMCija44o6CDSGR9xt9xbd2jFB6ky3J3csVxQl+wjuc4t17nOKXSbiNR+sD8KibSnTRRoFYqvUUXG1HYTtskQUbwsBY8MrSrId1jKKh8VRHZcdIvSbTof39g9/4GKCIm6sBcFG0mrx508GLgwrHVa39KHDbrB7ItAMcRwOXl5gMs/jluuOLAucvNvOZWPFvOP8uCl0vn0L4SdbZy0Di8liEl88TTNv0vNBE0RXf/r7Urzt79oqrYxpb81Kq5ZcnFDhph9ztumE/HFqEkn7jOPix2wXlE6/2wNXh90f5cdwsydlOgy7ZC1k5MvE4WUm24nUcyzZV8XPA3ogpZCYF9kk/vzejp/y/f0j3Ihl/HEJV+qO3fku+T6N9Mov+A0BRJZQ=",
+      "contentHash": "85fafcc88b742317b31f55564844e624"
+    },
+    "src/tasks/invoice/scheduler/invoice-scheduled-send.ts": {
+      "contents": "eJx1Uk2P2jAUvOdXzPrkrCAJ6g2UqmpLV6lUVlpWe0UmfoC1wab2C3TF8t+rhARoqyo5jWfex8wz253zjCNCuSFdVxRwwsq7LcQn9ma9Jp9o2qdBv6b7D2ISmV5QelJM391yXu/UUgX6UhmyfJEnSXr+yxYPaeh4t0W6Fp8Vl5t/lTWbKqQdZ7hsSLfiQFYXdu9MSTN3uJW7HXnFxtmQNqShObPEJIroV6sunQ2MDp93u+s5WY386kXCKrzKYwQYPYbo6MP+XQ+b6mIQAaV3dgxxn44y3J8/MUCagvbk3zDKsDW2ZgoR4Gs7hgpvtoSMkX9E0wAwK8iddyWFkJDdJ89PxcPD9Gkxnb0UT4+zH9PZM+7yHGLnna7LZj0RwxPX3k6itsR5q95o5P8LScaTG751hyI45LB0wFfFJOOEXTF/nLM3dt2T0xTfqMlJe7XiAN4oRti4utJYUpNGW+qm8BFasRr3NjenlUMdlLnO2LKBpIlO9gYHEfd4oIpKlsLoK0Y/pQisuA5iANFOc32smKS4BLRoAlooFoNuyyvPbA3LUZZlcWde4//dZdT398vYSUV2zRvkeY7sL8fP29yesew6XNRbtZPStEHLYw8XegyTGI1THA86xZ/3fEZb70+D6BRPot84DSdr",
+      "contentHash": "d11eaf49b202b86d1ffed34d5fa9bede"
+    },
+    "trigger.config.js": {
+      "contents": "eJxlUsFqGzEQvfsrBp1asL1OAz3Il4Y4BLcpLca3EIyymt1MIo0WaVaYBP97kXcL2WQuM7x5b+aNUFXBXTAWlsgZmhDBhdo4sJghBdjvtre3N7vD392fnzfX+8N2A5TAZEPOPDqcke9CFFA2CHKu6sANtWr9H38Diw0xXp9xOEETgwf1QyK1LcalxVwl+6LWMzyeBRYb0zuZyL68zQAAuhiesRZdihpTKoaXn/3Nz+TYs5BHDYqDRTWALrR3mNFpUC60I+jNcdNHIxRYw/fVAOKxw0geWYw7jPt+IXZXjjJqkNjjuAclEiYNg8ezlsvL2C1vMGtojEsjt8R433v+aOJKBH0nScPlfNoj3pPH0MuWfycNF6vVav5R/YnxgdKYWkLU8G0KR8M2eHqd3FTiNJRjeuzJ2cmNR8HIxmm4V+nJxE7NQdWGs0ml6ohDycMvWBAv5AkXnqx1qB4moy3FVKYsqxTrSkx6SYVx+rqe/QOT/8Ln",
+      "contentHash": "469fa7eb9dfd11c6b58fe1074905e48c"
+    },
+    "tsconfig.json": {
+      "contents": "eJxdkDtPAzEQhHv/ipXryOmvJSlAoEiIDqXw+TbHEtt78q55KMp/Rz7uQNDOfPuYuRgAix+KeRDbgXVu69xWJXA+0eh6L+hehbPdNDBwmihiOUxKnNvAxQAAWK66o9IWDCQ6wwC2MK+ylLCqiYca8RGFY21rmt3XPEQsP4PNfMM74fww07YDLRUXW8403VN/84Lh/NfJvE+ktoOTj7KKmEh3GKIvvt075Pj5j/Ax8vttmrgo5fFJ9q0QWSLOoAG4zhVQDrEO7aHnOdRx893gr6qFxhGLWypUsUdzNV+WJ29T",
+      "contentHash": "de66c68082c83da737d723c2c2cdd100"
+    },
+    "package.json": {
+      "contents": "eJxtkcFuwjAMQO/9Citn6tJ1oIkTh2mfgZQ2hoW1SRSnHQzx71PSdhRpyiXxe7Zl55YBCCM7EjsQ+w/5bb2XxdnWLFYRDeRZWxPpGktcj1Hn9SBDzAm+pxQKV5dqdFb1LY0aXZz1gcUObhkAgMBoYMG+KbRRdMHAIgO4J5sbr93SVjREP3h9OpGH+FzNxLX2+gxTZOJ1r1uVMDeQOwjcWHPUJzyzNY+OihwZRabRtGi7597JWjIV8yU/RywOL7h5m1YQvak3KhoKVl9RecU1bmdhwVP6E1QyUH40PJHyUVd3cWu5Nnn4pLzTSrVps4cSy+qhORmP55FtcIPVjH6s+itblst5h/d/R46fN65/KrbFKqVl919BcpQ3",
+      "contentHash": "fe024265a50695ded5aa3f9d3acb1860"
+    }
+  },
+  "externals": [
+    {
+      "name": "import-in-the-middle",
+      "version": "1.15.0"
+    }
+  ],
+  "config": {
+    "project": "proj_cxubexjxmgrbzyxtgmkz",
+    "dirs": [
+      "./src/tasks"
+    ]
+  },
+  "outputPath": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis",
+  "indexWorkerEntryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\node_modules\\.bun\\trigger.dev@4.0.6+1fb4c65d43e298b9\\node_modules\\trigger.dev\\dist\\esm\\entryPoints\\dev-index-worker.mjs",
+  "runWorkerEntryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\node_modules\\.bun\\trigger.dev@4.0.6+1fb4c65d43e298b9\\node_modules\\trigger.dev\\dist\\esm\\entryPoints\\dev-run-worker.mjs",
+  "configPath": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\trigger.config.mjs",
+  "customConditions": [],
+  "deploy": {
+    "env": {}
+  },
+  "build": {},
+  "otelImportHook": {
+    "include": []
+  }
+}

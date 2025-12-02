@@ -1,0 +1,3 @@
+- The app should have a place for investors to see how well business are doing and if they wanna invest.
+- You know how some customers refer others or buy stuff for others, we need to track those and analyze the relationship between 
+  clients and their referrals. 

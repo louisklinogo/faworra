@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/utils/trigger-batch.ts"],
+  "sourcesContent": ["import type { BatchRunHandle } from \"@trigger.dev/sdk/v3\";\n\nconst BATCH_SIZE = 100;\n\ninterface BatchItem<T> {\n  payload: T;\n}\n\ninterface BatchTriggerTask<T> {\n  batchTrigger: (items: BatchItem<T>[]) => Promise<BatchRunHandle<string, T, void>>;\n}\n\nexport async function triggerBatch<T>(data: T[], task: BatchTriggerTask<T>) {\n  for (let i = 0; i < data.length; i += BATCH_SIZE) {\n    const chunk = data.slice(i, i + BATCH_SIZE);\n    await task.batchTrigger(\n      chunk.map((item) => ({\n        payload: item,\n      })),\n    );\n  }\n}\n"],
+  "mappings": ";;;;;;AAAA;AAEA,IAAM,aAAa;AAUnB,eAAsB,aAAgB,MAAW,MAA2B;AAC1E,WAAS,IAAI,GAAG,IAAI,KAAK,QAAQ,KAAK,YAAY;AAChD,UAAM,QAAQ,KAAK,MAAM,GAAG,IAAI,UAAU;AAC1C,UAAM,KAAK;AAAA,MACT,MAAM,IAAI,CAAC,UAAU;AAAA,QACnB,SAAS;AAAA,MACX,EAAE;AAAA,IACJ;AAAA,EACF;AACF;AATsB;",
+  "names": []
+}

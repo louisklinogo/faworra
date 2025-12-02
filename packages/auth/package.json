@@ -1,0 +1,20 @@
+{
+  "name": "@Faworra/auth",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./api-keys": {
+      "types": "./src/api-keys.ts",
+      "default": "./src/api-keys.ts"
+    }
+  },
+  "dependencies": {
+    "@Faworra/cache": "workspace:*",
+    "@supabase/supabase-js": "^2.86.0",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

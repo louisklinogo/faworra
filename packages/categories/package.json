@@ -1,0 +1,13 @@
+{
+  "name": "@Faworra/categories",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./tax-rates": "./src/tax-rates/index.ts",
+    "./types": "./src/types.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "zod": "^3.23.8"
+  }
+}

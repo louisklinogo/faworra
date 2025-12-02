@@ -1,0 +1,11 @@
+{
+  "name": "@Faworra/utils",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./tax": "./src/tax.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

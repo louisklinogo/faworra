@@ -1,0 +1,67 @@
+ # ERD: Cross‑Domain Overview (PK/FK only)
+ 
+ High‑level relationships across core domains. Full detail: `docs/diagrams/erds.md`.
+ 
+ ```mermaid
+ erDiagram
+   TEAMS ||--o{ USERS_ON_TEAM : has
+   TEAMS ||--o{ TEAM_MEMBERSHIPS : has
+   TEAMS ||--o{ CLIENTS : has
+   TEAMS ||--o{ ORDERS : has
+   TEAMS ||--o{ INVOICES : has
+   TEAMS ||--o{ MEASUREMENTS : has
+   TEAMS ||--o{ PRODUCTS : has
+   TEAMS ||--o{ INVENTORY_LOCATIONS : has
+   TEAMS ||--o{ PRODUCT_VARIANTS : has
+   TEAMS ||--o{ PRODUCT_MEDIA : has
+   TEAMS ||--o{ PRODUCT_CATEGORIES : has
+   TEAMS ||--o{ COMMUNICATION_ACCOUNTS : has
+   TEAMS ||--o{ COMMUNICATION_THREADS : has
+   TEAMS ||--o{ COMMUNICATION_MESSAGES : has
+   TEAMS ||--o{ FINANCIAL_ACCOUNTS : has
+   TEAMS ||--o{ TRANSACTIONS : has
+   TEAMS ||--o{ TRANSACTION_CATEGORIES : has
+   TEAMS ||--o{ TRANSACTION_TAGS : has
+   TEAMS ||--o{ TAGS : has
+   TEAMS ||--o{ TRANSACTION_ATTACHMENTS : has
+   TEAMS ||--o{ BANK_STATEMENTS : has
+   TEAMS ||--o{ ACTIVITIES : has
+   TEAMS ||--o{ NOTIFICATION_SETTINGS : has
+   TEAMS ||--o{ DOCUMENTS : has
+ 
+   USERS ||--o{ TEAM_MEMBERSHIPS : has
+   USERS ||--o{ USERS_ON_TEAM : has
+ 
+   CLIENTS ||--o{ ORDERS : places
+   CLIENTS ||--o{ MEASUREMENTS : has
+   CLIENTS ||--o{ COMMUNICATION_THREADS : links
+   CLIENTS ||--o{ DOCUMENTS : links
+   CLIENTS ||--o{ TRANSACTIONS : links
+ 
+   ORDERS ||--o{ ORDER_ITEMS : contains
+   ORDERS ||--o{ INVOICES : bills
+   INVOICES ||--o{ INVOICE_ITEMS : lists
+ 
+   PRODUCTS ||--o{ PRODUCT_VARIANTS : has
+   PRODUCT_VARIANTS ||--o{ PRODUCT_INVENTORY : at
+   INVENTORY_LOCATIONS ||--o{ PRODUCT_INVENTORY : stores
+   PRODUCTS ||--o{ PRODUCT_MEDIA : has
+   PRODUCT_CATEGORIES ||--o{ PRODUCT_CATEGORY_MAPPINGS : maps
+   TRANSACTION_CATEGORIES ||--o{ PRODUCT_CATEGORY_MAPPINGS : maps
+ 
+   COMMUNICATION_ACCOUNTS ||--o{ COMMUNICATION_THREADS : owns
+   COMMUNICATION_THREADS ||--o{ COMMUNICATION_MESSAGES : has
+   COMMUNICATION_MESSAGES ||--o{ MESSAGE_ATTACHMENTS : has
+   COMMUNICATION_MESSAGES ||--o{ MESSAGE_DELIVERY : has
+ 
+   FINANCIAL_ACCOUNTS ||--o{ TRANSACTIONS : posts
+   TRANSACTIONS ||--o{ TRANSACTION_TAGS : has
+   TRANSACTIONS ||--o{ TRANSACTION_ATTACHMENTS : has
+   TRANSACTIONS ||--o{ TRANSACTION_ALLOCATIONS : allocates
+   INVOICES ||--o{ TRANSACTION_ALLOCATIONS : allocated_by
+   TRANSACTION_CATEGORIES ||--o{ TRANSACTIONS : classifies
+ 
+   BANK_STATEMENTS ||--o{ BANK_STATEMENT_LINES : has
+   BANK_STATEMENT_LINES ||--o{ BANK_STATEMENT_ALLOCATIONS : allocates
+   TRANSACTIONS ||--o{ BANK_STATEMENT_ALLOCATIONS : allocated_by
+ ```

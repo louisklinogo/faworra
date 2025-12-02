@@ -1,0 +1,242 @@
+{
+  "configPath": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\trigger.config.mjs",
+  "tasks": [
+    {
+      "id": "check-invoice-status",
+      "queue": {
+        "concurrencyLimit": 10
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "factor": 2,
+        "minTimeoutInMs": 1000,
+        "maxTimeoutInMs": 10000,
+        "randomize": true
+      },
+      "maxDuration": 60,
+      "payloadSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "invoiceId"
+        ],
+        "additionalProperties": false
+      },
+      "filePath": "src/tasks/invoice/scheduler/invoice-scheduler.ts",
+      "entryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\scheduler\\invoice-scheduler.mjs"
+    },
+    {
+      "id": "invoice-scheduler",
+      "retry": {
+        "maxAttempts": 3,
+        "factor": 2,
+        "minTimeoutInMs": 1000,
+        "maxTimeoutInMs": 10000,
+        "randomize": true
+      },
+      "triggerSource": "schedule",
+      "schedule": {
+        "cron": "0 0,12 * * *",
+        "timezone": "UTC"
+      },
+      "maxDuration": 60,
+      "filePath": "src/tasks/invoice/scheduler/invoice-scheduler.ts",
+      "entryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\scheduler\\invoice-scheduler.mjs"
+    },
+    {
+      "id": "import-transactions",
+      "queue": {
+        "concurrencyLimit": 5
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "factor": 2,
+        "minTimeoutInMs": 1000,
+        "maxTimeoutInMs": 10000,
+        "randomize": true
+      },
+      "maxDuration": 120,
+      "payloadSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "bankAccountId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "filePath": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "inverted": {
+            "default": false,
+            "type": "boolean"
+          },
+          "mappings": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "date",
+              "description"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "teamId",
+          "bankAccountId",
+          "currency",
+          "filePath",
+          "inverted",
+          "mappings"
+        ],
+        "additionalProperties": false
+      },
+      "filePath": "src/tasks/transactions/import.ts",
+      "entryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\transactions\\import.mjs"
+    },
+    {
+      "id": "send-invoice-now",
+      "queue": {
+        "concurrencyLimit": 10
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "factor": 2,
+        "minTimeoutInMs": 1000,
+        "maxTimeoutInMs": 10000,
+        "randomize": true
+      },
+      "maxDuration": 60,
+      "payloadSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "invoiceId"
+        ],
+        "additionalProperties": false
+      },
+      "filePath": "src/tasks/invoice/operations/send-invoice.ts",
+      "entryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\operations\\send-invoice.mjs"
+    },
+    {
+      "id": "send-invoice-reminder",
+      "queue": {
+        "concurrencyLimit": 10
+      },
+      "retry": {
+        "maxAttempts": 3,
+        "factor": 2,
+        "minTimeoutInMs": 1000,
+        "maxTimeoutInMs": 10000,
+        "randomize": true
+      },
+      "maxDuration": 60,
+      "payloadSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "invoiceId"
+        ],
+        "additionalProperties": false
+      },
+      "filePath": "src/tasks/invoice/operations/send-reminder.ts",
+      "entryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\operations\\send-reminder.mjs"
+    },
+    {
+      "id": "invoice-reminders-scheduler",
+      "retry": {
+        "maxAttempts": 3,
+        "factor": 2,
+        "minTimeoutInMs": 1000,
+        "maxTimeoutInMs": 10000,
+        "randomize": true
+      },
+      "triggerSource": "schedule",
+      "schedule": {
+        "cron": "0 9,15 * * *",
+        "timezone": "UTC"
+      },
+      "maxDuration": 60,
+      "filePath": "src/tasks/invoice/scheduler/invoice-reminders-scheduler.ts",
+      "entryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\scheduler\\invoice-reminders-scheduler.mjs"
+    },
+    {
+      "id": "invoice-scheduled-send",
+      "retry": {
+        "maxAttempts": 3,
+        "factor": 2,
+        "minTimeoutInMs": 1000,
+        "maxTimeoutInMs": 10000,
+        "randomize": true
+      },
+      "triggerSource": "schedule",
+      "schedule": {
+        "cron": "*/10 * * * *",
+        "timezone": "UTC"
+      },
+      "maxDuration": 60,
+      "filePath": "src/tasks/invoice/scheduler/invoice-scheduled-send.ts",
+      "entryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\packages\\jobs\\src\\tasks\\invoice\\scheduler\\invoice-scheduled-send.mjs"
+    }
+  ],
+  "queues": [],
+  "workerEntryPoint": "C:\\Users\\louis\\Projects\\telegram-bot\\packages\\jobs\\.trigger\\tmp\\build-Drcpis\\node_modules\\.bun\\trigger.dev@4.0.6+1fb4c65d43e298b9\\node_modules\\trigger.dev\\dist\\esm\\entryPoints\\dev-run-worker.mjs",
+  "runtime": "node",
+  "runtimeVersion": "22.14.0",
+  "customConditions": [],
+  "timings": {
+    "src/tasks/invoice/scheduler/invoice-scheduler.ts": 224.73799999999983,
+    "src/tasks/transactions/import.ts": 23.7663,
+    "src/tasks/invoice/operations/check-status.ts": 5.9698000000000775,
+    "src/tasks/invoice/operations/send-invoice.ts": 8.02800000000002,
+    "src/tasks/invoice/operations/send-reminder.ts": 9.377500000000055,
+    "src/tasks/invoice/scheduler/invoice-reminders-scheduler.ts": 4.480599999999868,
+    "src/tasks/invoice/scheduler/invoice-scheduled-send.ts": 4.029399999999896
+  }
+}

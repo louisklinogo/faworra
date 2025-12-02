@@ -1,0 +1,58 @@
+Status: resolved via drizzle/manual-migrations/0059_rls_policy_dedup_select.sql (service_role policy restricted; authenticated SELECT consolidated).
+
+Summary of the issue
+The table public.measurements has multiple permissive RLS policies for the authenticated role on the SELECT action. Specifically, the policies identified are:
+
+"Allow all operations for service role"
+measurements_select
+Having multiple permissive policies for the same role+action means PostgreSQL must evaluate each policy for every matching query. This increases CPU and planning overhead and can hurt read performance, especially on high-traffic tables.
+
+Why this is a problem (concise)
+Each permissive policy is OR'd together; PostgreSQL evaluates them to decide row visibility.
+Multiple permissive policies cause redundant evaluations on every SELECT, increasing execution time.
+It complicates reasoning about access rules and can mask unintended wide access if one policy is too permissive.
+Suggested fixes (ordered, with recommended approach first)
+Consolidate policies into a single, well-scoped SELECT policy
+
+Combine the logic of the existing permissive policies into one policy that covers all intended cases.
+Example approach:
+If one policy allows access based on membership and another allows access for a tenant claim, combine using explicit OR conditions in a single policy's USING expression.
+Benefits: single evaluation, clearer semantics, simpler maintenance.
+Convert permissive policies to more restrictive ones where appropriate
+
+Replace overly-broad permissive policies with more specific conditions (e.g., require tenant_id match, membership check, or specific JWT claim).
+Use auth.uid() or auth.jwt() ->> 'claim' in the policy to limit rows by user/tenant.
+Benefits: reduces rows scanned, improves security and performance.
+Use TO clauses to scope policies to fewer roles
+
+If a policy is intended only for a subset of authenticated users, restrict it to a custom role or check claims instead of the entire authenticated role.
+Example: TO authenticated WHERE (auth.jwt() ->> 'role') = 'viewer' — or better, use USING/WITH CHECK and explicit claim checks.
+Remove redundant/unnecessary policies
+
+If one policy fully subsumes another, drop the redundant policy.
+Always review the intent and test before dropping.
+Add indexes on columns referenced in the policy expressions
+
+If your single consolidated policy references user_id, tenant_id, organization_id, etc., ensure those columns are indexed to maintain query performance with RLS.
+Concrete steps to implement (safe checklist)
+Review both policy definitions and confirm intent (who should be able to SELECT which rows).
+Draft a single combined policy that implements the intended access logic.
+Test the policy as different users (or with different JWT claims) to ensure correct behavior.
+When ready, drop the old policy/policies and create the consolidated policy in a transaction, e.g.:
+BEGIN;
+DROP POLICY measurements_select ON public.measurements;
+DROP POLICY "" ON public.measurements;
+CREATE POLICY measurements_select_consolidated ON public.measurements FOR SELECT TO authenticated USING (<combined_condition>);
+COMMIT; Note: I will not run destructive SQL without your explicit confirmation.
+Create indexes on referenced columns if missing:
+CREATE INDEX ON public.measurements(tenant_id);
+CREATE INDEX ON public.measurements(user_id); Adjust columns as relevant.
+Example consolidated policy (illustrative)
+Only provide actual SQL if you want me to generate it. I can create a safe, tested policy given:
+
+The exact conditions currently implemented by each policy, and
+The intended access model (per-user, per-tenant, organization-membership, public read, etc.).
+Verification
+- Confirmed policies applied and Advisor warning cleared alongside other RLS fixes.
+
+

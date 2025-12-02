@@ -1,0 +1,332 @@
+# Supabase Advisor — Info Checklist
+
+## Unindexed foreign keys
+- [x] activities.activities_user_id_fkey
+- [x] appointments.appointments_client_id_fkey
+- [x] appointments.appointments_staff_user_id_fkey
+- [x] bank_statement_allocations.bank_statement_allocations_transaction_id_fkey
+- [x] communication_outbox.communication_outbox_account_id_fkey
+- [x] communication_threads.communication_threads_assigned_user_id_fkey
+- [x] communication_threads.communication_threads_customer_id_fkey
+- [x] communication_threads.communication_threads_instagram_contact_id_fkey
+- [x] communication_threads.communication_threads_whatsapp_contact_id_fkey
+- [x] documents.documents_uploaded_by_users_id_fk
+- [x] invoice_items.invoice_items_order_item_id_fkey
+- [x] leads.leads_customer_id_fkey
+- [x] leads.leads_instagram_contact_fk
+- [x] leads.leads_owner_user_id_fkey
+- [x] leads.leads_thread_id_fkey
+- [x] leads.leads_whatsapp_contact_fk
+- [x] measurements.measurements_previous_version_id_measurements_id_fk
+- [x] message_attachments.message_attachments_message_id_fkey
+- [x] message_delivery.message_delivery_message_id_fkey
+- [x] notification_settings.notification_settings_team_id_fkey
+- [x] oauth_access_tokens.oauth_access_tokens_team_id_fkey
+- [x] oauth_applications.oauth_applications_created_by_fkey
+- [x] oauth_authorization_codes.oauth_authorization_codes_team_id_fkey
+- [x] product_inventory.product_inventory_location_id_fkey
+- [x] saved_inbox_views.saved_inbox_views_owner_user_id_fkey
+- [x] transaction_enrichments.fk_suggested_category
+- [x] transaction_enrichments.transaction_enrichments_team_id_fkey
+- [x] user_invites.user_invites_invited_by_fkey
+- [x] users.users_current_team_id_fkey
+
+## Unused indexes (candidates; require approval)
+- [ ] activities.activities_team_idx
+- [ ] activities.idx_activities_team_id_fk
+- [ ] activities.idx_activities_user_id_fk
+- [ ] api_key_usage.idx_api_key_usage_api_key_id
+- [ ] api_key_usage.idx_api_key_usage_api_key_id_fk
+- [ ] api_key_usage.idx_api_key_usage_created_at
+- [ ] api_key_usage.idx_api_key_usage_endpoint
+- [ ] api_key_usage.idx_api_key_usage_key_date
+- [ ] api_key_usage.idx_api_key_usage_status_code
+- [ ] api_key_usage.idx_api_key_usage_team_id
+- [ ] api_key_usage.idx_api_key_usage_team_id_fk
+- [ ] api_keys.idx_api_keys_active
+- [ ] api_keys.idx_api_keys_expires_at
+- [ ] api_keys.idx_api_keys_key_hash
+- [ ] api_keys.idx_api_keys_team_id
+- [ ] api_keys.idx_api_keys_team_id_fk
+- [ ] api_keys.idx_api_keys_user_id
+- [ ] api_keys.idx_api_keys_user_id_fk
+- [ ] appointments.appointments_team_start_idx
+- [ ] appointments.idx_appointments_client_id_fk
+- [ ] appointments.idx_appointments_staff_user_id_fk
+- [ ] appointments.idx_appointments_team_id_fk
+- [ ] assignment_policies.idx_assignment_policies_team
+- [ ] assignment_policies.idx_assignment_policies_team_id_fk
+- [ ] bank_statement_allocations.idx_bank_statement_allocations_line_id_fk
+- [ ] bank_statement_allocations.idx_bank_statement_allocations_transaction_id_fk
+- [ ] bank_statement_lines.bank_statement_lines_statement_idx
+- [ ] bank_statement_lines.idx_bank_statement_lines_statement_id_fk
+- [ ] bank_statements.bank_statements_team_idx
+- [ ] bank_statements.idx_bank_statements_team_id_fk
+- [ ] clients.clients_team_id_idx
+- [ ] clients.idx_clients_deleted_at
+- [ ] clients.idx_clients_email
+- [ ] clients.idx_clients_email_trgm
+- [ ] clients.idx_clients_name
+- [ ] clients.idx_clients_name_trgm
+- [ ] clients.idx_clients_phone
+- [ ] clients.idx_clients_phone_trgm
+- [ ] clients.idx_clients_search_tsv
+- [ ] clients.idx_clients_team_id
+- [ ] clients.idx_clients_team_id_fk
+- [ ] clients.idx_clients_whatsapp
+- [ ] clients.idx_clients_whatsapp_trgm
+- [ ] communication_accounts.idx_communication_accounts_team_id_fk
+- [ ] communication_messages.idx_comm_messages_status
+- [ ] communication_messages.idx_communication_messages_team_id_fk
+- [ ] communication_messages.idx_communication_messages_thread_id_fk
+- [ ] communication_messages.uq_comm_msg_team_client
+- [ ] communication_outbox.idx_comm_outbox_provider_message_id
+- [ ] communication_outbox.idx_comm_outbox_status
+- [ ] communication_outbox.idx_comm_outbox_status_next_attempt
+- [ ] communication_outbox.idx_communication_outbox_account_id_fk
+- [ ] communication_outbox.idx_communication_outbox_status_next_attempt
+- [ ] communication_outbox.idx_communication_outbox_team_id_fk
+- [ ] communication_outbox.uq_outbox_team_client
+- [ ] communication_templates.idx_communication_templates_team_id_fk
+- [ ] communication_thread_tags.idx_comm_thread_tags_tag
+- [ ] communication_thread_tags.idx_comm_thread_tags_thread
+- [ ] communication_thread_tags.idx_communication_thread_tags_tag_id_fk
+- [ ] communication_thread_tags.idx_communication_thread_tags_team_id_fk
+- [ ] communication_thread_tags.idx_communication_thread_tags_thread_id_fk
+- [ ] communication_threads.idx_comm_threads_status
+- [ ] communication_threads.idx_comm_threads_team
+- [ ] communication_threads.idx_comm_threads_team_status
+- [ ] communication_threads.idx_communication_threads_account_id_fk
+- [ ] communication_threads.idx_communication_threads_assigned_user_id_fk
+- [ ] communication_threads.idx_communication_threads_customer_id_fk
+- [ ] communication_threads.idx_communication_threads_instagram_contact_id_fk
+- [ ] communication_threads.idx_communication_threads_team_id_fk
+- [ ] communication_threads.idx_communication_threads_whatsapp_contact_id_fk
+- [ ] communication_threads.uq_comm_threads_account_contact
+- [ ] document_tag_embeddings.document_tag_embeddings_idx
+- [ ] documents.idx_documents_client_id
+- [ ] documents.idx_documents_client_id_fk
+- [ ] documents.idx_documents_created_at
+- [ ] documents.idx_documents_deleted_at
+- [ ] documents.idx_documents_invoice_id
+- [ ] documents.idx_documents_invoice_id_fk
+- [ ] documents.idx_documents_order_id_fk
+- [ ] documents.idx_documents_path
+- [ ] documents.idx_documents_path_tokens_gin
+- [ ] documents.idx_documents_search_tsv
+- [ ] documents.idx_documents_tags
+- [ ] documents.idx_documents_team_id_fk
+- [ ] documents.idx_documents_uploaded_by_fk
+- [ ] event_outbox.idx_event_outbox_status_next_attempt
+- [ ] event_outbox.idx_event_outbox_team_id_fk
+- [ ] event_outbox.uq_event_outbox_idempotency
+- [ ] exchange_rates.exchange_rates_base_target_idx
+- [ ] exchange_rates.unique_rate
+- [ ] financial_accounts.idx_fin_accounts_status
+- [ ] financial_accounts.idx_fin_accounts_team_id
+- [ ] financial_accounts.idx_financial_accounts_team_id_fk
+- [ ] instagram_contacts.idx_instagram_contacts_team_id_fk
+- [ ] instagram_contacts.instagram_contacts_team_idx
+- [ ] inventory_locations.idx_inventory_locations_team_id_fk
+- [ ] inventory_locations.idx_locations_team
+- [ ] invoice_items.idx_invoice_items_invoice_id
+- [ ] invoice_items.idx_invoice_items_invoice_id_fk
+- [ ] invoice_items.idx_invoice_items_order_item_id_fk
+- [ ] invoice_templates.idx_invoice_templates_team_id_fk
+- [ ] invoices.idx_invoices_created_at
+- [ ] invoices.idx_invoices_deleted_at
+- [ ] invoices.idx_invoices_idempotency_key
+- [ ] invoices.idx_invoices_invoice_number
+- [ ] invoices.idx_invoices_last_reminded_at
+- [ ] invoices.idx_invoices_order_id
+- [ ] invoices.idx_invoices_order_id_fk
+- [ ] invoices.idx_invoices_scheduled_send_at
+- [ ] invoices.idx_invoices_sent_at
+- [ ] invoices.idx_invoices_status
+- [ ] invoices.idx_invoices_team_id
+- [ ] invoices.idx_invoices_team_id_fk
+- [ ] invoices.idx_invoices_token
+- [ ] invoices.idx_invoices_unpaid
+- [ ] invoices.invoices_team_id_idx
+- [ ] invoices.uniq_invoices_team_idempotency
+- [ ] invoices.uniq_invoices_team_invoice
+- [ ] invoices.uq_invoices_team_invoice_active
+- [ ] leads.idx_leads_customer_id_fk
+- [ ] leads.idx_leads_instagram_contact_id_fk
+- [ ] leads.idx_leads_last_interaction
+- [ ] leads.idx_leads_owner_user_id_fk
+- [ ] leads.idx_leads_team
+- [ ] leads.idx_leads_team_id_fk
+- [ ] leads.idx_leads_team_score
+- [ ] leads.idx_leads_team_status
+- [ ] leads.idx_leads_thread_id_fk
+- [ ] leads.idx_leads_whatsapp_contact_id_fk
+- [ ] macros.idx_macros_team_id_fk
+- [ ] measurements.idx_measurements_client_active
+- [ ] measurements.idx_measurements_client_id
+- [ ] measurements.idx_measurements_client_id_fk
+- [ ] measurements.idx_measurements_deleted_at
+- [ ] measurements.idx_measurements_garment_type
+- [ ] measurements.idx_measurements_group_id
+- [ ] measurements.idx_measurements_previous_version_id_fk
+- [ ] measurements.idx_measurements_tags
+- [ ] measurements.idx_measurements_tags_gin
+- [ ] measurements.idx_measurements_taken_at
+- [ ] measurements.idx_measurements_team_id
+- [ ] measurements.idx_measurements_team_id_fk
+- [ ] measurements.measurements_team_id_idx
+- [ ] message_attachments.idx_message_attachments_message_id_fk
+- [ ] message_delivery.idx_message_delivery_message_id_fk
+- [ ] notification_settings.idx_notification_settings_team_id_fk
+- [ ] notification_settings.idx_notification_settings_user_id_fk
+- [ ] notification_settings.notification_settings_user_team_idx
+- [ ] oauth_access_tokens.idx_oauth_access_tokens_application_id_fk
+- [ ] oauth_access_tokens.idx_oauth_access_tokens_team_id_fk
+- [ ] oauth_access_tokens.idx_oauth_access_tokens_user_id_fk
+- [ ] oauth_access_tokens.oauth_access_tokens_application_id_idx
+- [ ] oauth_access_tokens.oauth_access_tokens_expires_at_idx
+- [ ] oauth_access_tokens.oauth_access_tokens_refresh_token_idx
+- [ ] oauth_access_tokens.oauth_access_tokens_token_idx
+- [ ] oauth_access_tokens.oauth_access_tokens_user_id_idx
+- [ ] oauth_applications.idx_oauth_applications_created_by_fk
+- [ ] oauth_applications.idx_oauth_applications_team_id_fk
+- [ ] oauth_applications.oauth_applications_client_id_idx
+- [ ] oauth_applications.oauth_applications_slug_idx
+- [ ] oauth_applications.oauth_applications_team_id_idx
+- [ ] oauth_authorization_codes.idx_oauth_authorization_codes_application_id_fk
+- [ ] oauth_authorization_codes.idx_oauth_authorization_codes_team_id_fk
+- [ ] oauth_authorization_codes.idx_oauth_authorization_codes_user_id_fk
+- [ ] oauth_authorization_codes.oauth_authorization_codes_application_id_idx
+- [ ] oauth_authorization_codes.oauth_authorization_codes_code_idx
+- [ ] oauth_authorization_codes.oauth_authorization_codes_user_id_idx
+- [ ] order_items.idx_order_items_order_id_fk
+- [ ] orders.idx_orders_active_status
+- [ ] orders.idx_orders_client_id
+- [ ] orders.idx_orders_client_id_fk
+- [ ] orders.idx_orders_deleted_at
+- [ ] orders.idx_orders_due_date
+- [ ] orders.idx_orders_idempotency_key
+- [ ] orders.idx_orders_order_number
+- [ ] orders.idx_orders_search_tsv
+- [ ] orders.idx_orders_status
+- [ ] orders.idx_orders_team_created_cursor
+- [ ] orders.idx_orders_team_id
+- [ ] orders.idx_orders_team_id_fk
+- [ ] orders.orders_team_id_idx
+- [ ] orders.uniq_orders_team_idempotency
+- [ ] orders.uniq_orders_team_order_number
+- [ ] product_categories.idx_product_categories_parent_id
+- [ ] product_categories.idx_product_categories_parent_id_fk
+- [ ] product_categories.idx_product_categories_slug
+- [ ] product_categories.idx_product_categories_team_id
+- [ ] product_categories.idx_product_categories_team_id_fk
+- [ ] product_category_mappings.idx_pcm_product_category
+- [ ] product_category_mappings.idx_pcm_team
+- [ ] product_category_mappings.idx_pcm_transaction_category
+- [ ] product_category_mappings.idx_product_category_mappings_product_category_id_fk
+- [ ] product_category_mappings.idx_product_category_mappings_team_id_fk
+- [ ] product_category_mappings.idx_product_category_mappings_transaction_category_id_fk
+- [ ] product_inventory.idx_product_inventory_location_id_fk
+- [ ] product_inventory.idx_product_inventory_team_id_fk
+- [ ] product_inventory.idx_product_inventory_variant_id_fk
+- [ ] product_media.idx_product_media_primary
+- [ ] product_media.idx_product_media_product_id_fk
+- [ ] product_media.idx_product_media_team
+- [ ] product_media.idx_product_media_team_id_fk
+- [ ] product_media.idx_product_media_team_product
+- [ ] product_media.idx_product_media_team_product_order
+- [ ] product_media.idx_product_media_team_product_primary
+- [ ] product_media.idx_product_media_variant
+- [ ] product_media.idx_product_media_variant_id_fk
+- [ ] product_media.uq_primary_media_per_product
+- [ ] product_media.uq_primary_media_per_variant
+- [ ] product_media.uq_product_media_primary
+- [ ] product_variants.idx_product_variants_product_id_fk
+- [ ] product_variants.idx_product_variants_team_id_fk
+- [ ] product_variants.idx_product_variants_team_product
+- [ ] product_variants.idx_variants_status
+- [ ] product_variants.idx_variants_team
+- [ ] products.idx_products_search_tsv
+- [ ] products.idx_products_status
+- [ ] products.idx_products_team
+- [ ] products.idx_products_team_category_slug
+- [ ] products.idx_products_team_id_fk
+- [ ] products.idx_products_team_name
+- [ ] products.idx_products_team_updated_at_id
+- [ ] saved_inbox_views.idx_saved_inbox_views_owner_user_id_fk
+- [ ] saved_inbox_views.idx_saved_inbox_views_team_id_fk
+- [ ] tags.idx_tags_name
+- [ ] tags.idx_tags_team_id_fk
+- [ ] transaction_allocations.idx_transaction_allocations_invoice_id_fk
+- [ ] transaction_allocations.idx_transaction_allocations_transaction_id_fk
+- [ ] transaction_allocations.transaction_allocations_invoice_idx
+- [ ] transaction_attachments.idx_transaction_attachments_checksum
+- [ ] transaction_attachments.idx_transaction_attachments_team_id
+- [ ] transaction_attachments.idx_transaction_attachments_team_id_fk
+- [ ] transaction_attachments.idx_transaction_attachments_transaction_id_fk
+- [ ] transaction_attachments.idx_transaction_attachments_type
+- [ ] transaction_attachments.idx_transaction_attachments_uploaded_by
+- [ ] transaction_attachments.idx_transaction_attachments_uploaded_by_fk
+- [ ] transaction_categories.idx_transaction_categories_parent_id_fk
+- [ ] transaction_categories.idx_transaction_categories_system
+- [ ] transaction_categories.idx_transaction_categories_team_id_fk
+- [ ] transaction_category_embeddings.idx_transaction_category_embeddings_system
+- [ ] transaction_category_embeddings.idx_transaction_category_embeddings_vector
+- [ ] transaction_category_embeddings.transaction_category_embeddings_system_idx
+- [ ] transaction_category_embeddings.transaction_category_embeddings_vector_idx
+- [ ] transaction_embeddings.idx_transaction_embeddings_team_id
+- [ ] transaction_embeddings.idx_transaction_embeddings_team_id_fk
+- [ ] transaction_embeddings.idx_transaction_embeddings_transaction_id
+- [ ] transaction_embeddings.idx_transaction_embeddings_transaction_id_fk
+- [ ] transaction_embeddings.idx_transaction_embeddings_vector
+- [ ] transaction_enrichments.idx_transaction_enrichme_tea_sug_fk_awr4x3
+- [ ] transaction_enrichments.idx_transaction_enrichments_reviewed
+- [ ] transaction_enrichments.idx_transaction_enrichments_team_id_fk
+- [ ] transaction_enrichments.idx_transaction_enrichments_transaction_id
+- [ ] transaction_enrichments.idx_transaction_enrichments_transaction_id_fk
+- [ ] transaction_tags.idx_transaction_tags_tag_id
+- [ ] transaction_tags.idx_transaction_tags_tag_id_fk
+- [ ] transaction_tags.idx_transaction_tags_team_id
+- [ ] transaction_tags.idx_transaction_tags_team_id_fk
+- [ ] transaction_tags.idx_transaction_tags_transaction_id_fk
+- [ ] transactions.idx_transactions_account_id
+- [ ] transactions.idx_transactions_account_id_fk
+- [ ] transactions.idx_transactions_assigned_id
+- [ ] transactions.idx_transactions_assigned_id_fk
+- [ ] transactions.idx_transactions_client_id
+- [ ] transactions.idx_transactions_client_id_fk
+- [ ] transactions.idx_transactions_deleted_at
+- [ ] transactions.idx_transactions_description_trgm
+- [ ] transactions.idx_transactions_fts
+- [ ] transactions.idx_transactions_internal_id
+- [ ] transactions.idx_transactions_invoice_id
+- [ ] transactions.idx_transactions_invoice_id_fk
+- [ ] transactions.idx_transactions_name_trgm
+- [ ] transactions.idx_transactions_order_id_fk
+- [ ] transactions.idx_transactions_spending
+- [ ] transactions.idx_transactions_status
+- [ ] transactions.idx_transactions_team_account_date
+- [ ] transactions.idx_transactions_team_amount
+- [ ] transactions.idx_transactions_team_assigned_date
+- [ ] transactions.idx_transactions_team_category_date
+- [ ] transactions.idx_transactions_team_date
+- [ ] transactions.idx_transactions_team_deleted_date
+- [ ] transactions.idx_transactions_team_id_category_slug_fk
+- [ ] transactions.idx_transactions_team_id_fk
+- [ ] transactions.idx_transactions_team_status_date
+- [ ] transactions.idx_transactions_team_status_type_date
+- [ ] transactions.idx_transactions_team_type_date
+- [ ] transactions.idx_transactions_transaction_date
+- [ ] transactions.idx_transactions_type
+- [ ] user_invites.idx_user_invites_invited_by_fk
+- [ ] user_invites.idx_user_invites_team_id_fk
+- [ ] user_invites.user_invites_team_id_idx
+- [ ] users.idx_users_current_team_id_fk
+- [ ] users_on_team.idx_users_on_team_team_id_fk
+- [ ] users_on_team.idx_users_on_team_user_id_fk
+- [ ] whatsapp_contacts.idx_whatsapp_contacts_team_id_fk
+- [ ] whatsapp_contacts.whatsapp_contacts_team_idx
+
+Notes:
+- FK entries are auto-marked done when a covering leading-column index exists.
+- Unused indexes are not auto-dropped; use report + explicit allowlist to drop.
