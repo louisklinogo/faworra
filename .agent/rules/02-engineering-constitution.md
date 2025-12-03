@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Engineering Constitution
 
 Principles
@@ -20,13 +24,8 @@ PR Checklist
 - [ ] Minimal selects; `.returns<T>()` only at end of tRPC chains.
 - [ ] Zod validation present; error shape `{ error: string }` consistent.
 - [ ] CI passes typecheck/lint/test/build; no schema/type drift.
-- [ ] UI/UX mirrors Midday patterns; no placeholders without approval; deviations documented.
 - [ ] Data tables follow docs/coding-guidelines-data-tables.md (infinite query, virtualization, real‑time, hooks).
 - [ ] InitialData pattern used with no mount refetch; infinite queries wired with initialData.
 - [ ] Keyset pagination on large tables; composite indexes (e.g., `team_id, created_at DESC`).
 - [ ] Search uses `tsvector` + GIN; no broad `ILIKE` scans.
 - [ ] Queries use shared team‑scoped helpers or explicit predicate; lint rule for scoping passes.
-
-Notes
-- Full background: docs/engineering-constitution.md
-- Data Table Guidelines: docs/coding-guidelines-data-tables.md

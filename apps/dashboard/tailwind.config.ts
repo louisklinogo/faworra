@@ -19,7 +19,6 @@ export default {
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
-        inter: ["var(--font-inter)", "system-ui", "sans-serif"],
         serif: ["var(--font-instrument-serif)", "serif"],
       },
       colors: {
@@ -56,6 +55,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Swiss Industrial Accents
+        braun: {
+          DEFAULT: "hsl(var(--braun-orange))",
+          foreground: "#ffffff",
+        },
+        signal: {
+          DEFAULT: "hsl(var(--signal-green))",
+          foreground: "#ffffff",
+        },
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",
@@ -75,10 +83,10 @@ export default {
         },
       },
       borderRadius: {
-        sm: "calc(var(--radius) - 4px)",
-        md: "calc(var(--radius) - 2px)",
-        lg: "var(--radius)",
-        xl: "calc(var(--radius) + 4px)",
+        sm: "calc(var(--radius) - 2px)", // 2px
+        md: "var(--radius)", // 4px
+        lg: "calc(var(--radius) + 4px)", // 8px
+        xl: "calc(var(--radius) + 8px)", // 12px
       },
       keyframes: {
         "accordion-down": {

@@ -4,89 +4,133 @@
 
 @layer base {
   :root {
-    /* Light mode colors synced from v0-brillance (OKLch → HSL) */
-    --background: 224 0% 100%;
-    --foreground: 224 0% 4%;
-    --card: 224 0% 100%;
-    --card-foreground: 224 0% 4%;
-    --popover: 224 0% 100%;
-    --popover-foreground: 224 0% 4%;
-    --primary: 224 0% 9%;
-    --primary-foreground: 224 0% 98%;
-    --secondary: 224 0% 96%;
-    --secondary-foreground: 224 0% 9%;
-    --muted: 224 0% 96%;
-    --muted-foreground: 224 0% 45%;
-    --accent: 224 0% 96%;
-    --accent-foreground: 224 0% 9%;
-    --destructive: 352 100% 41%;
-    --destructive-foreground: 352 100% 41%;
-    --border: 224 0% 90%;
-    --input: 224 0% 90%;
-    --ring: 224 0% 63%;
-    --radius: 0.625rem;
+    /* Swiss Industrial Palette - Light Mode */
+    /* Neutrals */
+    --background: 0 0% 100%;
+    /* Pure White */
+    --foreground: 220 0% 10%;
+    /* Matte Black (almost) */
 
-    /* Border radius variants - for flexible component sizing */
-    --radius-sm: calc(var(--radius) - 4px);
-    --radius-md: calc(var(--radius) - 2px);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) + 4px);
+    --card: 0 0% 100%;
+    --card-foreground: 220 0% 10%;
 
-    /* Chart colors */
-    --chart-1: 24 100% 40%;
-    --chart-2: 176 100% 21%;
-    --chart-3: 196 72% 23%;
-    --chart-4: 47 100% 39%;
-    --chart-5: 41 100% 39%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 0% 10%;
 
-    /* Sidebar colors */
-    --sidebar: 224 0% 98%;
-    --sidebar-foreground: 224 0% 4%;
-    --sidebar-primary: 224 0% 9%;
-    --sidebar-primary-foreground: 224 0% 98%;
-    --sidebar-accent: 224 0% 96%;
-    --sidebar-accent-foreground: 224 0% 9%;
-    --sidebar-border: 224 0% 90%;
-    --sidebar-ring: 224 0% 63%;
+    --primary: 220 0% 10%;
+    /* Matte Black */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 0% 96%;
+    /* Light Gray Surface */
+    --secondary-foreground: 220 0% 10%;
+
+    --muted: 220 0% 96%;
+    --muted-foreground: 220 0% 40%;
+
+    --accent: 220 0% 96%;
+    --accent-foreground: 220 0% 10%;
+
+    --destructive: 0 100% 50%;
+    /* Alert Red */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 0% 90%;
+    /* Precise Light Gray */
+    --input: 220 0% 90%;
+    --ring: 216 100% 50%;
+    /* Focus Blue */
+
+    --radius: 0.25rem;
+    /* 4px - Standard */
+
+    /* Functional Accents */
+    --braun-orange: 18 100% 50%;
+    --signal-green: 142 100% 35%;
+
+    /* Chart colors (High Contrast) */
+    --chart-1: 18 100% 50%;
+    /* Braun Orange */
+    --chart-2: 220 0% 10%;
+    /* Black */
+    --chart-3: 220 0% 40%;
+    /* Grey */
+    --chart-4: 142 100% 35%;
+    /* Signal Green */
+    --chart-5: 216 100% 50%;
+    /* Focus Blue */
+
+    /* Sidebar */
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 220 0% 10%;
+    --sidebar-primary: 220 0% 10%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 0% 94%;
+    --sidebar-accent-foreground: 220 0% 10%;
+    --sidebar-border: 220 0% 90%;
+    --sidebar-ring: 216 100% 50%;
   }
 
   .dark {
-    --background: 224 0% 4%;
-    --foreground: 224 0% 98%;
-    --card: 224 0% 4%;
-    --card-foreground: 224 0% 98%;
-    --popover: 224 0% 4%;
-    --popover-foreground: 224 0% 98%;
-    --primary: 224 0% 98%;
-    --primary-foreground: 224 0% 9%;
-    --secondary: 224 0% 15%;
-    --secondary-foreground: 224 0% 98%;
-    --muted: 224 0% 15%;
-    --muted-foreground: 224 0% 63%;
-    --accent: 224 0% 15%;
-    --accent-foreground: 224 0% 98%;
-    --destructive: 359 69% 30%;
-    --destructive-foreground: 357 96% 58%;
-    --border: 224 0% 15%;
-    --input: 224 0% 15%;
-    --ring: 224 0% 32%;
+    /* Swiss Industrial Palette - Dark Mode */
+    /* Neutrals */
+    --background: 220 0% 10%;
+    /* Matte Black */
+    --foreground: 0 0% 98%;
+    /* Off White */
 
-    /* Chart colors (dark) */
-    --chart-1: 225 84% 49%;
-    --chart-2: 164 100% 26%;
-    --chart-3: 41 100% 39%;
-    --chart-4: 272 100% 65%;
-    --chart-5: 345 100% 56%;
+    --card: 220 0% 10%;
+    --card-foreground: 0 0% 98%;
 
-    /* Sidebar dark mode */
-    --sidebar: 224 0% 9%;
-    --sidebar-foreground: 224 0% 98%;
-    --sidebar-primary: 225 84% 49%;
-    --sidebar-primary-foreground: 224 0% 98%;
-    --sidebar-accent: 224 0% 15%;
-    --sidebar-accent-foreground: 224 0% 98%;
-    --sidebar-border: 224 0% 15%;
-    --sidebar-ring: 224 0% 32%;
+    --popover: 220 0% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    /* White */
+    --primary-foreground: 220 0% 10%;
+
+    --secondary: 220 0% 15%;
+    /* Dark Gray Surface */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 0% 15%;
+    --muted-foreground: 220 0% 60%;
+
+    --accent: 220 0% 15%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 100% 50%;
+    /* Alert Red */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 0% 20%;
+    /* Precise Dark Gray */
+    --input: 220 0% 20%;
+    --ring: 216 100% 50%;
+    /* Focus Blue */
+
+    /* Chart colors (Dark) */
+    --chart-1: 18 100% 50%;
+    /* Braun Orange */
+    --chart-2: 0 0% 98%;
+    /* White */
+    --chart-3: 220 0% 60%;
+    /* Grey */
+    --chart-4: 142 100% 35%;
+    /* Signal Green */
+    --chart-5: 216 100% 50%;
+    /* Focus Blue */
+
+    /* Sidebar Dark */
+    --sidebar: 220 0% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 18 100% 50%;
+    /* Braun Orange for active items? Or White? Let's stick to White for consistency with Primary */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 0% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 220 0% 20%;
+    --sidebar-ring: 216 100% 50%;
   }
 }
 
@@ -94,18 +138,15 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    /* Enforce Geist Sans */
     @apply bg-background text-foreground;
   }
 }
 
 /* Font utility classes from v0 */
-.font-inter {
-  font-family:
-    var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
 .font-instrument-serif {
   font-family: var(--font-instrument-serif);
   font-display: swap;
@@ -113,11 +154,6 @@
 
 /* Font display optimization - prioritize readability */
 @supports (font-display: swap) {
-  @font-face {
-    font-family: "Inter";
-    font-display: swap;
-  }
-
   @font-face {
     font-family: "Instrument Serif";
     font-display: swap;
@@ -152,6 +188,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -161,6 +198,7 @@
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -171,6 +209,7 @@
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -182,6 +221,7 @@
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.97);
@@ -194,7 +234,8 @@
   vertical-align: bottom;
   -webkit-animation: ellipsis steps(4, end) 900ms infinite;
   animation: ellipsis steps(4, end) 900ms infinite;
-  content: "\2026"; /* ascii code for the ellipsis character */
+  content: "\2026";
+  /* ascii code for the ellipsis character */
   width: 0px;
 }
 

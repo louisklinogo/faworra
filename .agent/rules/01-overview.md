@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Overview
 
 Faworra is a multi‑tenant SaaS that unifies communications (WhatsApp, Instagram, SMS) with business management (clients, orders, invoices, transactions), powered by AI assistance.
@@ -14,12 +18,12 @@ Core pillars:
 
 How to use this guide:
 - Start with Architecture and Development Patterns to understand the data flow.
-- Use UI/UX Parity to mirror established patterns (Midday reference).
 - Consult Git Workflow, Testing, and Success Criteria before opening PRs.
 - See Debugging and Quick Wins when you’re stuck.
 
 References:
 - Midday (production SaaS) for architecture and UI patterns.
 - Evolution API for WhatsApp/Baileys integration.
+- Chatwoot for Unified Inbox
 
 Keep changes small, typed, and tenant‑scoped. Favor reuse over reinvention.

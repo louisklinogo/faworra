@@ -17,6 +17,3 @@
 - [ ] Prevent refetch from immediately overriding new filter values: cancel in-flight requests and debounce refetch on filter changes; keep targeted invalidations for kebab actions.
 - [ ] Re-test flow: open 3‑dots → View details → change date filter; expect stable menu, no flicker, correct filtered results without redundant refetch loop.
 
-New
-Install Turbopack
-

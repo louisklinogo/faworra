@@ -1,15 +1,14 @@
 import { Document, Font, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 
 // Register fonts (optional - for better typography)
-Font.register({
-  family: "Inter",
-  src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2",
-});
+// Register fonts (optional - for better typography)
+// Using standard fonts for PDF to ensure reliability and speed
+// Helvetica is standard in PDF and fits Swiss Style perfectly
 
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: "Inter",
+    fontFamily: "Helvetica",
     fontSize: 10,
     color: "#1f2937",
   },
@@ -239,7 +238,7 @@ export function InvoicePDF({ invoice, items, from, to, currency, pageSize = "A4"
         </View>
 
         {topText && (
-          <View style={[styles.section, { marginTop: -10 }]}> 
+          <View style={[styles.section, { marginTop: -10 }]}>
             <Text style={styles.notesText}>{topText}</Text>
           </View>
         )}
@@ -329,7 +328,7 @@ export function InvoicePDF({ invoice, items, from, to, currency, pageSize = "A4"
         )}
 
         {bottomText && (
-          <View style={[styles.section, { marginTop: 10 }]}> 
+          <View style={[styles.section, { marginTop: 10 }]}>
             <Text style={styles.notesText}>{bottomText}</Text>
           </View>
         )}
