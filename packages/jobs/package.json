@@ -7,7 +7,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "dev": "trigger dev",
+    "dev": "bun -e \"console.log('Skipping @Faworra/jobs dev (Trigger.dev). Run: bun run dev:trigger');\"",
+    "dev:trigger": "trigger dev",
     "deploy": "trigger deploy",
     "build": "tsc -p tsconfig.json"
   },

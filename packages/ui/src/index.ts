@@ -25,6 +25,9 @@ export * from "./components/table";
 export * from "./components/textarea";
 export * from "./components/tooltip";
 
+// Icons
+export * from "./icons";
+
 // Hooks
 export * from "./hooks/use-zod-form";
 

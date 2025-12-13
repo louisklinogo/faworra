@@ -22,6 +22,14 @@ import { useClients } from "@/hooks/use-supabase-data";
 import { useTeamCurrency } from "@/hooks/use-team-currency";
 import type { OrderWithClient } from "@/lib/supabase-queries";
 import { trpc } from "@/lib/trpc/client";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { ComboboxDropdown, type ComboboxItem } from "@/components/ui/combobox-dropdown";
+import { cn } from "@/lib/utils";
 
 interface OrderItem {
   name: string;
@@ -54,14 +62,14 @@ export function OrderSheet({ open, onOpenChange, order }: OrderSheetProps) {
     notes: order?.notes || "",
     deposit_amount: order
       ? Number.parseFloat(
-          String((order as any).deposit_amount || (order as any).depositAmount || "0"),
-        )
+        String((order as any).deposit_amount || (order as any).depositAmount || "0"),
+      )
       : 0,
     due_date: order
       ? (() => {
-          const dateVal = (order as any).due_date || (order as any).dueDate;
-          return dateVal ? String(dateVal).split("T")[0] : "";
-        })()
+        const dateVal = (order as any).due_date || (order as any).dueDate;
+        return dateVal ? String(dateVal).split("T")[0] : "";
+      })()
       : "",
   });
 
@@ -71,8 +79,6 @@ export function OrderSheet({ open, onOpenChange, order }: OrderSheetProps) {
 
   const isEdit = !!order;
   const isLoading = createMutation.isPending || updateMutation.isPending;
-
-  // Order number is generated in the database trigger now.
 
   // Calculate totals
   const calculateItemTotal = (quantity: number, unitCost: number) => quantity * unitCost;
@@ -118,7 +124,6 @@ export function OrderSheet({ open, onOpenChange, order }: OrderSheetProps) {
 
     const orderData = {
       clientId: formData.client_id || null,
-      // Let DB generate when creating
       orderNumber: isEdit ? order.order_number : undefined,
       status: String(formData.status || "generated"),
       items: validItems.map((it) => ({
@@ -203,119 +208,112 @@ export function OrderSheet({ open, onOpenChange, order }: OrderSheetProps) {
 
         <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit}>
           <div className="scrollbar-hide flex-1 overflow-y-auto px-6 py-4">
-            <div className="space-y-6">
-              {/* Client Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="client_id">Client</Label>
-                <Select
-                  onValueChange={(value) => setFormData({ ...formData, client_id: value })}
-                  value={formData.client_id}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a client" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {clients.map((client) => (
-                      <SelectItem key={client.id} value={client.id}>
-                        {client.name} {client.phone && `(${client.phone})`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Status */}
-              <div className="space-y-2">
-                <Label htmlFor="status">
-                  Status <span className="text-destructive">*</span>
-                </Label>
-                <Select
-                  onValueChange={(value) => setFormData({ ...formData, status: value })}
-                  value={formData.status}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="generated">Generated</SelectItem>
-                    <SelectItem value="in_progress">In progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Due Date */}
-              <div className="space-y-2">
-                <Label>Due Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button className="w-full justify-start" type="button" variant="outline">
-                      {formData.due_date
-                        ? new Date(formData.due_date).toLocaleDateString()
-                        : "Select due date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent align="start" className="w-auto p-0">
-                    <Calendar
-                      initialFocus
-                      mode="single"
-                      onSelect={(date) => {
-                        setFormData({
-                          ...formData,
-                          due_date:
-                            date && date instanceof Date ? date.toISOString().split("T")[0] : "",
-                        });
-                      }}
-                      selected={formData.due_date ? new Date(formData.due_date) : undefined}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {/* Items */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label>
-                    Items <span className="text-destructive">*</span>
-                  </Label>
-                  <Button onClick={addItem} size="sm" type="button" variant="outline">
-                    <Plus className="mr-1 h-4 w-4" /> Add Item
-                  </Button>
-                </div>
-
-                <div className="space-y-3">
-                  {items.map((item, index) => (
-                    <div className="space-y-3 border p-3" key={`${item.name}-${index}`}>
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">Item {index + 1}</span>
-                        {items.length > 1 && (
-                          <Button
-                            onClick={() => removeItem(index)}
-                            size="sm"
-                            type="button"
-                            variant="ghost"
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        )}
+            <Accordion className="space-y-0" defaultValue={["general", "items", "payment"]} type="multiple">
+              {/* General Section */}
+              <AccordionItem value="general">
+                <AccordionTrigger>General</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="col-span-2">
+                        <Label htmlFor="client_id">Client</Label>
+                        <ComboboxDropdown
+                          items={clients.map((c) => ({ id: c.id, label: c.name }))}
+                          onSelect={(item) => setFormData({ ...formData, client_id: item?.id || "" })}
+                          placeholder="Select client"
+                          searchPlaceholder="Search clients..."
+                          selectedItem={
+                            formData.client_id
+                              ? {
+                                id: formData.client_id,
+                                label: clients.find((c) => c.id === formData.client_id)?.name || "",
+                              }
+                              : undefined
+                          }
+                        />
                       </div>
 
-                      <div className="grid gap-3">
-                        <div>
-                          <Label className="text-xs">Item Name</Label>
-                          <Input
-                            onChange={(e) => updateItem(index, "name", e.target.value)}
-                            placeholder="e.g., Kaftan"
-                            required
-                            value={item.name}
-                          />
-                        </div>
+                      <div>
+                        <Label htmlFor="status">
+                          Status <span className="text-destructive">*</span>
+                        </Label>
+                        <Select
+                          onValueChange={(value) => setFormData({ ...formData, status: value })}
+                          value={formData.status}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="generated">Generated</SelectItem>
+                            <SelectItem value="in_progress">In progress</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                        <div className="grid grid-cols-3 gap-2">
-                          <div>
-                            <Label className="text-xs">Qty</Label>
+                      <div>
+                        <Label>Due Date</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button className="w-full justify-start" type="button" variant="outline">
+                              {formData.due_date
+                                ? new Date(formData.due_date).toLocaleDateString()
+                                : "Select due date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent align="start" className="w-auto p-0">
+                            <Calendar
+                              initialFocus
+                              mode="single"
+                              onSelect={(date) => {
+                                setFormData({
+                                  ...formData,
+                                  due_date:
+                                    date && date instanceof Date ? date.toISOString().split("T")[0] : "",
+                                });
+                              }}
+                              selected={formData.due_date ? new Date(formData.due_date) : undefined}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Items Section */}
+              <AccordionItem value="items">
+                <AccordionTrigger>Items</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    {/* Header Row */}
+                    <div className="grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground tracking-wider">
+                      <div className="col-span-5 pl-1">ITEM</div>
+                      <div className="col-span-2 text-center">QTY</div>
+                      <div className="col-span-2 text-right">COST</div>
+                      <div className="col-span-2 text-right">TOTAL</div>
+                      <div className="col-span-1"></div>
+                    </div>
+
+                    {/* Items List */}
+                    <div className="space-y-2">
+                      {items.map((item, index) => (
+                        <div key={`${index}`} className="group relative grid grid-cols-12 gap-2 items-start">
+                          <div className="col-span-5">
                             <Input
+                              className="h-9 border-transparent bg-muted/30 focus:bg-background focus:border-input px-2 transition-colors"
+                              onChange={(e) => updateItem(index, "name", e.target.value)}
+                              placeholder="Item name"
+                              required
+                              value={item.name}
+                            />
+                          </div>
+                          <div className="col-span-2">
+                            <Input
+                              className="h-9 border-transparent bg-muted/30 focus:bg-background focus:border-input px-2 text-center font-mono transition-colors"
                               min="1"
                               onChange={(e) =>
                                 updateItem(
@@ -328,9 +326,9 @@ export function OrderSheet({ open, onOpenChange, order }: OrderSheetProps) {
                               value={item.quantity}
                             />
                           </div>
-                          <div>
-                            <Label className="text-xs">Unit Cost ({currency})</Label>
+                          <div className="col-span-2">
                             <Input
+                              className="h-9 border-transparent bg-muted/30 focus:bg-background focus:border-input px-2 text-right font-mono transition-colors"
                               min="0"
                               onChange={(e) =>
                                 updateItem(
@@ -344,79 +342,103 @@ export function OrderSheet({ open, onOpenChange, order }: OrderSheetProps) {
                               value={item.unit_cost}
                             />
                           </div>
-                          <div>
-                            <Label className="text-xs">Total ({currency})</Label>
-                            <Input
-                              className="bg-muted"
-                              disabled
-                              type="number"
-                              value={item.total_cost.toFixed(2)}
-                            />
+                          <div className="col-span-2">
+                            <div className="flex h-9 items-center justify-end px-2 font-mono text-sm">
+                              {item.total_cost.toFixed(2)}
+                            </div>
+                          </div>
+                          <div className="col-span-1 flex justify-center">
+                            {items.length > 1 && (
+                              <Button
+                                className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removeItem(index)}
+                                size="icon"
+                                type="button"
+                                variant="ghost"
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            )}
                           </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Payment Summary */}
-              <div className="space-y-3 border bg-muted/50 p-4">
-                <h4 className="font-medium text-sm">Payment Summary</h4>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Total Price:</span>
-                    <span className="font-medium">
-                      {currency} {totalPrice.toFixed(2)}
-                    </span>
+                    {/* Add Item Button */}
+                    <Button
+                      className="w-full border-dashed border-muted-foreground/20 hover:bg-muted/50 hover:border-muted-foreground/40 text-muted-foreground"
+                      onClick={addItem}
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      <Plus className="mr-2 h-4 w-4" /> Add Item
+                    </Button>
                   </div>
+                </AccordionContent>
+              </AccordionItem>
 
-                  <div>
-                    <Label className="text-xs" htmlFor="deposit_amount">
-                      Deposit Amount ({currency})
-                    </Label>
-                    <Input
-                      className="mt-1"
-                      id="deposit_amount"
-                      max={totalPrice}
-                      min="0"
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          deposit_amount: Number.parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      step="0.01"
-                      type="number"
-                      value={formData.deposit_amount}
-                    />
+              {/* Payment Section */}
+              <AccordionItem value="payment">
+                <AccordionTrigger>Payment</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4 p-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Total Price</span>
+                      <span className="font-mono font-medium">
+                        {currency} {totalPrice.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 items-center">
+                      <Label className="text-xs text-muted-foreground" htmlFor="deposit_amount">
+                        Deposit Amount
+                      </Label>
+                      <Input
+                        className="h-8 text-right font-mono"
+                        id="deposit_amount"
+                        max={totalPrice}
+                        min="0"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            deposit_amount: Number.parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        step="0.01"
+                        type="number"
+                        value={formData.deposit_amount}
+                      />
+                    </div>
+
+                    <div className="flex justify-between border-t border-dashed pt-3 text-sm">
+                      <span className="font-medium">Balance Due</span>
+                      <span className="font-mono font-semibold text-primary">
+                        {currency} {balanceAmount.toFixed(2)}
+                      </span>
+                    </div>
                   </div>
+                </AccordionContent>
+              </AccordionItem>
 
-                  <div className="flex justify-between border-t pt-2 text-sm">
-                    <span className="text-muted-foreground">Balance Due:</span>
-                    <span className="font-semibold">
-                      {currency} {balanceAmount.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Notes */}
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Any additional notes about this order..."
-                  rows={6}
-                  value={formData.notes}
-                />
-              </div>
-            </div>
+              {/* Notes Section */}
+              <AccordionItem value="notes">
+                <AccordionTrigger>Notes</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    id="notes"
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    placeholder="Any additional notes about this order..."
+                    rows={4}
+                    value={formData.notes}
+                    className="resize-none"
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
 
-          <div className="flex flex-shrink-0 justify-end gap-4 border-t px-6 py-4">
+          <div className="flex flex-shrink-0 justify-end gap-4 border-t px-6 py-4 bg-background/50 backdrop-blur-sm">
             <Button
               disabled={isLoading}
               onClick={() => handleOpenChange(false)}

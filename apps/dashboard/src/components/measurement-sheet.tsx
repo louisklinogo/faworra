@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, History } from "lucide-react";
+import { CalendarIcon, History, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -17,6 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { ComboboxDropdown, type ComboboxItem } from "@/components/ui/combobox-dropdown";
 import {
   Form,
   FormControl,
@@ -28,19 +29,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateMeasurement, useUpdateMeasurement } from "@/hooks/use-measurement-mutations";
 import { useClients } from "@/hooks/use-supabase-data";
 import type { MeasurementWithClient } from "@/lib/supabase-queries";
+import { cn } from "@/lib/utils";
 
 // Zod schema for validation
 const measurementFormSchema = z.object({
@@ -67,6 +62,18 @@ const TAG_SUGGESTIONS = [
   "wedding",
   "traditional",
   "modern",
+];
+
+// Common measurements for Quick Add
+const QUICK_ADD_MEASUREMENTS = [
+  "Chest",
+  "Waist",
+  "Hips",
+  "Length",
+  "Shoulder",
+  "Sleeve",
+  "Neck",
+  "Thigh",
 ];
 
 interface MeasurementSheetProps {
@@ -163,6 +170,21 @@ export function MeasurementSheet({ open, onOpenChange, measurement }: Measuremen
     }
   };
 
+  const addQuickMeasurement = (key: string) => {
+    const current = form.getValues("measurements") || {};
+    // Only add if not already present
+    if (!current[key]) {
+      form.setValue(
+        "measurements",
+        {
+          ...current,
+          [key]: "",
+        },
+        { shouldDirty: true, shouldTouch: true, shouldValidate: true },
+      );
+    }
+  };
+
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>
       <SheetContent className="flex flex-col overflow-hidden p-0 sm:max-w-[650px]">
@@ -207,20 +229,20 @@ export function MeasurementSheet({ open, onOpenChange, measurement }: Measuremen
                       <FormLabel className="font-normal text-muted-foreground text-xs">
                         Client <span className="text-destructive">*</span>
                       </FormLabel>
-                      <Select disabled={isEdit} onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select client" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {clients.map((client) => (
-                            <SelectItem key={client.id} value={client.id}>
-                              {client.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <ComboboxDropdown
+                        items={clients.map((c) => ({ id: c.id, label: c.name }))}
+                        onSelect={(item) => field.onChange(item?.id || "")}
+                        placeholder="Select client"
+                        searchPlaceholder="Search clients..."
+                        selectedItem={
+                          field.value
+                            ? {
+                              id: field.value,
+                              label: clients.find((c) => c.id === field.value)?.name || "",
+                            }
+                            : undefined
+                        }
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -232,19 +254,36 @@ export function MeasurementSheet({ open, onOpenChange, measurement }: Measuremen
                 <AccordionItem value="measurements">
                   <AccordionTrigger>Measurements</AccordionTrigger>
                   <AccordionContent>
-                    <FormField
-                      control={form.control}
-                      name="measurements"
-                      render={({ field }) => (
-                        <FormItem>
-                          <DynamicMeasurementInput
-                            measurements={field.value || {}}
-                            onChange={field.onChange}
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="space-y-4">
+                      {/* Quick Add Chips */}
+                      <div className="flex flex-wrap gap-2">
+                        {QUICK_ADD_MEASUREMENTS.map((m) => (
+                          <button
+                            key={m}
+                            type="button"
+                            onClick={() => addQuickMeasurement(m)}
+                            className="inline-flex items-center rounded-sm border bg-muted/30 px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                          >
+                            <Plus className="mr-1 h-3 w-3" />
+                            {m}
+                          </button>
+                        ))}
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="measurements"
+                        render={({ field }) => (
+                          <FormItem>
+                            <DynamicMeasurementInput
+                              measurements={field.value || {}}
+                              onChange={field.onChange}
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
 
@@ -381,7 +420,7 @@ export function MeasurementSheet({ open, onOpenChange, measurement }: Measuremen
               </Accordion>
             </div>
 
-            <div className="flex flex-shrink-0 justify-end gap-4 border-t px-6 py-4">
+            <div className="flex flex-shrink-0 justify-end gap-4 border-t px-6 py-4 bg-background/50 backdrop-blur-sm">
               <Button
                 disabled={isLoading}
                 onClick={() => onOpenChange(false)}

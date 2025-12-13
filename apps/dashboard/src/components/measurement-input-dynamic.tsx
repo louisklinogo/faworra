@@ -2,9 +2,9 @@
 
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import { MeasurementSelector } from "@/components/measurement-selector";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 type DynamicMeasurementInputProps = {
@@ -18,28 +18,11 @@ export function DynamicMeasurementInput({
   onChange,
   className,
 }: DynamicMeasurementInputProps) {
-  const [selectedMeasurementKey, setSelectedMeasurementKey] = useState<string>("");
-  const [_selectedMeasurementLabel, setSelectedMeasurementLabel] = useState<string>("");
-  const [newValue, setNewValue] = useState("");
+  const [isAddingCustom, setIsAddingCustom] = useState(false);
+  const [customKey, setCustomKey] = useState("");
 
   // Convert measurements object to array for rendering
-  const entries = Object.entries(measurements).map(([key, value]) => ({ key, value }));
-
-  // Get list of used measurement keys
-  const usedMeasurements = Object.keys(measurements);
-
-  const handleAddMeasurement = () => {
-    if (!(selectedMeasurementKey && newValue.trim())) return;
-
-    onChange({
-      ...measurements,
-      [selectedMeasurementKey]: newValue.trim(),
-    });
-
-    setSelectedMeasurementKey("");
-    setSelectedMeasurementLabel("");
-    setNewValue("");
-  };
+  const entries = Object.entries(measurements);
 
   const handleUpdateMeasurement = (key: string, value: string) => {
     onChange({
@@ -54,95 +37,105 @@ export function DynamicMeasurementInput({
     onChange(updated);
   };
 
-  const handleMeasurementSelect = (key: string, label: string) => {
-    setSelectedMeasurementKey(key);
-    setSelectedMeasurementLabel(label);
+  const handleAddCustom = () => {
+    if (!customKey.trim()) return;
+    const key = customKey.trim(); // Keep original casing or normalize if needed
+    if (!measurements[key]) {
+      onChange({
+        ...measurements,
+        [key]: "",
+      });
+    }
+    setCustomKey("");
+    setIsAddingCustom(false);
   };
 
   return (
     <div className={cn("space-y-4", className)}>
-      {/* Existing Measurements */}
-      {entries.length > 0 && (
-        <div className="space-y-2">
-          {entries.map(({ key, value }) => (
-            <div className="flex items-center gap-2" key={key}>
-              <div className="grid flex-1 grid-cols-2 gap-2">
-                <Input
-                  className="h-9 cursor-not-allowed bg-muted/50"
-                  disabled
-                  value={key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-                />
-                <Input
-                  className="h-9"
-                  onChange={(e) => handleUpdateMeasurement(key, e.target.value)}
-                  placeholder="e.g., 42 or 42/44"
-                  value={value}
-                />
+      {/* Measurements Grid */}
+      {entries.length > 0 ? (
+        <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+          {entries.map(([key, value]) => (
+            <div className="group relative space-y-1.5" key={key}>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  {key.replace(/_/g, " ")}
+                </Label>
+                <button
+                  onClick={() => handleRemoveMeasurement(key)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                  type="button"
+                >
+                  <X className="h-3 w-3" />
+                </button>
               </div>
-              <Button
-                className="h-9 w-9 text-muted-foreground hover:text-destructive"
-                onClick={() => handleRemoveMeasurement(key)}
-                size="icon"
-                type="button"
-                variant="ghost"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+              <Input
+                className="h-9 font-mono text-sm"
+                onChange={(e) => handleUpdateMeasurement(key, e.target.value)}
+                placeholder="0.0"
+                value={value}
+              />
             </div>
           ))}
         </div>
-      )}
-
-      {/* Empty State */}
-      {entries.length === 0 && (
-        <div className="border p-8 text-center">
-          <p className="mb-2 text-muted-foreground text-sm">No measurements added yet</p>
-          <p className="text-muted-foreground text-xs">
-            Add measurements below or use quick add suggestions
+      ) : (
+        <div className="py-8 text-center border border-dashed rounded-sm">
+          <p className="text-sm text-muted-foreground">No measurements added</p>
+          <p className="text-xs text-muted-foreground/60 mt-1">
+            Select from quick add above or add custom
           </p>
         </div>
       )}
 
-      {/* Add New Measurement */}
-      <div className="space-y-2">
-        <p className="font-medium text-sm">Add Measurement</p>
-        <div className="flex items-end gap-2">
-          <div className="grid flex-1 grid-cols-2 gap-2">
-            <MeasurementSelector
-              onSelect={handleMeasurementSelect}
-              placeholder="Select measurement"
-              usedMeasurements={usedMeasurements}
-              value={selectedMeasurementKey}
-            />
+      {/* Add Custom Toggle */}
+      {!isAddingCustom ? (
+        <Button
+          onClick={() => setIsAddingCustom(true)}
+          size="sm"
+          variant="ghost"
+          className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
+          type="button"
+        >
+          <Plus className="mr-1.5 h-3 w-3" />
+          Add Custom Field
+        </Button>
+      ) : (
+        <div className="flex items-end gap-2 pt-2 animate-in fade-in slide-in-from-top-1">
+          <div className="flex-1 space-y-1.5">
+            <Label className="text-xs">Custom Measurement Name</Label>
             <Input
-              className="h-10"
-              onChange={(e) => setNewValue(e.target.value)}
+              autoFocus
+              className="h-8"
+              onChange={(e) => setCustomKey(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  handleAddMeasurement();
+                  handleAddCustom();
+                }
+                if (e.key === "Escape") {
+                  setIsAddingCustom(false);
                 }
               }}
-              placeholder="Value (e.g., 42)"
-              value={newValue}
+              placeholder="e.g. Inseam"
+              value={customKey}
             />
           </div>
-          <Button
-            className="h-10"
-            disabled={!(selectedMeasurementKey && newValue.trim())}
-            onClick={handleAddMeasurement}
-            size="sm"
-            type="button"
-          >
-            <Plus className="mr-1 h-4 w-4" />
-            Add
-          </Button>
+          <div className="flex gap-1">
+            <Button onClick={handleAddCustom} size="sm" className="h-8" type="button">
+              Add
+            </Button>
+            <Button
+              onClick={() => setIsAddingCustom(false)}
+              size="sm"
+              variant="ghost"
+              className="h-8"
+              type="button"
+            >
+              Cancel
+            </Button>
+          </div>
         </div>
-        <p className="text-muted-foreground text-xs">
-          Select a measurement from the dropdown and enter the value. Supports dual values (e.g.,
-          "42/44")
-        </p>
-      </div>
+      )}
     </div>
   );
 }

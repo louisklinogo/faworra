@@ -1,7 +1,6 @@
 import type { Database } from "@Faworra/supabase/types";
 import { createServerClient as createSSRClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
 
 type CreateClientOptions = { admin?: boolean };
 
@@ -9,8 +8,10 @@ export async function createServerClient(options?: CreateClientOptions) {
   const { admin = false } = options ?? {};
   let cookieStore: any = null;
   try {
-    // In Next.js request scope this succeeds; in workers/CLI it throws
-    cookieStore = await cookies();
+    // Only available in Next.js request scope.
+    // Keep as a dynamic import so non-Next runtimes (workers/CLI) don't require `next`.
+    const mod: any = await import("next/headers");
+    cookieStore = await mod.cookies?.();
   } catch {
     cookieStore = null;
   }
