@@ -45,7 +45,7 @@ export async function createFinancialAccount(
     teamId: string;
     type: string;
     name: string;
-    currency?: string;
+    currency: string;
     provider?: string;
     externalId?: string;
     openingBalance?: string;
@@ -57,7 +57,7 @@ export async function createFinancialAccount(
       teamId: params.teamId,
       type: params.type as any,
       name: params.name,
-      currency: params.currency || undefined,
+      currency: params.currency,
       provider: params.provider || null,
       externalId: params.externalId || null,
       openingBalance: params.openingBalance || null,

@@ -6,38 +6,38 @@
   :root {
     /* Swiss Industrial Palette - Light Mode */
     /* Neutrals */
-    --background: 0 0% 100%;
-    /* Pure White */
-    --foreground: 220 0% 10%;
-    /* Matte Black (almost) */
+    --background: 60 17% 95%; 
+    /* Warm Grey #F4F4F0 */
+    --foreground: 0 0% 7%;
+    /* Matte Black #111111 */
 
     --card: 0 0% 100%;
-    --card-foreground: 220 0% 10%;
+    --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 0% 10%;
+    --popover-foreground: 0 0% 7%;
 
-    --primary: 220 0% 10%;
+    --primary: 0 0% 7%;
     /* Matte Black */
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 220 0% 96%;
+    --secondary: 0 0% 96%;
     /* Light Gray Surface */
-    --secondary-foreground: 220 0% 10%;
+    --secondary-foreground: 0 0% 7%;
 
-    --muted: 220 0% 96%;
-    --muted-foreground: 220 0% 40%;
+    --muted: 60 5% 90%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 220 0% 96%;
-    --accent-foreground: 220 0% 10%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 7%;
 
     --destructive: 0 100% 50%;
     /* Alert Red */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 0% 90%;
-    /* Precise Light Gray */
-    --input: 220 0% 90%;
+    --border: 0 0% 86%;
+    /* Precise Light Gray #DCDCDC */
+    --input: 0 0% 86%;
     --ring: 216 100% 50%;
     /* Focus Blue */
 
@@ -45,29 +45,32 @@
     /* 4px - Standard */
 
     /* Functional Accents */
-    --braun-orange: 18 100% 50%;
-    --signal-green: 142 100% 35%;
+    --braun-orange: 17 88% 48%;
+    /* #E84D0E */
+    --signal-green: 104 52% 32%;
+    /* #3E7B27 */
 
     /* Chart colors (High Contrast) */
-    --chart-1: 18 100% 50%;
+    --chart-1: 17 88% 48%;
     /* Braun Orange */
-    --chart-2: 220 0% 10%;
+    --chart-2: 0 0% 7%;
     /* Black */
-    --chart-3: 220 0% 40%;
+    --chart-3: 0 0% 40%;
     /* Grey */
-    --chart-4: 142 100% 35%;
+    --chart-4: 104 52% 32%;
     /* Signal Green */
     --chart-5: 216 100% 50%;
     /* Focus Blue */
 
     /* Sidebar */
-    --sidebar: 0 0% 98%;
-    --sidebar-foreground: 220 0% 10%;
-    --sidebar-primary: 220 0% 10%;
+    --sidebar: 60 17% 95%;
+    /* Match background */
+    --sidebar-foreground: 0 0% 7%;
+    --sidebar-primary: 0 0% 7%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 0% 94%;
-    --sidebar-accent-foreground: 220 0% 10%;
-    --sidebar-border: 220 0% 90%;
+    --sidebar-accent: 0 0% 92%;
+    --sidebar-accent-foreground: 0 0% 7%;
+    --sidebar-border: 0 0% 86%;
     --sidebar-ring: 216 100% 50%;
   }
 
@@ -140,9 +143,25 @@
   }
 
   body {
-    font-family: var(--font-geist-sans), system-ui, sans-serif;
-    /* Enforce Geist Sans */
+    font-family: var(--font-inter), system-ui, sans-serif;
+    /* Enforce Inter as base */
     @apply bg-background text-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-instrument-serif), serif;
+  }
+}
+
+/* Enforce Space Mono for financial data, numbers, and technical labels (Swiss Style) */
+@layer utilities {
+  .font-mono {
+    font-family: var(--font-space-mono), monospace !important;
+  }
+  
+  /* Apply to all currency/amount displays */
+  .currency, .amount, .data-cell {
+    font-family: var(--font-space-mono), monospace !important;
   }
 }
 

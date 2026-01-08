@@ -544,13 +544,24 @@ export const transactionsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const currency =
+        input.currency ??
+        (
+          await ctx.db
+            .select({ baseCurrency: teams.baseCurrency })
+            .from(teams)
+            .where(eq(teams.id, ctx.teamId))
+            .limit(1)
+        )[0]?.baseCurrency ??
+        "GHS";
+
       const [created] = await ctx.db
         .insert(financialAccounts)
         .values({
           teamId: ctx.teamId,
           name: input.name,
           type: input.type,
-          currency: input.currency,
+          currency,
           status: "active",
         })
         .returning({

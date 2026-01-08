@@ -19,7 +19,7 @@ export function TransactionsNetProfit({
           <div className="h-8 w-32 animate-pulse rounded bg-muted" />
         ) : (
           <CardTitle
-            className={`font-medium text-2xl ${isNegative ? "text-red-600" : "text-emerald-600"}`}
+            className={`font-mono font-medium text-2xl ${isNegative ? "text-red-600" : "text-emerald-600"}`}
           >
             {formatAmount({ currency, amount })}
           </CardTitle>

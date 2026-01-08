@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Inter, Space_Mono, Instrument_Serif } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const instrumentSerif = Instrument_Serif({
@@ -34,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} bg-background font-sans antialiased`}
+        className={`${inter.variable} ${spaceMono.variable} ${instrumentSerif.variable} bg-background font-sans antialiased`}
       >
         <NuqsAdapter>
           <Providers>{children}</Providers>

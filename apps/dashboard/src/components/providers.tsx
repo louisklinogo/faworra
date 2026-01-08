@@ -28,8 +28,8 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     const supabase = createBrowserClient();
     let unsub: (() => void) | undefined;
     supabase.auth
-      .getSession()
-      .then(({ data: { session } }) => setReady(!!session))
+      .getUser()
+      .then(({ data: { user } }) => setReady(!!user))
       .catch(() => setReady(false));
     try {
       const { data } = supabase.auth.onAuthStateChange((_event, session) => {

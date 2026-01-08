@@ -1,31 +1,26 @@
-import { updateSession } from "@Faworra/supabase/middleware";
-import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  // First, refresh Supabase session cookies (Edge-safe)
-  const response = await updateSession(request, NextResponse.next());
-
-  // Build a Supabase client bound to middleware request/response cookies to read session
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      get(name: string) {
-        return request.cookies.get(name)?.value;
-      },
-      set(name: string, value: string, options: CookieOptions) {
-        request.cookies.set({ name, value, ...options });
-        response.cookies.set({ name, value, ...options });
-      },
-      remove(name: string, options: CookieOptions) {
-        request.cookies.set({ name, value: "", ...options });
-        response.cookies.set({ name, value: "", ...options });
-      },
-    },
+function hasSupabaseAuthCookie(request: NextRequest) {
+  const cookies = request.cookies.getAll();
+  return cookies.some(({ name }) => {
+    // Common Supabase SSR cookie naming patterns
+    // e.g. sb-<project-ref>-auth-token, sb-access-token, sb-refresh-token
+    if (!name.startsWith("sb")) return false;
+    return (
+      name.includes("auth-token") ||
+      name.endsWith("access-token") ||
+      name.endsWith("refresh-token") ||
+      name === "sb-access-token" ||
+      name === "sb-refresh-token"
+    );
   });
+}
 
+function isStaticAssetPath(pathname: string) {
+  return /\.[a-zA-Z0-9]+$/.test(pathname);
+}
+
+export function middleware(request: NextRequest) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
@@ -38,39 +33,25 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/api/debug") ||
     pathname.startsWith("/i/");
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // Never block static assets or public routes.
+  if (isPublicRoute || isStaticAssetPath(pathname)) {
+    return NextResponse.next();
+  }
 
-  // If not authenticated and not visiting a public route, redirect to /login with return_to
-  if (!(session || isPublicRoute)) {
+  // Avoid Edge network calls here; rely on the presence of Supabase auth cookies.
+  if (!hasSupabaseAuthCookie(request)) {
     const loginUrl = new URL("/login", url.origin);
     const encoded = `${pathname}${url.search}`.replace(/^\/+/, "");
     if (encoded) loginUrl.searchParams.set("return_to", encoded);
     return NextResponse.redirect(loginUrl);
   }
 
-  // If authenticated, optional MFA gating and invite allowlist
-  if (session) {
-    try {
-      const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-      const requiresAal2 =
-        mfaData?.nextLevel === "aal2" && mfaData?.nextLevel !== mfaData?.currentLevel;
-      const onMfaPage = pathname === "/mfa/verify" || pathname === "/mfa/setup";
-      if (requiresAal2 && !onMfaPage) {
-        const loginUrl = new URL("/mfa/verify", url.origin);
-        const encoded = `${pathname}${url.search}`.replace(/^\/+/, "");
-        if (encoded) loginUrl.searchParams.set("return_to", encoded);
-        return NextResponse.redirect(loginUrl);
-      }
-      // Allow proceeding to invite acceptance pages even if no current team
-      if (pathname.startsWith("/teams/invite/")) {
-        return response;
-      }
-    } catch {}
+  // Allow proceeding to invite acceptance pages even if no current team
+  if (pathname.startsWith("/teams/invite/")) {
+    return NextResponse.next();
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

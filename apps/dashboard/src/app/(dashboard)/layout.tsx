@@ -1,6 +1,7 @@
-import { getUserTeams } from "@Faworra/database/queries";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Header } from "@/components/header";
+import React from "react";
+import { getUserTeams } from "@Faworra/database/queries";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { db, getAuthenticatedUser, getCurrentTeamId } from "@/lib/trpc/server";
 
@@ -25,8 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex h-dvh min-h-screen w-full">
       <Sidebar currentTeamId={teamId} teams={userTeams} />
-      <div className="flex h-full flex-1 flex-col md:ml-[70px]">
-        <Header />
+      <div className="flex h-full flex-1 flex-col md:ml-[100px]">
         <div className="flex flex-1 min-h-0 flex-col overflow-hidden px-8">{children}</div>
       </div>
     </div>

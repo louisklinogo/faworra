@@ -9,8 +9,8 @@ export function useAuthReady() {
 
   useEffect(() => {
     let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (mounted) setReady(!!data.session?.access_token);
+    supabase.auth.getUser().then(({ data }) => {
+      if (mounted) setReady(!!data.user);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       if (mounted) setReady(!!session?.access_token);

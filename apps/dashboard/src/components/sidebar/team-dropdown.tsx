@@ -41,36 +41,48 @@ export function TeamDropdown({ isExpanded = false, teams = [], currentTeamId }: 
       await fetch(`/api/teams/launch?teamId=${id}`, { method: "POST" });
       setCurrent(id);
       if (typeof window !== "undefined") window.location.reload();
-    } catch {}
+    } catch { }
   };
 
   const currentTeam = teamsList.find((t) => t.id === current) || teamsList[0] || null;
   const initials = (currentTeam?.name || "TM").slice(0, 2).toUpperCase();
 
+  // Braun "Cartridge" Style: Square, Mechanical border, Hover invert
+  const triggerButton = (
+    <button className="h-10 w-10 flex items-center justify-center bg-background border border-sidebar-border text-foreground hover:bg-foreground hover:text-background transition-colors outline-none group">
+        <span className="font-mono text-xs font-bold tracking-widest">{initials}</span>
+    </button>
+  );
+
   return (
-    <div className="absolute bottom-4 left-[19px] flex items-center gap-3">
+    <div className="flex flex-col items-center gap-1">
       {mounted ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar className="h-[32px] w-[32px] cursor-pointer rounded-none border">
-              <AvatarFallback className="rounded-none text-xs">{initials}</AvatarFallback>
-            </Avatar>
+            {triggerButton}
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="right">
+          <DropdownMenuContent 
+            align="start" 
+            side="right" 
+            sideOffset={12}
+            className="rounded-none border-sidebar-border bg-sidebar p-0 min-w-[180px]"
+          >
+             <div className="px-3 py-2 border-b border-sidebar-border bg-sidebar-accent">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Team Select</span>
+             </div>
             {teamsList.map((t) => (
-              <DropdownMenuItem key={t.id} onClick={() => setTeam(t.id)}>
+              <DropdownMenuItem 
+                key={t.id} 
+                onClick={() => setTeam(t.id)}
+                className="rounded-none focus:bg-foreground focus:text-background py-2 px-3 font-medium text-xs cursor-pointer"
+              >
                 {t.name || t.id}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Avatar className="h-[32px] w-[32px] rounded-none border">
-          <AvatarFallback className="rounded-none text-xs">{initials}</AvatarFallback>
-        </Avatar>
-      )}
-      {isExpanded && currentTeam?.name && (
-        <span className="max-w-[140px] truncate text-primary text-sm">{currentTeam.name}</span>
+        triggerButton
       )}
     </div>
   );

@@ -19,7 +19,7 @@ export function TransactionsTotalIncome({
         {loading ? (
           <div className="h-8 w-32 animate-pulse rounded bg-muted" />
         ) : (
-          <CardTitle className="font-medium text-2xl text-emerald-600">
+          <CardTitle className="font-mono font-medium text-2xl text-emerald-600">
             {formatAmount({ currency, amount })}
           </CardTitle>
         )}

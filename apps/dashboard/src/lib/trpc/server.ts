@@ -20,19 +20,20 @@ import { makeQueryClient } from "./query-client";
  */
 
 export const getServerSession = cache(async () => {
-  const supabase = await createServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session;
+  try {
+    const supabase = await createServerClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session;
+  } catch {
+    return null;
+  }
 });
 
 export const getAuthenticatedUser = cache(async () => {
-  const supabase = await createServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  const session = await getServerSession();
+  return session?.user ?? null;
 });
 
 export const getCurrentTeamId = cache(async () => {

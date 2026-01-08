@@ -11,7 +11,7 @@ export function AverageOrderValue() {
   return (
     <Card className="hidden sm:block">
       <CardHeader className="pb-3">
-        <CardTitle className="font-medium text-2xl">
+        <CardTitle className="font-mono font-medium text-2xl">
           {formatAmount({ currency: team?.baseCurrency || "GHS", amount: Number(data) })}
         </CardTitle>
       </CardHeader>

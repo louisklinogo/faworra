@@ -50,11 +50,7 @@
       "semicolons": "always"
     }
   },
-  "css": {
-    "parser": {
-      "tailwindDirectives": true
-    }
-  },
+  "css": {},
   "assist": {
     "actions": {
       "source": {
@@ -62,7 +58,5 @@
       }
     }
   },
-  "extends": [
-    "ultracite"
-  ]
+  "extends": []
 }

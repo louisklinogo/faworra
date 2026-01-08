@@ -36,55 +36,66 @@ export function UserMenu() {
     setEmail(null);
   };
 
+  const initials = email ? email.substring(0, 2).toUpperCase() : "G";
+
+  const triggerButton = (
+    <button className="h-10 w-10 flex items-center justify-center bg-background border border-sidebar-border text-foreground hover:bg-foreground hover:text-background transition-colors outline-none group">
+        <span className="font-mono text-xs font-bold tracking-widest">{initials}</span>
+    </button>
+  );
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="h-8 w-8 cursor-pointer rounded-full">
-          <AvatarFallback>
-            <span className="text-xs">OM</span>
-          </AvatarFallback>
-        </Avatar>
+        {triggerButton}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[240px]" sideOffset={10}>
-        <DropdownMenuLabel>
+      <DropdownMenuContent 
+        align="start" 
+        side="right" 
+        sideOffset={12}
+        className="w-[240px] rounded-none border-sidebar-border bg-sidebar p-0"
+      >
+        <DropdownMenuLabel className="px-3 py-3 border-b border-sidebar-border">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="line-clamp-1 block max-w-[155px] truncate">
+              <span className="line-clamp-1 block max-w-[155px] truncate font-sans text-sm font-medium">
                 {email ? email.split("@")[0] : "Guest"}
               </span>
-              <span className="truncate font-normal text-muted-foreground text-xs">
+              <span className="truncate font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
                 {email || "Not signed in"}
               </span>
             </div>
           </div>
         </DropdownMenuLabel>
 
-        <DropdownMenuSeparator />
+        <div className="p-1">
+            <DropdownMenuGroup>
+            <DropdownMenuItem className="rounded-none focus:bg-sidebar-accent cursor-pointer py-2">Account</DropdownMenuItem>
+            <DropdownMenuItem className="rounded-none focus:bg-sidebar-accent cursor-pointer py-2">Support</DropdownMenuItem>
+            <DropdownMenuItem className="rounded-none focus:bg-sidebar-accent cursor-pointer py-2">Teams</DropdownMenuItem>
+            </DropdownMenuGroup>
+        </div>
 
-        <DropdownMenuGroup>
-          <DropdownMenuItem>Account</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuItem>Teams</DropdownMenuItem>
-        </DropdownMenuGroup>
+        <DropdownMenuSeparator className="bg-sidebar-border m-0" />
 
-        <DropdownMenuSeparator />
-
-        <div className="flex flex-row items-center justify-between p-2">
-          <p className="text-sm">Theme</p>
+        <div className="flex flex-row items-center justify-between p-3">
+          <p className="text-xs font-medium">Theme</p>
           <ThemeSwitch />
         </div>
 
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-sidebar-border m-0" />
 
-        {email ? (
-          <DropdownMenuItem className="text-destructive" onClick={signOut}>
-            Sign out
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem asChild>
-            <a href="/login">Sign in</a>
-          </DropdownMenuItem>
-        )}
+        <div className="p-1">
+            {email ? (
+            <DropdownMenuItem className="rounded-none focus:bg-destructive focus:text-destructive-foreground text-destructive cursor-pointer py-2" onClick={signOut}>
+                Sign out
+            </DropdownMenuItem>
+            ) : (
+            <DropdownMenuItem asChild className="rounded-none focus:bg-sidebar-accent cursor-pointer py-2">
+                <a href="/login">Sign in</a>
+            </DropdownMenuItem>
+            )}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

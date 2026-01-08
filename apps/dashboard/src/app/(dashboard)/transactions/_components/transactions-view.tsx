@@ -50,9 +50,10 @@ import { useTeamCurrency } from "@/hooks/use-team-currency";
 import { useTransactionParams } from "@/hooks/use-transaction-params";
 import { trpc } from "@/lib/trpc/client";
 import { useTransactionsInvalidation } from "../_hooks/use-transactions-invalidation";
-import { TransactionsAnalyticsCarousel } from "./transactions-analytics-carousel";
+import { AnalyticsRail, type RailMetric } from "@/components/analytics/analytics-rail";
 import { createTransactionColumns, type TransactionRow } from "./transactions-columns";
 import { uniqueCurrencies } from "@Faworra/location/currencies";
+import { cn } from "@/lib/utils";
 
 type FilterType = "all" | "payment" | "expense" | "refund" | "adjustment";
 
@@ -865,47 +866,76 @@ export function TransactionsView({
         </div>
       )}
 
-      {/* Analytics carousel */}
-      <TransactionsAnalyticsCarousel
-        initialSpending={initialSpending}
-        initialStats={initialStats}
+      {/* Analytics Rail (Swiss Style) */}
+      <AnalyticsRail
+        metrics={[
+          {
+            label: "Net Position",
+            value: initialStats?.net ?? 0,
+            currency: currencyCode,
+            trend: 12.5, // TODO: Wire up real trend data
+            trendDirection: (initialStats?.net ?? 0) >= 0 ? "up" : "down",
+          },
+          {
+            label: "Total Outflow",
+            value: initialStats?.expenses ?? 0,
+            currency: currencyCode,
+            trend: 2.1, // TODO: Wire up real trend data
+            trendDirection: "down",
+          },
+          {
+            label: "Open Items",
+            value: initialStats?.pendingCount ?? 0,
+            currency: "QTY",
+            trend: 0,
+            trendDirection: "neutral",
+          },
+        ]}
       />
 
-      <div>
-        <div className="mb-4 space-y-4">
-          {/* Row 1: Right-aligned toolbar (search, filter icon, column visibility, export, add) */}
-          <div className="sticky top-0 z-10 hidden grid-cols-[420px,1fr,auto] items-center gap-2 rounded bg-background/95 px-1 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:grid">
-            {/* Left column: reserved slot for bulk actions (fixed width) */}
-            <div className="min-w-0">
-              {selectedCount > 0 ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">{selectedCount} selected</span>
-                  <BulkActions
-                    ids={Array.from(selected)}
-                    onComplete={() => setSelected(new Set())}
-                  />
-                  <Button className="gap-1" onClick={_handleBulkExport} size="sm" variant="outline">
-                    <Download className="h-4 w-4" /> Export
-                  </Button>
-                  <Button className="gap-1" onClick={handleConfirmDelete} size="sm" variant="ghost">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                  <Button onClick={() => setRowSelection({})} size="sm" variant="ghost">
-                    Clear
-                  </Button>
-                </div>
-              ) : (
-                <div className="pointer-events-none h-9 select-none opacity-0" />
-              )}
-            </div>
+      {/* Swiss Filter Toolbar */}
+      <div className="w-full flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-6">
+        
+        {/* Search & Tabs */}
+        <div className="flex flex-col gap-6 w-full md:w-auto flex-1">
+          {/* Search */}
+          <div className="relative group w-full md:w-[320px]">
+             <SearchInline className="w-full pb-2 text-sm border-b border-[#DCDCDC] bg-transparent focus:outline-none focus:border-[#111111] font-mono uppercase placeholder:text-neutral-300 transition-colors rounded-none p-0 h-auto shadow-none" />
+          </div>
+          
+          {/* Tabs (Status as primary filter in Swiss View) */}
+          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-2">
+            {["all", "completed", "pending", "failed"].map((status) => {
+              const isActive = status === "all" ? statuses.length === 0 : statuses.includes(status);
+              return (
+                <button
+                  key={status}
+                  onClick={() => {
+                    if (status === "all") {
+                      setFilters({ statuses: null });
+                    } else {
+                      setFilters({ statuses: [status] });
+                    }
+                  }}
+                  className={cn(
+                    "text-[10px] uppercase tracking-widest font-medium transition-all whitespace-nowrap relative pb-1",
+                    isActive ? "text-[#111111]" : "text-neutral-400 hover:text-neutral-600"
+                  )}
+                >
+                  {status}
+                  {isActive && (
+                      <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-[var(--color-braun-orange)]"></div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-            {/* Middle column: spacer to keep layout stable */}
-            <div className="min-w-0" />
-
-            {/* Right column: filters and controls */}
-            <div className="flex items-center justify-end gap-2">
-              <SearchInline />
-              <FilterDropdown
+        {/* Actions */}
+        <div className="flex items-center gap-4 w-full md:w-auto justify-end">
+           {/* Detailed Filter Dropdown (Secondary) */}
+           <FilterDropdown
                 onChange={(n) => {
                   setFilters({
                     statuses: n.statuses ?? null,
@@ -940,78 +970,23 @@ export function TransactionsView({
                         : "exclude",
                 }}
               />
-              <TransactionsColumnVisibility columns={table.getAllColumns()} />
-              {selectedCount === 0 && (
-                <Button aria-label="Export" onClick={exportSelected} size="icon" variant="outline">
-                  <Download className="h-4 w-4" />
-                </Button>
-              )}
-              <AddTransactions
-                showCreateAccount={accountsList.length === 0}
-                onCreateAccount={() => setCreateAccountOpen(true)}
-              />
-            </div>
-          </div>
-
-          {/* Row 2: Left pills + +Filter, Right Reset only */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
-              <FilterToolbar
-                appearance="chip"
-                fields={filterFields}
-                onChange={(next) => {
-                  setFilters({
-                    type: (next.type as any) ?? null,
-                    statuses: (next.statuses as any) ?? null,
-                    categories: (next.categories as any) ?? null,
-                    tags: (next.tags as any) ?? null,
-                    accounts: (next.accounts as any) ?? null,
-                    assignees: (next.assignees as any) ?? null,
-                    start: (next as any).dateRange?.startDate ?? null,
-                    end: (next as any).dateRange?.endDate ?? null,
-                    amount_range:
-                      (next as any).amountRange?.amountMin != null ||
-                      (next as any).amountRange?.amountMax != null
-                        ? [
-                            (next as any).amountRange?.amountMin ?? 0,
-                            (next as any).amountRange?.amountMax ?? 500_000,
-                          ]
-                        : null,
-                    attachments:
-                      (next as any).hasAttachments === undefined
-                        ? null
-                        : (next as any).hasAttachments
-                          ? "include"
-                          : "exclude",
-                    recurring: (next.isRecurring as any) ?? null,
-                  });
-                }}
-                values={{
-                  type: filterType === "all" ? undefined : filterType,
-                  statuses,
-                  categories,
-                  tags,
-                  accounts,
-                  assignees,
-                  dateRange: { startDate, endDate },
-                  amountRange: { amountMin, amountMax },
-                  hasAttachments: hasAttachments === "any" ? undefined : hasAttachments === "with",
-                  isRecurring,
-                }}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              {hasActiveFilters && (
-                <Button onClick={clearAllFilters} size="sm" variant="ghost">
-                  Reset
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Using Notion-style pills + picker only; legacy sheet UI removed */}
+          
+          <TransactionsColumnVisibility columns={table.getAllColumns()} />
+          
+          {selectedCount === 0 && (
+            <Button aria-label="Export" onClick={exportSelected} size="icon" variant="outline" className="rounded-none border-[#DCDCDC]">
+              <Download className="h-4 w-4" />
+            </Button>
+          )}
+          
+          <AddTransactions
+            showCreateAccount={accountsList.length === 0}
+            onCreateAccount={() => setCreateAccountOpen(true)}
+          />
         </div>
+      </div>
 
+      <div>
         {listError ? (
           <EmptyState
             action={{ label: "Clear filters", onClick: clearAllFilters }}

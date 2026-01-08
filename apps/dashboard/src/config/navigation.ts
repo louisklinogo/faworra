@@ -1,21 +1,27 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  CreditCard,
-  Inbox,
-  LayoutDashboard,
-  NotebookPen,
-  Package,
-  ReceiptText,
-  Ruler,
-  Settings,
-  Users,
-  Vault,
-} from "lucide-react";
+    SwissIconClients,
+    SwissIconDashboard,
+    SwissIconInbox,
+    SwissIconInvoices,
+    SwissIconMeasurements,
+    SwissIconOrders,
+    SwissIconProducts,
+    SwissIconSettings,
+    SwissIconTransactions,
+    SwissIconVault
+} from "@/components/icons/swiss-icons";
+
+// We use "any" here because custom SVG components don't strictly match LucideIcon type,
+// but they render identically as (props) => JSX.Element.
+// In a strict setup, we'd update the NavItem type.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type IconType = any;
 
 export type NavItem = {
   title: string;
   href: string;
-  icon: LucideIcon;
+  icon: IconType;
   badge?: string;
   description?: string;
   children?: { title: string; href: string }[];
@@ -33,13 +39,13 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         title: "Dashboard",
         href: "/",
-        icon: LayoutDashboard,
+        icon: SwissIconDashboard,
         description: "Business overview",
       },
       {
         title: "Inbox",
         href: "/inbox/conversations",
-        icon: Inbox,
+        icon: SwissIconInbox,
         description: "Messages & notifications",
         children: [{ title: "Settings", href: "/inbox/settings" }],
       },
@@ -51,26 +57,26 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         title: "Transactions",
         href: "/transactions",
-        icon: CreditCard,
+        icon: SwissIconTransactions,
         description: "Payments & expenses",
         children: [{ title: "Categories", href: "/transactions/categories" }],
       },
       {
         title: "Orders",
         href: "/orders",
-        icon: NotebookPen,
+        icon: SwissIconOrders,
         description: "Tailoring orders",
       },
       {
         title: "Invoices",
         href: "/invoices",
-        icon: ReceiptText,
+        icon: SwissIconInvoices,
         description: "Billing & payments",
       },
       {
         title: "Products",
         href: "/products",
-        icon: Package,
+        icon: SwissIconProducts,
         description: "Catalog & inventory",
         children: [
           { title: "Categories", href: "/products/categories" },
@@ -80,7 +86,7 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         title: "Clients",
         href: "/clients",
-        icon: Users,
+        icon: SwissIconClients,
         description: "Customer database",
       },
     ],
@@ -91,13 +97,13 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         title: "Measurements",
         href: "/measurements",
-        icon: Ruler,
+        icon: SwissIconMeasurements,
         description: "Client measurements",
       },
       {
         title: "Vault",
         href: "/vault",
-        icon: Vault,
+        icon: SwissIconVault,
         description: "Documents & files",
       },
     ],
@@ -108,7 +114,7 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         title: "Settings",
         href: "/settings",
-        icon: Settings,
+        icon: SwissIconSettings,
         description: "App configuration",
         children: [{ title: "Accounts", href: "/settings/accounts" }],
       },

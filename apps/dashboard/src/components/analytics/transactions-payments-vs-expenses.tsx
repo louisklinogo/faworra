@@ -42,7 +42,7 @@ export function TransactionsPaymentsVsExpenses({
     <Card className="h-[200px]">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-medium text-base">Payments vs Expenses</CardTitle>
+          <CardTitle className="font-instrument-serif font-medium text-base">Payments vs Expenses</CardTitle>
           <ToggleGroup
             className="gap-1"
             onValueChange={(v) => v && setMode(v as Mode)}
@@ -103,7 +103,7 @@ export function TransactionsPaymentsVsExpenses({
                   <span className="h-2 w-2 rounded-sm bg-emerald-500" />
                   Payments
                 </span>
-                <span>
+                <span className="font-mono">
                   {formatAmount({ currency, amount: income })} ({pctIncome.toFixed(0)}%)
                 </span>
               </button>
@@ -117,7 +117,7 @@ export function TransactionsPaymentsVsExpenses({
                   <span className="h-2 w-2 rounded-sm bg-red-500" />
                   Expenses
                 </span>
-                <span>
+                <span className="font-mono">
                   {formatAmount({ currency, amount: expenses })} ({pctExpenses.toFixed(0)}%)
                 </span>
               </button>
@@ -150,7 +150,7 @@ export function TransactionsPaymentsVsExpenses({
                   <span className="h-2 w-2 rounded-sm bg-emerald-500" />
                   Payments
                 </span>
-                <span>
+                <span className="font-mono">
                   {formatAmount({ currency, amount: income })} ({pctIncome.toFixed(0)}%)
                 </span>
               </button>
@@ -164,7 +164,7 @@ export function TransactionsPaymentsVsExpenses({
                   <span className="h-2 w-2 rounded-sm bg-red-500" />
                   Expenses
                 </span>
-                <span>
+                <span className="font-mono">
                   {formatAmount({ currency, amount: expenses })} ({pctExpenses.toFixed(0)}%)
                 </span>
               </button>
