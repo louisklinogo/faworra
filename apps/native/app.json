@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "scheme": "faworra-new",
+    "userInterfaceStyle": "automatic",
+    "orientation": "default",
+    "web": {
+      "bundler": "metro"
+    },
+    "name": "faworra-new",
+    "slug": "faworra-new",
+    "plugins": ["expo-font"],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

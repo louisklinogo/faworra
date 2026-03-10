@@ -1,0 +1,27 @@
+{
+  "name": "@faworra-new/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@faworra-new/auth": "workspace:*",
+    "@faworra-new/db": "workspace:*",
+    "@faworra-new/env": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@faworra-new/config": "workspace:*",
+    "hono": "catalog:",
+    "typescript": "^5"
+  }
+}
