@@ -8,7 +8,9 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**",
+      "!**/.agent",
+      "!**/.agents",
+      "!**/.claude",
       "!**/.next",
       "!**/dist",
       "!**/.turbo",
@@ -80,5 +82,9 @@
       "tailwindDirectives": true
     }
   },
-  "extends": ["ultracite/biome/core", "ultracite/biome/next", "ultracite/biome/react"]
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/next",
+    "ultracite/biome/react"
+  ]
 }

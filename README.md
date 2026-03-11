@@ -1,6 +1,6 @@
 # faworra-new
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Next.js, Hono, TRPC, and more.
+This repository is the scaffold for **Faworra**. It started from Better-T-Stack, but the target architecture now leans heavily on **Midday's proven app/package patterns** while using **Better Auth** instead of Supabase Auth.
 
 ## Features
 
@@ -14,11 +14,66 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **tRPC** - End-to-end type-safe APIs
 - **Bun** - Runtime environment
 - **Drizzle** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
+- **Supabase Postgres** - Database platform
+- **Authentication** - Better Auth
+- **Fashion-first onboarding** - creates a team, owner membership, team settings, and active team context after signup
 - **Biome** - Linting and formatting
 - **PWA** - Progressive Web App support
 - **Turborepo** - Optimized monorepo build system
+
+## Current Architecture Direction
+
+- `apps/dashboard` - main authenticated product app
+- `apps/api` - Hono + tRPC API app
+- `apps/mobile` - Expo mobile scaffold
+- `apps/docs` - docs surface kept for now
+
+### Midday-first rule
+
+- Midday is the default source of truth for app/package boundaries, routing, middleware, request context, onboarding shape, and team patterns.
+- Check Midday's organization and implementation patterns before introducing a Faworra-specific structure.
+- Only deviate when Midday is genuinely unclear for the use case or when Better Auth requires a concrete adaptation.
+- Ask for clarification only after checking Midday and only when the decision is still not clear.
+
+### Core platform decisions
+
+- **Authentication provider:** Better Auth
+- **Auth architecture pattern:** Midday-style route gating, request context, and protected procedures adapted to Better Auth + Next 16 proxy
+- **Database:** Supabase Postgres
+- **ORM:** Drizzle
+- **Multi-tenancy:** Midday-style team model from day one
+- **Local dev URLs:** Portless with role-based names
+
+### Current Phase 1 progress
+
+#### Completed
+
+- app rename completed: `dashboard`, `api`, `mobile`, `docs`
+- scripts/docs/path references updated to the renamed app structure
+- docs app Biome conflict removed
+- Portless wired into dashboard/API/docs dev scripts
+- dashboard route gating now uses a Next 16 `proxy.ts` with Better Auth session-cookie checks
+- API/tRPC context now resolves `session -> userId -> activeTeam -> membership` centrally
+- signup now routes into a fashion-first onboarding flow that bootstraps team, membership, settings, and active team
+- targeted validation completed with `bun run check-types` and `bun x ultracite check packages/api/src apps/dashboard/src`
+
+#### Still open
+
+- API local-dev cleanup around billing env requirements
+- billing/Polar env requirements documentation for local boot
+- multi-membership team switching once invites and additional memberships exist
+
+### Current onboarding flow
+
+- A new user signs up in `apps/dashboard`
+- They are redirected to `/onboarding`
+- Onboarding collects company name, base currency, and country code
+- The bootstrap transaction creates:
+  - a `teams` row
+  - an owner `users_on_team` row
+  - a `team_settings` row with `industry_key = "fashion"`
+  - a `user_context` row pointing `activeTeamId` at the new team
+- Authenticated users without an active team are redirected into onboarding before they can use `/dashboard`
 
 ## Getting Started
 
@@ -30,10 +85,10 @@ bun install
 
 ## Database Setup
 
-This project uses PostgreSQL with Drizzle ORM.
+This project uses Supabase Postgres with Drizzle ORM.
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+1. Make sure you have a Supabase Postgres database set up.
+2. Update your `apps/api/.env` file with your database connection details.
 
 3. Apply the schema to your database:
 
@@ -47,9 +102,17 @@ Then, run the development server:
 bun run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
-Use the Expo Go app to run the mobile application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+Portless is now wired into the dashboard, API, and docs dev scripts. Running `bun run dev` or the app-specific dev scripts will register stable local URLs such as:
+
+- `dashboard.faworra.localhost`
+- `api.faworra.localhost`
+- `docs.faworra.localhost`
+
+Local auth and dashboard/API communication are expected to use the `*.faworra.localhost` subdomain contract in development.
+
+Portless currently supports macOS and Linux. On Windows, the dev scripts automatically fall back to the legacy localhost ports while keeping the repo Portless-ready.
+
+The mobile app still uses Expo's normal local development flow for now. Use the Expo Go app to run it.
 
 ## UI Customization
 
@@ -57,7 +120,7 @@ React web apps in this stack share shadcn/ui primitives through `packages/ui`.
 
 - Change design tokens and global styles in `packages/ui/src/styles/globals.css`
 - Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
+- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/dashboard/components.json`
 
 ### Add more shared components
 
@@ -75,20 +138,22 @@ import { Button } from "@faworra-new/ui/components/button";
 
 ### Add app-specific blocks
 
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/dashboard`.
 
 ## Git Hooks and Formatting
 
-- Format and lint fix: `bun run check`
+- Repo-wide lint/format check: `bun run check`
+- Targeted lint/format check for the auth/team flow: `bun x ultracite check packages/api/src apps/dashboard/src`
 
 ## Project Structure
 
 ```
 faworra-new/
 ├── apps/
-│   ├── web/         # Frontend application (Next.js)
-│   ├── native/      # Mobile application (React Native, Expo)
-│   └── server/      # Backend API (Hono, TRPC)
+│   ├── dashboard/   # Main authenticated product app (Next.js)
+│   ├── mobile/      # Mobile application (React Native, Expo)
+│   ├── api/         # Backend API (Hono, tRPC)
+│   └── docs/        # Documentation surface
 ├── packages/
 │   ├── ui/          # Shared shadcn/ui components and styles
 │   ├── api/         # API layer / business logic
@@ -100,13 +165,15 @@ faworra-new/
 
 - `bun run dev`: Start all applications in development mode
 - `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
-- `bun run dev:server`: Start only the server
+- `bun run dev:dashboard`: Start only the dashboard app
+- `bun run dev:api`: Start only the API app
+- `bun run dev:docs`: Start only the docs app
 - `bun run check-types`: Check TypeScript types across all apps
-- `bun run dev:native`: Start the React Native/Expo development server
+- `bun run dev:mobile`: Start the React Native/Expo development server
+- `bun run portless:list`: Show active Portless routes
 - `bun run db:push`: Push schema changes to database
 - `bun run db:generate`: Generate database client/types
 - `bun run db:migrate`: Run database migrations
 - `bun run db:studio`: Open database studio UI
 - `bun run check`: Run Biome formatting and linting
-- `cd apps/web && bun run generate-pwa-assets`: Generate PWA assets
+- `cd apps/dashboard && bun run generate-pwa-assets`: Generate PWA assets

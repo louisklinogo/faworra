@@ -1,17 +1,38 @@
 import { auth } from "@faworra-new/auth";
 import type { Context as HonoContext } from "hono";
 
-export type CreateContextOptions = {
-  context: HonoContext;
-};
+import { getViewerState } from "./lib/team";
 
-export async function createContext({ context }: CreateContextOptions) {
-  const session = await auth.api.getSession({
-    headers: context.req.raw.headers,
-  });
-  return {
-    session,
-  };
+export interface CreateContextOptions {
+	context: HonoContext;
+}
+
+export async function createContextFromHeaders(requestHeaders: Headers) {
+	const session = await auth.api.getSession({
+		headers: requestHeaders,
+	});
+
+	if (!session) {
+		return {
+			session: null,
+			userId: null,
+			activeTeam: null,
+			membership: null,
+			needsOnboarding: false,
+		};
+	}
+
+	const viewerState = await getViewerState(session.user.id);
+
+	return {
+		session,
+		userId: session.user.id,
+		...viewerState,
+	};
+}
+
+export function createContext({ context }: CreateContextOptions) {
+	return createContextFromHeaders(context.req.raw.headers);
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
