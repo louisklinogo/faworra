@@ -12,13 +12,16 @@ import {
 } from "./schema/auth";
 import { userContext, userContextRelations } from "./schema/core";
 import {
+	teamInviteStatus,
+	teamInvites,
+	teamInvitesRelations,
+	teamMemberships,
+	teamMembershipsRelations,
 	teamRole,
 	teamSettings,
 	teamSettingsRelations,
 	teams,
 	teamsRelations,
-	usersOnTeam,
-	usersOnTeamRelations,
 } from "./schema/team";
 
 const schema = {
@@ -28,6 +31,11 @@ const schema = {
 	sessionRelations,
 	teams,
 	teamsRelations,
+	teamInviteStatus,
+	teamInvites,
+	teamInvitesRelations,
+	teamMemberships,
+	teamMembershipsRelations,
 	teamRole,
 	teamSettings,
 	teamSettingsRelations,
@@ -35,8 +43,6 @@ const schema = {
 	userContext,
 	userContextRelations,
 	userRelations,
-	usersOnTeam,
-	usersOnTeamRelations,
 	verification,
 };
 

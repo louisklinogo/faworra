@@ -1,6 +1,7 @@
 import { protectedTeamProcedure, publicProcedure, router } from "../index";
 
 import { onboardingRouter } from "./onboarding";
+import { teamInvitesRouter } from "./team-invites";
 
 export const appRouter = router({
 	healthCheck: publicProcedure.query(() => {
@@ -16,6 +17,7 @@ export const appRouter = router({
 		};
 	}),
 	onboarding: onboardingRouter,
+	teamInvites: teamInvitesRouter,
 	privateData: protectedTeamProcedure.query(({ ctx }) => {
 		return {
 			message: "This is private",

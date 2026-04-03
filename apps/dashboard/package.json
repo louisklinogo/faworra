@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun ../../scripts/run-dev-with-portless.mjs dashboard",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@faworra-new/api": "workspace:*",

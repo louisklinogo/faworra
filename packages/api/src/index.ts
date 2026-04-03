@@ -43,3 +43,18 @@ export const protectedTeamProcedure = protectedProcedure.use(
 		});
 	}
 );
+
+export const protectedOwnerTeamProcedure = protectedTeamProcedure.use(
+	({ ctx, next }) => {
+		if (ctx.membership.role !== "owner") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "Owner permissions required",
+			});
+		}
+
+		return next({
+			ctx,
+		});
+	}
+);
