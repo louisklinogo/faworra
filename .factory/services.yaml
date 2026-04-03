@@ -1,0 +1,21 @@
+commands:
+  install: bun install
+  typecheck: bun run check-types && bun x tsc -p apps/dashboard/tsconfig.json --noEmit && bun x tsc -p packages/api/tsconfig.json --noEmit && bun x tsc -p packages/auth/tsconfig.json --noEmit && bun x tsc -p packages/db/tsconfig.json --noEmit && bun x tsc -p packages/env/tsconfig.json --noEmit
+  lint: bun x ultracite check apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src
+  test: bun test --max-concurrency=6 apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src
+  build: bun x turbo build --filter=dashboard --filter=api --filter=@faworra-new/api --filter=@faworra-new/auth --filter=@faworra-new/db --filter=@faworra-new/env --filter=@faworra-new/ui
+
+services:
+  api:
+    start: bun run dev:api
+    stop: pkill -f "portless api.faworra" || true
+    healthcheck: curl -sf http://api.faworra.localhost:1355/
+    port: 1355
+    depends_on: []
+
+  dashboard:
+    start: bun run dev:dashboard
+    stop: pkill -f "portless dashboard.faworra" || true
+    healthcheck: curl -sf http://dashboard.faworra.localhost:1355/login
+    port: 1355
+    depends_on: [api]

@@ -1,7 +1,5 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { serverAuthClient } from "@/lib/server-auth-client";
 import { getServerViewer } from "@/lib/server-viewer";
 
 import Dashboard from "./dashboard";
@@ -17,20 +15,11 @@ export default async function DashboardPage() {
 		redirect("/onboarding");
 	}
 
-	const { data: customerState } = await serverAuthClient.customer.state({
-		fetchOptions: {
-			headers: await headers(),
-		},
-	});
-
 	return (
 		<div>
 			<h1>Dashboard</h1>
 			<p>Welcome {viewer.user?.name}</p>
-			<Dashboard
-				activeTeamName={viewer.activeTeam.name}
-				customerState={customerState}
-			/>
+			<Dashboard activeTeamName={viewer.activeTeam.name} />
 		</div>
 	);
 }

@@ -15,6 +15,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import { polarClient } from "./lib/payments";
+import { getPolarCheckoutProducts } from "./lib/polar-products";
 
 const localCookieDomain = "faworra.localhost";
 const localHostnameSuffix = `.${localCookieDomain}`;
@@ -32,6 +33,28 @@ const authSchema = {
 	userRelations,
 	verification,
 };
+
+// Billing/Polar is explicitly deferred for this mission.
+// The Polar plugin is only registered when all required billing env vars are
+// present so the API can boot and serve auth without billing configuration.
+const billingPlugins =
+	polarClient && env.POLAR_PRO_PRODUCT_ID && env.POLAR_SUCCESS_URL
+		? [
+				polar({
+					client: polarClient,
+					createCustomerOnSignUp: true,
+					enableCustomerPortal: true,
+					use: [
+						checkout({
+							products: getPolarCheckoutProducts(env.POLAR_PRO_PRODUCT_ID),
+							successUrl: env.POLAR_SUCCESS_URL,
+							authenticatedUsersOnly: true,
+						}),
+						portal(),
+					],
+				}),
+			]
+		: [];
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -62,25 +85,5 @@ export const auth = betterAuth({
 			httpOnly: true,
 		},
 	},
-	plugins: [
-		polar({
-			client: polarClient,
-			createCustomerOnSignUp: true,
-			enableCustomerPortal: true,
-			use: [
-				checkout({
-					products: [
-						{
-							productId: "your-product-id",
-							slug: "pro",
-						},
-					],
-					successUrl: env.POLAR_SUCCESS_URL,
-					authenticatedUsersOnly: true,
-				}),
-				portal(),
-			],
-		}),
-		expo(),
-	],
+	plugins: [...billingPlugins, expo()],
 });
