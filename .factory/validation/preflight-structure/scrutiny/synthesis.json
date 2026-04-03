@@ -1,0 +1,57 @@
+{
+  "milestone": "preflight-structure",
+  "round": 1,
+  "status": "fail",
+  "validatorsRun": {
+    "test": {
+      "passed": true,
+      "command": "bun test --max-concurrency=6 apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src",
+      "exitCode": 0
+    },
+    "typecheck": {
+      "passed": true,
+      "command": "bun run check-types && bun x tsc -p apps/dashboard/tsconfig.json --noEmit && bun x tsc -p packages/api/tsconfig.json --noEmit && bun x tsc -p packages/auth/tsconfig.json --noEmit && bun x tsc -p packages/db/tsconfig.json --noEmit && bun x tsc -p packages/env/tsconfig.json --noEmit",
+      "exitCode": 0
+    },
+    "lint": {
+      "passed": true,
+      "command": "bun x ultracite check apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src",
+      "exitCode": 0
+    }
+  },
+  "reviewsSummary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "failedFeatures": [
+      "scoped-validator-and-dev-contract-normalization"
+    ]
+  },
+  "blockingIssues": [
+    {
+      "featureId": "scoped-validator-and-dev-contract-normalization",
+      "severity": "blocking",
+      "description": "The validator/dev-contract normalization is not fully reproducible from tracked repo state because the `packages/api` `drizzle-orm` pass in this environment depended on an ignored local `packages/api/node_modules/drizzle-orm` symlink workaround noted in the worker handoff."
+    }
+  ],
+  "appliedUpdates": [],
+  "suggestedGuidanceUpdates": [
+    {
+      "target": "skill:runtime-parity-worker",
+      "suggestion": "Either relax the mandatory `midday-reference` invocation requirement for narrow runtime/validator normalization work, or enforce required skill-invocation checks before workers can mark `followedProcedure: true`.",
+      "evidence": "Both completed preflight-structure implementation reviews (`preflight-disable-polar-runtime-blockers` and `scoped-validator-and-dev-contract-normalization`) reported that the worker sessions did not invoke `midday-reference` even though the skill requires it, and the handoffs still claimed procedure compliance.",
+      "isSystemic": true
+    }
+  ],
+  "rejectedObservations": [
+    {
+      "observation": "The repeated `midday-reference` compliance observation from the second review.",
+      "reason": "duplicate"
+    },
+    {
+      "observation": "README still lists `POLAR_*` vars as required for local API boot.",
+      "reason": "already-documented"
+    }
+  ],
+  "previousRound": null
+}

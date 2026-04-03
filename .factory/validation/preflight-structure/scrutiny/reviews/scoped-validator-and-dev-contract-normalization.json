@@ -1,0 +1,28 @@
+{
+  "featureId": "scoped-validator-and-dev-contract-normalization",
+  "reviewedAt": "2026-04-03T22:49:58.158484+00:00",
+  "commitId": "d91078b",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "fail",
+  "codeReview": {
+    "summary": "The commit makes validator coverage broader and tracks previously untracked auth/tenancy files, but it does not fully achieve the feature's goal of a truthful, reviewable validator contract because packages/api now depends on a hidden node_modules symlink workaround that is not part of the reviewed repo state.",
+    "issues": [
+      {
+        "file": "packages/api/package.json",
+        "line": 22,
+        "severity": "blocking",
+        "description": "The new direct drizzle-orm dependency only worked in this environment because the worker manually created packages/api/node_modules/drizzle-orm as an ignored symlink (per the handoff). That workaround is outside the tracked repo, so the claimed validator normalization is not reproducible from the reviewed files alone in the mission's network-restricted environment."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The runtime-parity-worker skill says midday-reference must be invoked before runtime/package-boundary changes, but this worker session never invoked midday-reference even though it changed package seams and tracked new API/DB tenancy files. The handoff still marked followedProcedure as true, so either the skill is too rigid for validator-normalization work or the procedure-compliance reporting needs to check required skill invocations more strictly.",
+      "evidence": "Skill requirement: .factory/skills/runtime-parity-worker/SKILL.md:21-30. Transcript evidence: the extracted session skeleton lists mission-worker-base and runtime-parity-worker skill invocations plus ultracite, but a direct search of the skeleton for 'midday-reference' returned false."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "Reviewed commit d91078b and the worker transcript/handoff for scoped-validator-and-dev-contract-normalization. I found one blocking issue: the packages/api typecheck fix depends on an ignored local drizzle-orm symlink workaround, so the validator/dev-contract normalization is not fully reviewable from tracked repo state in this environment."
+}
