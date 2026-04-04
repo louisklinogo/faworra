@@ -72,7 +72,10 @@ export default function OnboardingForm() {
 					</p>
 				</div>
 
-				<form.Field name="companyName">
+				<form.Field
+					name="companyName"
+					validators={{ onBlur: onboardingInputSchema.shape.companyName }}
+				>
 					{(field) => (
 						<div className="space-y-2">
 							<Label htmlFor={field.name}>Brand or company name</Label>
@@ -94,7 +97,10 @@ export default function OnboardingForm() {
 				</form.Field>
 
 				<div className="grid gap-5 md:grid-cols-2">
-					<form.Field name="baseCurrency">
+					<form.Field
+						name="baseCurrency"
+						validators={{ onBlur: onboardingInputSchema.shape.baseCurrency }}
+					>
 						{(field) => (
 							<div className="space-y-2">
 								<Label htmlFor={field.name}>Base currency</Label>
@@ -118,7 +124,10 @@ export default function OnboardingForm() {
 						)}
 					</form.Field>
 
-					<form.Field name="countryCode">
+					<form.Field
+						name="countryCode"
+						validators={{ onBlur: onboardingInputSchema.shape.countryCode }}
+					>
 						{(field) => (
 							<div className="space-y-2">
 								<Label htmlFor={field.name}>Country code</Label>
