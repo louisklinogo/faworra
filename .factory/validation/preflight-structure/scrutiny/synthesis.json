@@ -1,7 +1,7 @@
 {
   "milestone": "preflight-structure",
-  "round": 2,
-  "status": "fail",
+  "round": 3,
+  "status": "pass",
   "validatorsRun": {
     "test": {
       "passed": true,
@@ -21,43 +21,20 @@
   },
   "reviewsSummary": {
     "total": 1,
-    "passed": 0,
-    "failed": 1,
-    "failedFeatures": [
-      "preflight-reproducible-db-seam-normalization"
-    ]
+    "passed": 1,
+    "failed": 0,
+    "failedFeatures": []
   },
-  "blockingIssues": [
-    {
-      "featureId": "preflight-reproducible-db-seam-normalization",
-      "severity": "blocking",
-      "description": "The fix removes the ignored `packages/api/node_modules/drizzle-orm` symlink workaround and reroutes the API predicate imports through `@faworra-new/db`, but `bun.lock` still records `drizzle-orm` as a direct `packages/api` dependency even though `packages/api/package.json` no longer declares it."
-    }
-  ],
-  "appliedUpdates": [
-    {
-      "target": "library",
-      "description": "Added `.factory/library/validation.md` documenting that the current shared validator contract does not check workspace manifest ↔ `bun.lock` consistency and that dependency-seam changes must keep both in sync.",
-      "sourceFeature": "preflight-reproducible-db-seam-normalization"
-    }
-  ],
+  "blockingIssues": [],
+  "appliedUpdates": [],
   "suggestedGuidanceUpdates": [
     {
-      "target": "skill:runtime-parity-worker",
-      "suggestion": "Either relax the mandatory `midday-reference` invocation requirement for narrow runtime/validator normalization work, or enforce required skill-invocation checks before workers can mark `followedProcedure: true`.",
-      "evidence": "Both completed preflight-structure implementation reviews (`preflight-disable-polar-runtime-blockers` and `scoped-validator-and-dev-contract-normalization`) reported that the worker sessions did not invoke `midday-reference` even though the skill requires it, and the handoffs still claimed procedure compliance.",
-      "isSystemic": true
+      "target": "mission features.json",
+      "suggestion": "Update the `preflight-lockfile-manifest-sync` verification script to match the current quoted workspace-key shape in `bun.lock`, or replace the string-slice check with a format-robust parser.",
+      "evidence": "The review for `preflight-lockfile-manifest-sync` found that features.json still uses `text.index('packages/api:')`, while the actual lockfile uses quoted keys like `\"packages/api\":`, so the worker had to substitute a corrected verification command during implementation.",
+      "isSystemic": false
     }
   ],
-  "rejectedObservations": [
-    {
-      "observation": "The repeated `midday-reference` compliance observation from the second review.",
-      "reason": "duplicate"
-    },
-    {
-      "observation": "README still lists `POLAR_*` vars as required for local API boot.",
-      "reason": "already-documented"
-    }
-  ],
-  "previousRound": ".factory/validation/preflight-structure/scrutiny/synthesis.round-1.json"
+  "rejectedObservations": [],
+  "previousRound": ".factory/validation/preflight-structure/scrutiny/synthesis.round-2.json"
 }

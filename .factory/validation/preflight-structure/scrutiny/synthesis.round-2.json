@@ -1,0 +1,63 @@
+{
+  "milestone": "preflight-structure",
+  "round": 2,
+  "status": "fail",
+  "validatorsRun": {
+    "test": {
+      "passed": true,
+      "command": "bun test --max-concurrency=6 apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src",
+      "exitCode": 0
+    },
+    "typecheck": {
+      "passed": true,
+      "command": "bun run check-types && bun x tsc -p apps/dashboard/tsconfig.json --noEmit && bun x tsc -p packages/api/tsconfig.json --noEmit && bun x tsc -p packages/auth/tsconfig.json --noEmit && bun x tsc -p packages/db/tsconfig.json --noEmit && bun x tsc -p packages/env/tsconfig.json --noEmit",
+      "exitCode": 0
+    },
+    "lint": {
+      "passed": true,
+      "command": "bun x ultracite check apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src",
+      "exitCode": 0
+    }
+  },
+  "reviewsSummary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "failedFeatures": [
+      "preflight-reproducible-db-seam-normalization"
+    ]
+  },
+  "blockingIssues": [
+    {
+      "featureId": "preflight-reproducible-db-seam-normalization",
+      "severity": "blocking",
+      "description": "The fix removes the ignored `packages/api/node_modules/drizzle-orm` symlink workaround and reroutes the API predicate imports through `@faworra-new/db`, but `bun.lock` still records `drizzle-orm` as a direct `packages/api` dependency even though `packages/api/package.json` no longer declares it."
+    }
+  ],
+  "appliedUpdates": [
+    {
+      "target": "library",
+      "description": "Added `.factory/library/validation.md` documenting that the current shared validator contract does not check workspace manifest \u2194 `bun.lock` consistency and that dependency-seam changes must keep both in sync.",
+      "sourceFeature": "preflight-reproducible-db-seam-normalization"
+    }
+  ],
+  "suggestedGuidanceUpdates": [
+    {
+      "target": "skill:runtime-parity-worker",
+      "suggestion": "Either relax the mandatory `midday-reference` invocation requirement for narrow runtime/validator normalization work, or enforce required skill-invocation checks before workers can mark `followedProcedure: true`.",
+      "evidence": "Both completed preflight-structure implementation reviews (`preflight-disable-polar-runtime-blockers` and `scoped-validator-and-dev-contract-normalization`) reported that the worker sessions did not invoke `midday-reference` even though the skill requires it, and the handoffs still claimed procedure compliance.",
+      "isSystemic": true
+    }
+  ],
+  "rejectedObservations": [
+    {
+      "observation": "The repeated `midday-reference` compliance observation from the second review.",
+      "reason": "duplicate"
+    },
+    {
+      "observation": "README still lists `POLAR_*` vars as required for local API boot.",
+      "reason": "already-documented"
+    }
+  ],
+  "previousRound": ".factory/validation/preflight-structure/scrutiny/synthesis.round-1.json"
+}
