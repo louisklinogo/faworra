@@ -1,0 +1,28 @@
+{
+  "featureId": "onboarding-canonical-code-validation",
+  "reviewedAt": "2026-04-04T20:18:52.707026+00:00",
+  "commitId": "0239005",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "fail",
+  "codeReview": {
+    "summary": "The fix closes the exact `ZZZ`/`ZZ` hole called out in the prior review, but it still does not validate against truly canonical ISO code sets. The new shared sets are derived from Midday geo-detection data rather than strict canonical lists, so the schema now rejects some bad codes while still accepting other semantically invalid ones.",
+    "issues": [
+      {
+        "file": "packages/api/src/canonical-codes.ts",
+        "line": 84,
+        "severity": "blocking",
+        "description": "The new 'canonical' sets still contain non-canonical entries, including `countryCode = \"EU\"` at line 84 and `baseCurrency = \"AQD\"` at line 286. Because `packages/api/src/onboarding.ts:24` and `:34` only check membership in these sets, `onboardingInputSchema.safeParse({ companyName: \"Maison Paco\", baseCurrency: \"AQD\", countryCode: \"EU\" })` now succeeds. That means invalid-but-shaped onboarding codes are still accepted client-side and schema-side, so the original blocking validation gap is only partially fixed."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The `dashboard-parity-worker` skill is still too broad for schema-only onboarding fixes. Its procedure hard-requires `midday-reference`, but the reviewed fix session completed as a pure shared-schema/test change without invoking that skill.",
+      "evidence": ".factory/skills/dashboard-parity-worker/SKILL.md:22 and :29 require `midday-reference`, while the reviewed fix transcript skeleton for worker session `965e8ed3-b627-4dc2-bd83-fbf0e78c4d6f` in `/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/worker-transcripts.jsonl` includes `dashboard-parity-worker` and `agent-browser` but no `midday-reference` invocation."
+    }
+  ],
+  "addressesFailureFrom": "onboarding-bootstrap-recovery-parity",
+  "summary": "Reviewed the prior failed feature, prior scrutiny report, the fix handoff/transcript skeleton, and both commit diffs (`d24aeb2` and `0239005`). The fix does block `ZZZ` and `ZZ`, but it still accepts other non-canonical values such as `AQD` and `EU`, so the original blocking onboarding-validation issue is not fully resolved and the re-review remains a fail."
+}

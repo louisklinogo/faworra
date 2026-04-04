@@ -1,0 +1,21 @@
+{
+  "featureId": "auth-shell-return-to-hardening",
+  "reviewedAt": "2026-04-04T20:18:53Z",
+  "commitId": "6d44616",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "The fix closes the prior slash-backslash open-redirect gap by hardening the shared `getSafeReturnTo()` helper that both the server-side login redirect and client-side sign-in redirect rely on. Decoding once before validation and rejecting a second-character `/` or `\\` blocks the previously exploitable `'/\\evil.example'` path family, while the added regression tests cover raw, encoded, mixed, and malformed variants plus a safe encoded in-app destination.",
+    "issues": []
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The `dashboard-parity-worker` skill still appears out of sync with how scrutiny evaluates `followedProcedure`: both the original failed feature and this fix handoff reported `followedProcedure: true` even though neither transcript skeleton shows the required `ultracite` skill invocation while editing TS files.",
+      "evidence": "`/home/louis/developer/faworra/faworra-new/.factory/skills/dashboard-parity-worker/SKILL.md` lists `ultracite` under Required Skills. The transcript skeleton entries for worker sessions `e41e15fd-a33c-482f-b983-ca4a1f88cd5e` and `107c39d3-ce18-4e0d-af87-218e7a69d1e4` show `dashboard-parity-worker` and `agent-browser` usage but no `\"skill\": \"ultracite\"` invocation, while both handoffs marked `skillFeedback.followedProcedure` true."
+    }
+  ],
+  "addressesFailureFrom": "midday-protected-shell-auth-flow",
+  "summary": "Pass: the fix adequately resolves the prior blocking `return_to` sanitization failure. The shared helper now neutralizes slash-backslash and encoded external-path variants before either login-time redirect path uses them, the added tests exercise the previously missed cases, and I did not find a new blocking issue in the same scope."
+}
