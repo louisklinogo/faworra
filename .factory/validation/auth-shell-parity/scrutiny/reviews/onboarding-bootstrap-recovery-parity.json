@@ -1,0 +1,28 @@
+{
+  "featureId": "onboarding-bootstrap-recovery-parity",
+  "reviewedAt": "2026-04-04T19:16:26.145592+00:00",
+  "commitId": "d24aeb2",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "fail",
+  "codeReview": {
+    "summary": "The reviewed work adds useful coverage and better blur-time feedback, but the feature still misses part of its own onboarding-validation contract. `onboardingInputSchema` only enforces alphabetic length/shape for `baseCurrency` and `countryCode`, so semantically invalid codes still pass both the form and the API path; during review, `onboardingInputSchema.safeParse({ companyName: 'Maison Paco', baseCurrency: 'ZZZ', countryCode: 'ZZ' })` returned success.",
+    "issues": [
+      {
+        "file": "packages/api/src/onboarding.ts",
+        "line": 12,
+        "severity": "blocking",
+        "description": "`baseCurrency` and `countryCode` are advertised and tested as 'valid' codes, but the schema only checks fixed-length alphabetic strings (`/^[A-Za-z]{3}$/` and `/^[A-Za-z]{2}$/`). As a result, values like `ZZZ` and `ZZ` are accepted, and because `apps/dashboard/src/components/onboarding-form.tsx` reuses this schema for both submit-time and blur-time validation, the UI does not actually block invalid currency/country inputs client-side as required by VAL-ONBOARD-002 and the feature's expected behavior."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The `dashboard-parity-worker` skill still leaves onboarding workers to infer which Midday onboarding references matter for Faworra's much smaller bootstrap form. This worker's own handoff called out that nuance explicitly, which suggests the skill should be clearer about using Midday's onboarding input/validation patterns without implying the full multi-step onboarding flow should be mirrored.",
+      "evidence": ".factory/skills/dashboard-parity-worker/SKILL.md:28-31 directs workers to inspect Midday onboarding routing broadly, while the reviewed handoff records `skillFeedback.followedProcedure=true` plus a suggested skill change about Midday onboarding complexity at /home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/handoffs/2026-04-04T19-06-14-394Z__onboarding-bootstrap-recovery-parity__d755cc3a-63c2-4cf9-b01f-fbd368cce9bd.json:137-140."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "Reviewed the feature handoff, transcript skeleton, and commit `d24aeb2`. The added blur validators and tests are directionally correct, but the feature still fails its onboarding-validation requirement because alphabetic-but-invalid currency and country codes are accepted end-to-end, so I marked the review as fail with one blocking issue."
+}

@@ -1,0 +1,31 @@
+{
+  "featureId": "midday-request-context-and-current-team-primitives",
+  "reviewedAt": "2026-04-04T19:13:28Z",
+  "commitId": "f799c65",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "The commit cleanly adds `user.me`, `team.current`, `team.list`, and `user.switchTeam` on top of the existing membership-first context model. The new helpers preserve `activeMembershipId` precedence, invalid switch attempts are rejected before any `user_context` write, and the added tests cover the critical empty-list, valid-switch, invalid-switch, and stale-pointer cases required by the feature.",
+    "issues": []
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The `api-parity-worker` skill requires direct API verification for guest, authenticated, and team-ready states, but this run only shows guest curl probes plus unit-test seeding while the handoff still marks `followedProcedure` true.",
+      "evidence": "/home/louis/developer/faworra/faworra-new/.factory/skills/api-parity-worker/SKILL.md:41-44 requires direct API checks for guest vs authenticated vs team-ready behavior. /home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/handoffs/2026-04-04T01-37-15-333Z__midday-request-context-and-current-team-primitives__3c663be0-4767-4f41-bd63-dcc92def388b.json:36-46 lists only guest curl commands, and line 102 records `followedProcedure: true`."
+    },
+    {
+      "area": "services",
+      "observation": "The services manifest does not provide feature-scoped API-only validator commands, even though this feature contract does. That makes the skill instruction to run the scoped validators from `.factory/services.yaml` impossible to follow literally for this feature.",
+      "evidence": "/home/louis/developer/faworra/faworra-new/.factory/services.yaml:6 defines the broad test command `bun test --max-concurrency=6 apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src`, while /home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/features.json:332-333 defines the narrower feature validators for `packages/api/src packages/db/src packages/env/src`."
+    },
+    {
+      "area": "knowledge",
+      "observation": "Shared architecture guidance names `team.list` and `user.switchTeam` but does not capture the contract that the list now exposes `membershipId` and that the switch mutation consumes `membershipId` rather than `teamId`. Future dashboard switcher work will need that repo-specific divergence documented somewhere durable.",
+      "evidence": "/home/louis/developer/faworra/faworra-new/.factory/library/architecture.md:35-54 only names the missing primitives, and lines 168 and 234 state the membership-first invariant. The implemented contract lives in /home/louis/developer/faworra/faworra-new/packages/api/src/lib/team.ts:251-264 and /home/louis/developer/faworra/faworra-new/packages/api/src/routers/user.ts:32-34."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "Pass. I reviewed the transcript skeleton, handoff, and commit f799c65 and did not find code-level defects in the feature implementation. I did note shared-state gaps around skill adherence reporting, validator command scoping, and documentation of the new membershipId-based switch contract."
+}

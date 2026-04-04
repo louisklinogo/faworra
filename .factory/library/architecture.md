@@ -233,6 +233,11 @@ During this mission, workers may need to expand the recovery model so the dashbo
 
 During the compatibility window, any switch operation should keep `activeMembershipId` authoritative while also maintaining `activeTeamId` as needed until the legacy fallback is removed.
 
+Current repo contract detail: `team.list` returns switcher entries keyed by
+membership context, including `membershipId`, and `user.switchTeam` consumes a
+`membershipId` input rather than a raw `teamId`. Dashboard switcher work should
+preserve that membership-first contract unless the tenancy model itself changes.
+
 ## Protected-shell target shape
 
 For this mission, the target shape is Midday-like:

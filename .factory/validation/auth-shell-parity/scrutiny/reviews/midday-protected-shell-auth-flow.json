@@ -1,0 +1,28 @@
+{
+  "featureId": "midday-protected-shell-auth-flow",
+  "reviewedAt": "2026-04-04T19:13:42Z",
+  "commitId": "f45e7b5",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "fail",
+  "codeReview": {
+    "summary": "The protected-shell centralization, proxy-based stale-cookie recovery, and dashboard route regrouping are directionally correct, but the feature does not fully satisfy the unsafe `return_to` requirement because the shared sanitizer still permits slash-backslash paths that resolve off-origin.",
+    "issues": [
+      {
+        "file": "apps/dashboard/src/lib/return-to.ts",
+        "line": 8,
+        "severity": "blocking",
+        "description": "`getSafeReturnTo()` only rejects values starting with `//`, so it accepts inputs like `/\\\\evil.com`. Browser/WHATWG URL resolution normalizes that to `http://evil.com/`, which means the helper fails VAL-AUTH-002's requirement to neutralize unsafe `return_to` values. Both `apps/dashboard/src/app/login/page.tsx:32` and `apps/dashboard/src/components/sign-in-form.tsx:36` trust this helper for redirects, so visiting `/login?return_to=/%5Cevil.com` can escape the app instead of falling back to `/dashboard`."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The dashboard worker skill says `ultracite` is a required skill when editing JS/TS/React files, but this worker session never invoked it even though the handoff reported `followedProcedure: true`.",
+      "evidence": "`.factory/skills/dashboard-parity-worker/SKILL.md` lists `ultracite` under Required Skills, while the transcript skeleton for worker session `e41e15fd-a33c-482f-b983-ca4a1f88cd5e` contains `dashboard-parity-worker`, `midday-reference`, and `agent-browser` usage but zero `\"skill\": \"ultracite\"` entries."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "Fail: the feature mostly matches the intended protected-shell shape, but unsafe `return_to` sanitization is incomplete and leaves an open-redirect path via slash-backslash input."
+}
