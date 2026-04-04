@@ -1,6 +1,6 @@
 {
   "milestone": "preflight-structure",
-  "round": 2,
+  "round": 1,
   "status": "fail",
   "validatorsRun": {
     "test": {
@@ -20,27 +20,21 @@
     }
   },
   "reviewsSummary": {
-    "total": 1,
-    "passed": 0,
+    "total": 2,
+    "passed": 1,
     "failed": 1,
     "failedFeatures": [
-      "preflight-reproducible-db-seam-normalization"
+      "scoped-validator-and-dev-contract-normalization"
     ]
   },
   "blockingIssues": [
     {
-      "featureId": "preflight-reproducible-db-seam-normalization",
+      "featureId": "scoped-validator-and-dev-contract-normalization",
       "severity": "blocking",
-      "description": "The fix removes the ignored `packages/api/node_modules/drizzle-orm` symlink workaround and reroutes the API predicate imports through `@faworra-new/db`, but `bun.lock` still records `drizzle-orm` as a direct `packages/api` dependency even though `packages/api/package.json` no longer declares it."
+      "description": "The validator/dev-contract normalization is not fully reproducible from tracked repo state because the `packages/api` `drizzle-orm` pass in this environment depended on an ignored local `packages/api/node_modules/drizzle-orm` symlink workaround noted in the worker handoff."
     }
   ],
-  "appliedUpdates": [
-    {
-      "target": "library",
-      "description": "Added `.factory/library/validation.md` documenting that the current shared validator contract does not check workspace manifest ↔ `bun.lock` consistency and that dependency-seam changes must keep both in sync.",
-      "sourceFeature": "preflight-reproducible-db-seam-normalization"
-    }
-  ],
+  "appliedUpdates": [],
   "suggestedGuidanceUpdates": [
     {
       "target": "skill:runtime-parity-worker",
@@ -59,5 +53,5 @@
       "reason": "already-documented"
     }
   ],
-  "previousRound": ".factory/validation/preflight-structure/scrutiny/synthesis.round-1.json"
+  "previousRound": null
 }
