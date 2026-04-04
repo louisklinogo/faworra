@@ -36,7 +36,8 @@ Use this skill for features that touch:
    - redirect/return helpers
    - route-state utilities
    - component behavior or rendering tests where feasible
-   If a feature is mostly shell/routing work, add at least one focused automated test for the core non-visual decision logic before implementing the UI flow.
+   If a feature is mostly shell/routing work, add at least one focused automated test for the core non-visual decision logic before implementing the UI flow. For `return_to` changes, include slash-backslash and encoded external regressions, not just obvious `https://` and `//` cases.
+   For onboarding/input validation work, validate against canonical code sets or other approved domain sources when the product depends on real codes; length/regex checks alone are insufficient.
 5. Implement the smallest Midday-shaped UI and routing change that satisfies the mission contract.
 6. Run the scoped validators from `.factory/services.yaml`.
 7. Use `agent-browser` to manually verify every changed browser flow end-to-end. Each verified flow must be recorded in the handoff.
