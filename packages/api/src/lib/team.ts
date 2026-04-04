@@ -5,6 +5,7 @@ import {
 	teamSettings,
 	teams,
 } from "@faworra-new/db/schema/team";
+import { TRPCError } from "@trpc/server";
 
 import {
 	DEFAULT_INDUSTRY_CONFIG_VERSION,
@@ -243,4 +244,72 @@ export const completeOnboarding = (userId: string, input: OnboardingInput) => {
 			needsOnboarding: false,
 		};
 	});
+};
+
+/**
+ * Returns all accepted memberships for a user with metadata needed
+ * for the workspace switcher (membershipId, teamId, name, logoUrl, role).
+ * Only accepted memberships are stored in team_memberships per the tenancy model.
+ */
+export const getTeamList = async (userId: string) => {
+	const memberships = await db.query.teamMemberships.findMany({
+		where: (table, { eq }) => eq(table.userId, userId),
+		orderBy: (table, { asc }) => [asc(table.createdAt)],
+		with: {
+			team: true,
+		},
+	});
+
+	return memberships.map((m) => ({
+		membershipId: m.id,
+		teamId: m.teamId,
+		name: m.team.name,
+		logoUrl: m.team.logoUrl,
+		role: m.role,
+	}));
+};
+
+/**
+ * Switches the active workspace for a user by membershipId.
+ * Validates that the user actually holds the given membership before updating.
+ * Rejects invalid switches without mutating the current workspace context.
+ * Uses activeMembershipId as the source of truth per the membership-first invariant.
+ */
+export const switchTeam = async (userId: string, membershipId: string) => {
+	const membership = await db.query.teamMemberships.findFirst({
+		where: (table, { and, eq }) =>
+			and(eq(table.userId, userId), eq(table.id, membershipId)),
+		with: {
+			team: {
+				with: {
+					settings: true,
+				},
+			},
+		},
+	});
+
+	if (!membership) {
+		throw new TRPCError({
+			code: "FORBIDDEN",
+			message: "You are not a member of this team",
+		});
+	}
+
+	await db
+		.insert(userContext)
+		.values({
+			userId,
+			activeMembershipId: membership.id,
+			activeTeamId: membership.teamId,
+		})
+		.onConflictDoUpdate({
+			target: userContext.userId,
+			set: {
+				activeMembershipId: membership.id,
+				activeTeamId: membership.teamId,
+				updatedAt: new Date(),
+			},
+		});
+
+	return mapViewerStateFromMembership(membership);
 };

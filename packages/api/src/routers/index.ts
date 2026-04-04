@@ -1,7 +1,9 @@
 import { protectedTeamProcedure, publicProcedure, router } from "../index";
 
 import { onboardingRouter } from "./onboarding";
+import { teamRouter } from "./team";
 import { teamInvitesRouter } from "./team-invites";
+import { userRouter } from "./user";
 
 export const appRouter = router({
 	healthCheck: publicProcedure.query(() => {
@@ -16,6 +18,8 @@ export const appRouter = router({
 			needsOnboarding: ctx.session ? ctx.needsOnboarding : false,
 		};
 	}),
+	user: userRouter,
+	team: teamRouter,
 	onboarding: onboardingRouter,
 	teamInvites: teamInvitesRouter,
 	privateData: protectedTeamProcedure.query(({ ctx }) => {

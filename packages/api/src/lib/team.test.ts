@@ -68,6 +68,7 @@ const state = {
 	activeMembershipResult: null as Membership | null,
 	firstMembershipResult: null as Membership | null,
 	existingMembershipResult: null as Membership | null,
+	teamListResult: [] as Membership[],
 	createdMembership: [
 		{
 			id: "membership_new",
@@ -156,8 +157,21 @@ const dbMock = {
 					? state.firstMembershipResult
 					: state.activeMembershipResult;
 			},
+			findMany: async () => state.teamListResult,
 		},
 	},
+	insert: (table: unknown) => ({
+		values: (values: unknown) => {
+			const tableName = getTableName(table);
+			state.insertedValues.push({ table: tableName, values });
+
+			return {
+				onConflictDoUpdate: (config: unknown) => {
+					state.upsertCalls.push({ table: tableName, config });
+				},
+			};
+		},
+	}),
 	transaction: (callback: (transaction: typeof txMock) => Promise<unknown>) => {
 		return callback(txMock);
 	},
@@ -171,13 +185,15 @@ mock.module("@faworra-new/db", () => ({
 	eq: (_a: unknown, _b: unknown) => ({}),
 }));
 
-const { completeOnboarding, getViewerState } = await import("./team");
+const { completeOnboarding, getTeamList, getViewerState, switchTeam } =
+	await import("./team");
 
 beforeEach(() => {
 	state.userContextResult = null;
 	state.activeMembershipResult = null;
 	state.firstMembershipResult = null;
 	state.existingMembershipResult = null;
+	state.teamListResult = [];
 	state.createdMembership = [
 		{
 			id: "membership_new",
@@ -389,5 +405,177 @@ describe("completeOnboarding", () => {
 			},
 		]);
 		expect(state.upsertCalls).toHaveLength(1);
+	});
+});
+
+describe("getTeamList", () => {
+	it("returns an empty array when the user has no memberships", async () => {
+		await expect(getTeamList("user_1")).resolves.toEqual([]);
+	});
+
+	it("returns switchable memberships with switcher metadata", async () => {
+		state.teamListResult = [
+			createMembership({
+				id: "membership_1",
+				role: "owner",
+				teamId: "team_1",
+				team: {
+					id: "team_1",
+					name: "Maison Paco",
+					logoUrl: null,
+					settings: {
+						baseCurrency: "EUR",
+						countryCode: "FR",
+						fiscalYearStartMonth: null,
+						industryKey: DEFAULT_INDUSTRY_KEY,
+						industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					},
+				},
+			}),
+			createMembership({
+				id: "membership_2",
+				role: "member",
+				teamId: "team_2",
+				team: {
+					id: "team_2",
+					name: "House of Lagos",
+					logoUrl: "https://example.com/logo.png",
+					settings: {
+						baseCurrency: "NGN",
+						countryCode: "NG",
+						fiscalYearStartMonth: null,
+						industryKey: DEFAULT_INDUSTRY_KEY,
+						industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					},
+				},
+			}),
+		];
+
+		await expect(getTeamList("user_1")).resolves.toEqual([
+			{
+				membershipId: "membership_1",
+				teamId: "team_1",
+				name: "Maison Paco",
+				logoUrl: null,
+				role: "owner",
+			},
+			{
+				membershipId: "membership_2",
+				teamId: "team_2",
+				name: "House of Lagos",
+				logoUrl: "https://example.com/logo.png",
+				role: "member",
+			},
+		]);
+	});
+});
+
+describe("switchTeam", () => {
+	it("activates a valid membership and updates userContext", async () => {
+		state.activeMembershipResult = createMembership({
+			id: "membership_1",
+			role: "owner",
+			teamId: "team_1",
+			team: {
+				id: "team_1",
+				name: "Maison Paco",
+				logoUrl: null,
+				settings: {
+					baseCurrency: "EUR",
+					countryCode: "FR",
+					fiscalYearStartMonth: null,
+					industryKey: DEFAULT_INDUSTRY_KEY,
+					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+				},
+			},
+		});
+
+		await expect(switchTeam("user_1", "membership_1")).resolves.toEqual({
+			activeTeam: {
+				id: "team_1",
+				name: "Maison Paco",
+				logoUrl: null,
+				settings: {
+					baseCurrency: "EUR",
+					countryCode: "FR",
+					fiscalYearStartMonth: null,
+					industryKey: DEFAULT_INDUSTRY_KEY,
+					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+				},
+			},
+			membership: {
+				role: "owner",
+				teamId: "team_1",
+			},
+			needsOnboarding: false,
+		});
+
+		expect(state.insertedValues).toEqual([
+			{
+				table: "userContext",
+				values: {
+					userId: "user_1",
+					activeMembershipId: "membership_1",
+					activeTeamId: "team_1",
+				},
+			},
+		]);
+		expect(state.upsertCalls).toHaveLength(1);
+	});
+
+	it("invalid switch target leaves previous workspace active", async () => {
+		// activeMembershipResult is null — the membership doesn't belong to the user
+		await expect(switchTeam("user_1", "membership_other")).rejects.toThrow(
+			"You are not a member of this team"
+		);
+
+		// No mutations should have occurred
+		expect(state.insertedValues).toHaveLength(0);
+		expect(state.upsertCalls).toHaveLength(0);
+	});
+
+	it("activeMembershipId wins over conflicting activeTeamId on stale-pointer scenario", async () => {
+		// Set up: activeMembershipId points to a valid membership, activeTeamId is stale
+		state.userContextResult = {
+			activeMembershipId: "membership_2",
+			activeTeamId: "team_stale",
+		};
+		state.activeMembershipResult = createMembership({
+			id: "membership_2",
+			teamId: "team_active",
+			team: {
+				id: "team_active",
+				name: "Active Membership Team",
+				logoUrl: null,
+				settings: {
+					baseCurrency: "GBP",
+					countryCode: "GB",
+					fiscalYearStartMonth: 4,
+					industryKey: DEFAULT_INDUSTRY_KEY,
+					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+				},
+			},
+		});
+
+		// getViewerState should resolve via activeMembershipId precedence
+		await expect(getViewerState("user_1")).resolves.toEqual({
+			activeTeam: {
+				id: "team_active",
+				name: "Active Membership Team",
+				logoUrl: null,
+				settings: {
+					baseCurrency: "GBP",
+					countryCode: "GB",
+					fiscalYearStartMonth: 4,
+					industryKey: DEFAULT_INDUSTRY_KEY,
+					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+				},
+			},
+			membership: {
+				role: "owner",
+				teamId: "team_active",
+			},
+			needsOnboarding: false,
+		});
 	});
 });
