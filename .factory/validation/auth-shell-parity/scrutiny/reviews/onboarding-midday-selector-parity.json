@@ -1,0 +1,33 @@
+{
+  "featureId": "onboarding-midday-selector-parity",
+  "reviewedAt": "2026-04-04T23:03:49.926650+00:00",
+  "commitId": "bddc9dd",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "The re-review resolves the prior blocking issue. The onboarding browser surface now uses Midday-shaped selectors instead of free-text country/currency inputs, and the shared schema validates against the same Midday-backed location datasets that power those selectors, so the review target is aligned with actual Midday selector/data behavior rather than a stricter ISO-only assumption. I found one non-blocking accessibility issue in the new selector wiring.",
+    "issues": [
+      {
+        "file": "apps/dashboard/src/components/onboarding-form.tsx",
+        "line": 117,
+        "severity": "non_blocking",
+        "description": "The new Country and Base currency labels use `htmlFor={field.name}` (`onboarding-form.tsx:117` and `:139`), but the corresponding selector triggers do not render matching `id` attributes (`country-selector.tsx:48` and `select-currency.tsx:42`). That leaves the combobox triggers without a proper programmatic label association for click-to-focus and assistive technology."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "`dashboard-parity-worker` still marks `followedProcedure: true` even when the transcript skeleton does not show the required `midday-reference` invocation. This fix is explicitly Midday-selector parity work, so either the procedure or the compliance reporting needs clarification.",
+      "evidence": "`.factory/skills/dashboard-parity-worker/SKILL.md:22,29` require invoking `midday-reference` before Midday UX decisions. The transcript skeleton extracted from `/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/worker-transcripts.jsonl` for worker session `f1ccbcd1-3193-42b7-8bfb-ab71add359a3` contains `dashboard-parity-worker`, `agent-browser`, and `ultracite` but no `midday-reference`, while the handoff still records `skillFeedback.followedProcedure: true` in `/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/handoffs/2026-04-04T22-55-53-489Z__onboarding-midday-selector-parity__f1ccbcd1-3193-42b7-8bfb-ab71add359a3.json:93-97`."
+    },
+    {
+      "area": "skills",
+      "observation": "The dashboard skill still does not document the repo's existing UI-package wrapper pattern for Base UI primitives, even though this feature had to add `packages/ui/src/components/select.tsx` to follow that approach.",
+      "evidence": "The handoff suggests adding this guidance in `/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/handoffs/2026-04-04T22-55-53-489Z__onboarding-midday-selector-parity__f1ccbcd1-3193-42b7-8bfb-ab71add359a3.json:96-97`. The current skill file has no mention of `@base-ui/react/select` or wrapper guidance, while `packages/ui/src/components/dropdown-menu.tsx:1-17` already shows the established UI-package wrapper pattern for Base UI primitives."
+    }
+  ],
+  "addressesFailureFrom": "/home/louis/developer/faworra/faworra-new/.factory/validation/auth-shell-parity/scrutiny/reviews/onboarding-canonical-code-validation.json",
+  "summary": "Reviewed the prior failed canonical-code commit (`0239005`), the parity fix commit (`bddc9dd`), both handoffs, the fix transcript skeleton, the dashboard-parity-worker skill, and the shared-state docs. The fix adequately addresses the original blocking finding because the correct standard here is Midday selector/data parity: the browser no longer exposes raw free-text code entry, `packages/api/src/onboarding.ts` now accepts the same Midday-backed value class surfaced by the selectors, and `packages/api/src/onboarding.test.ts` explicitly covers EU/AQD acceptance alongside ZZ/ZZZ rejection. The only remaining code issue I found is a non-blocking selector-label accessibility gap."
+}
