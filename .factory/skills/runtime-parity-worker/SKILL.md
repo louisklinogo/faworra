@@ -20,14 +20,14 @@ Use this skill for features that touch:
 
 ## Required Skills
 
-- `midday-reference` — invoke before making any runtime, package-boundary, or flow-structure decision so the change stays Midday-shaped.
+- `midday-reference` — invoke before making any runtime, package-boundary, dependency, import-seam, or flow-structure decision so the change stays Midday-shaped. This is mandatory for this mission unless the change is purely mechanical and does not alter package boundaries, imports, dependencies, or runtime behavior.
 - `ultracite` — invoke when editing JS/TS files or validation commands so the work matches project lint/format expectations.
 - `agent-browser` — invoke when the feature affects dashboard boot, login rendering, or another browser-observable runtime surface.
 
 ## Work Procedure
 
 1. Read `mission.md`, mission `AGENTS.md`, `.factory/library/architecture.md`, `.factory/library/environment.md`, `.factory/library/user-testing.md`, and `.factory/services.yaml`.
-2. Invoke `midday-reference` and inspect the closest Midday analogue before changing structure, runtime boot, or protected-surface wiring.
+2. Invoke `midday-reference` and inspect the closest Midday analogue before changing structure, runtime boot, dependencies, cross-package imports, or protected-surface wiring.
 3. Identify the exact blocker or seam being fixed. Prefer the smallest change that restores Midday-shaped behavior without introducing new architecture.
 4. Write tests first where the changed behavior is testable in code:
    - env parsing/helpers
@@ -36,9 +36,12 @@ Use this skill for features that touch:
    - script-adjacent helpers
    If a shell/script change has no direct unit-test seam, add the nearest focused testable helper first or document why runtime verification is the compensating check.
 5. Implement the fix without reintroducing deferred billing dependencies. Out-of-scope services must not block boot or validation.
-6. Run the scoped validators from `.factory/services.yaml` relevant to the change.
-7. If the change affects browser-observable runtime behavior, use `agent-browser` to verify the real surface (for example `/login`, protected entry, or sign-out return).
-8. Record exact commands, observations, and any remaining risk in the handoff. Do not hand-wave runtime behavior.
+6. If the runtime seam involves the Supabase-backed database, treat Supabase MCP as read-only only. Use repo Drizzle commands (for example the `db_migrate` command in `.factory/services.yaml`) for schema bootstrap and migrations.
+7. If `bun install` or another external dependency step is blocked in this environment, do not use ignored local `node_modules` symlink workarounds to satisfy validators. Either solve the problem through a tracked repo-state seam or return to the orchestrator.
+8. When introducing a new tracked seam for Bun-resolved helpers, prefer explicit import-then-const-export patterns over fragile single-line re-export chains if the source package uses wildcard re-exports internally.
+9. Run the scoped validators from `.factory/services.yaml` relevant to the change.
+10. If the change affects browser-observable runtime behavior, use `agent-browser` to verify the real surface (for example `/login`, protected entry, or sign-out return).
+11. Record exact commands, observations, and any remaining risk in the handoff. Do not hand-wave runtime behavior.
 
 ## Example Handoff
 

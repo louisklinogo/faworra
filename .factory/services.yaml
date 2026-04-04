@@ -1,5 +1,6 @@
 commands:
   install: bun install
+  db_migrate: bun run db:migrate
   typecheck: bun run check-types && bun x tsc -p apps/dashboard/tsconfig.json --noEmit && bun x tsc -p packages/api/tsconfig.json --noEmit && bun x tsc -p packages/auth/tsconfig.json --noEmit && bun x tsc -p packages/db/tsconfig.json --noEmit && bun x tsc -p packages/env/tsconfig.json --noEmit
   lint: bun x ultracite check apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src
   test: bun test --max-concurrency=6 apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src

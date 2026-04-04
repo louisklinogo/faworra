@@ -14,7 +14,7 @@ This mission depends on:
 - Bun/Turbo workspace tooling
 - existing `node_modules` at the repo root or `bun install`
 - Better Auth for identity/session handling
-- existing Supabase Postgres connection via `DATABASE_URL`
+- cloud Supabase Postgres dev project `faworra-new` (`nwhsdbihxxobasadahbq`) via `DATABASE_URL`
 - Portless-local dashboard/API access on `*.faworra.localhost`
 
 ## Required env files
@@ -25,6 +25,32 @@ Workers should expect these env files to exist:
 - `apps/dashboard/.env`
 
 `packages/db/drizzle.config.ts` reads database configuration from `apps/api/.env`.
+
+## Cloud database contract
+
+- The active database for this mission is the cloud Supabase dev project `faworra-new` (`nwhsdbihxxobasadahbq`).
+- Keep the project connection string only in local env files such as `apps/api/.env`; never commit credentials or paste them into tracked mission artifacts.
+- Supabase MCP may be used for read-only checks (project status, tables, advisors, logs), but not for writes.
+- All schema creation and migration work must go through the repo’s Drizzle commands.
+
+## Dependency install note
+
+`bun install` may hang in this environment because registry/network access appears restricted.
+
+Operational guidance for this mission:
+
+- use the existing `node_modules` tree as the baseline
+- do not add new dependencies casually
+- if a feature truly requires a fresh install or new package, return to the orchestrator instead of repeatedly retrying installs
+
+## Bun-specific gotchas
+
+- When re-exporting helpers from packages that ultimately rely on wildcard re-exports (such as `drizzle-orm`), prefer the tracked pattern:
+  - `import { and as drizzleAnd, eq as drizzleEq } from "drizzle-orm"`
+  - `export const and = drizzleAnd`
+  - `export const eq = drizzleEq`
+- Avoid single-line re-export chains such as `export { and, eq } from "drizzle-orm"` for this mission’s package seams; Bun can fail to resolve them reliably in this environment.
+- Bun test module mocking is shared across test files in the same worker process. If a shared package mock gains new exports, every test file mocking that package must update its mock factory to include the same export shape.
 
 ## Server envs that matter for this mission
 

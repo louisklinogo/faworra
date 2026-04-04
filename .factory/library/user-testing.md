@@ -56,6 +56,12 @@ API validation should cover:
 - invite creation/list/accept/decline/revoke semantics
 - invalid switch / invalid invite safety
 
+DB-backed test setup notes:
+
+- The mission now uses the cloud Supabase dev project `faworra-new` through `apps/api/.env`.
+- If schema bootstrap or migration is required before validation, use repo Drizzle commands only.
+- Do not use Supabase MCP write actions for schema/data setup; reserve MCP for read-only checks.
+
 ## Validation Concurrency
 
 ### Browser surface
