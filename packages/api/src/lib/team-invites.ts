@@ -1,9 +1,8 @@
 import { createHash, randomUUID } from "node:crypto";
-import { db } from "@faworra-new/db";
+import { and, db, eq } from "@faworra-new/db";
 import { userContext } from "@faworra-new/db/schema/core";
 import { teamInvites, teamMemberships } from "@faworra-new/db/schema/team";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
 
 import {
 	type CreateTeamInvitesInput,

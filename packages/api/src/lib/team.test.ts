@@ -165,6 +165,10 @@ const dbMock = {
 
 mock.module("@faworra-new/db", () => ({
 	db: dbMock,
+	// Drizzle predicate stubs – included so the mock stays consistent with the
+	// full @faworra-new/db shape when test files share a module registry.
+	and: (..._args: unknown[]) => ({}),
+	eq: (_a: unknown, _b: unknown) => ({}),
 }));
 
 const { completeOnboarding, getViewerState } = await import("./team");

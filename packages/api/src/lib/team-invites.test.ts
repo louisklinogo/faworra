@@ -216,6 +216,10 @@ const dbMock = {
 
 mock.module("@faworra-new/db", () => ({
 	db: dbMock,
+	// Drizzle predicate stubs – the mock `.where()` ignores its argument so
+	// these just need to be callable. Values are not inspected by any test.
+	and: (..._args: unknown[]) => ({}),
+	eq: (_a: unknown, _b: unknown) => ({}),
 }));
 
 const {

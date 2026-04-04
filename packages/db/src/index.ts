@@ -1,4 +1,5 @@
 import { env } from "@faworra-new/env/server";
+import { and as drizzleAnd, eq as drizzleEq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 
 import {
@@ -23,6 +24,13 @@ import {
 	teams,
 	teamsRelations,
 } from "./schema/team";
+
+// Drizzle query predicates exported as named constants so dependent packages
+// can reach them through the @faworra-new/db boundary without a direct
+// drizzle-orm dependency. Named const bindings (rather than re-export syntax)
+// let Bun resolve these exports statically in test environments.
+export const and = drizzleAnd;
+export const eq = drizzleEq;
 
 const schema = {
 	account,
