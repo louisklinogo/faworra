@@ -30,6 +30,13 @@ Browser validation should cover:
 - invite recovery browser flow
 - team switcher behavior
 
+For onboarding parity checks after selector work lands:
+
+- treat country/currency as selector-driven Midday controls, not free-text code fields
+- verify the browser surface no longer allows arbitrary raw country/currency strings to be typed and submitted
+- verify required-field validation still blocks incomplete onboarding submits
+- do not fail parity solely because Midday-backed selector data still contains values such as `EU` or `AQD`; those values are part of Midday's current cloned surface unless the user requests a divergence
+
 Important notes:
 
 - billing is out of scope; auth/dashboard validation must not depend on Polar

@@ -89,6 +89,9 @@ Workers should use these Midday files/patterns as the primary shape reference:
 - protected app shell bootstrap: `midday/apps/dashboard/src/app/[locale]/(app)/(sidebar)/layout.tsx`
 - request-context headers: `midday/apps/dashboard/src/trpc/request-context.ts`
 - user/team primitives: `midday/apps/api/src/trpc/routers/user.ts`, `midday/apps/api/src/trpc/routers/team.ts`
+- onboarding page/defaults: `midday/apps/dashboard/src/app/[locale]/(app)/onboarding/page.tsx`
+- onboarding create-team step and selectors: `midday/apps/dashboard/src/components/onboarding/steps/create-team-step.tsx`, `midday/apps/dashboard/src/components/country-selector.tsx`, `midday/apps/dashboard/src/components/select-currency.tsx`
+- onboarding location data/default helpers: `midday/packages/location/src/index.ts`, `midday/packages/location/src/country-flags.ts`, `midday/packages/location/src/currencies.ts`
 - tenancy UX: `midday/apps/dashboard/src/components/team-dropdown.tsx`
 - invite/team recovery surface: `midday/apps/dashboard/src/app/[locale]/(app)/teams/page.tsx`
 
@@ -204,8 +207,9 @@ During this mission, workers may need to expand the recovery model so the dashbo
 
 1. A new account is created through Better Auth.
 2. The user is routed to onboarding / recovery.
-3. Onboarding creates a first team, owner membership, team settings, and active user context only if the user has no accepted membership yet.
-4. After success, the protected shell resolves a usable active workspace and the dashboard loads.
+3. Onboarding uses Midday-shaped selector-driven country/currency inputs with location-derived defaults rather than arbitrary free-text code entry.
+4. Onboarding creates a first team, owner membership, team settings, and active user context only if the user has no accepted membership yet.
+5. After success, the protected shell resolves a usable active workspace and the dashboard loads.
 
 ### Existing user -> protected shell
 
@@ -250,6 +254,17 @@ For this mission, the target shape is Midday-like:
 This does **not** require copying Midday’s Supabase-specific mechanics; it requires copying the architectural shape using Better Auth.
 
 Important baseline note: the current dashboard still uses page-local viewer checks rather than a single protected shell. Workers should treat centralized protected-shell bootstrap as a mission target, not as something already present.
+
+## Onboarding selector target shape
+
+The onboarding browser surface must follow Midday's real create-team flow:
+
+- country and currency are chosen through cloned Midday selector components, not raw text inputs
+- defaults come from the same country/currency location helpers pattern Midday uses
+- the browser surface prevents arbitrary typed codes by constraining users to selector choices
+- the shared onboarding validation/data path should accept the same selector-backed value class Midday exposes instead of introducing a stricter ISO-only allowlist
+
+Important parity note: Midday's current raw selector datasets include entries such as `EU` in country flags and `AQD` in currencies. Those values are part of Midday's current onboarding surface, so workers must not "clean them up" unless the user explicitly requests a divergence.
 
 ## Local runtime contract
 
