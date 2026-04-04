@@ -1,5 +1,6 @@
 "use client";
 
+import { uniqueCurrencies } from "@faworra-new/api/currencies";
 import { onboardingInputSchema } from "@faworra-new/api/onboarding";
 import { Button } from "@faworra-new/ui/components/button";
 import { Input } from "@faworra-new/ui/components/input";
@@ -9,9 +10,19 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { CountrySelector } from "@/components/country-selector";
+import { SelectCurrency } from "@/components/select-currency";
 import { trpc } from "@/utils/trpc";
 
-export default function OnboardingForm() {
+interface Props {
+	defaultCountryCode?: string;
+	defaultCurrency?: string;
+}
+
+export default function OnboardingForm({
+	defaultCurrency = "GHS",
+	defaultCountryCode = "GH",
+}: Props) {
 	const router = useRouter();
 	const completeOnboarding = useMutation(
 		trpc.onboarding.complete.mutationOptions()
@@ -20,8 +31,8 @@ export default function OnboardingForm() {
 	const form = useForm({
 		defaultValues: {
 			companyName: "",
-			baseCurrency: "",
-			countryCode: "",
+			baseCurrency: defaultCurrency,
+			countryCode: defaultCountryCode,
 		},
 		validators: {
 			onSubmit: onboardingInputSchema,
@@ -52,7 +63,7 @@ export default function OnboardingForm() {
 					Set up your brand workspace
 				</h1>
 				<p className="max-w-lg text-muted-foreground text-sm">
-					We’ll use this to create your team, owner access, and your first
+					We'll use this to create your team, owner access, and your first
 					fashion workspace settings.
 				</p>
 			</div>
@@ -98,22 +109,17 @@ export default function OnboardingForm() {
 
 				<div className="grid gap-5 md:grid-cols-2">
 					<form.Field
-						name="baseCurrency"
-						validators={{ onBlur: onboardingInputSchema.shape.baseCurrency }}
+						name="countryCode"
+						validators={{ onBlur: onboardingInputSchema.shape.countryCode }}
 					>
 						{(field) => (
 							<div className="space-y-2">
-								<Label htmlFor={field.name}>Base currency</Label>
-								<Input
-									id={field.name}
-									maxLength={3}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) =>
-										field.handleChange(event.target.value.toUpperCase())
-									}
-									placeholder="GHS"
-									value={field.state.value}
+								<Label htmlFor={field.name}>Country</Label>
+								<CountrySelector
+									defaultValue={field.state.value}
+									onSelect={(code) => {
+										field.handleChange(code);
+									}}
 								/>
 								{field.state.meta.errors.map((error) => (
 									<p className="text-red-500 text-sm" key={error?.message}>
@@ -125,21 +131,17 @@ export default function OnboardingForm() {
 					</form.Field>
 
 					<form.Field
-						name="countryCode"
-						validators={{ onBlur: onboardingInputSchema.shape.countryCode }}
+						name="baseCurrency"
+						validators={{ onBlur: onboardingInputSchema.shape.baseCurrency }}
 					>
 						{(field) => (
 							<div className="space-y-2">
-								<Label htmlFor={field.name}>Country code</Label>
-								<Input
-									id={field.name}
-									maxLength={2}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) =>
-										field.handleChange(event.target.value.toUpperCase())
-									}
-									placeholder="GH"
+								<Label htmlFor={field.name}>Base currency</Label>
+								<SelectCurrency
+									currencies={uniqueCurrencies}
+									onChange={(value) => {
+										field.handleChange(value);
+									}}
 									value={field.state.value}
 								/>
 								{field.state.meta.errors.map((error) => (

@@ -8,12 +8,8 @@ import {
 
 const RE_AT_LEAST_2 = /at least 2 characters/i;
 const RE_120_CHARS = /120 characters/i;
-const RE_3_LETTER = /3-letter/i;
-const RE_VALID_3_LETTER = /valid 3-letter/i;
-const RE_2_LETTER = /2-letter/i;
-const RE_VALID_2_LETTER = /valid 2-letter/i;
-const RE_ISO_4217 = /iso 4217/i;
-const RE_ISO_3166 = /iso 3166/i;
+const RE_SELECT_CURRENCY = /please select a (valid )?currency/i;
+const RE_SELECT_COUNTRY = /please select a (valid )?country/i;
 
 const VALID_INPUT: OnboardingInput = {
 	companyName: "Maison Paco",
@@ -67,52 +63,52 @@ describe("onboardingInputSchema", () => {
 	});
 
 	describe("baseCurrency", () => {
-		it("accepts a valid 3-letter currency code", () => {
+		it("accepts a valid currency code from the Midday selector dataset", () => {
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, baseCurrency: "GHS" })
+					.success
+			).toBe(true);
+		});
+
+		it("accepts the Ghana cedi code (GHS)", () => {
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, baseCurrency: "GHS" })
+					.success
+			).toBe(true);
+		});
+
+		it("accepts EUR and USD", () => {
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, baseCurrency: "EUR" })
+					.success
+			).toBe(true);
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, baseCurrency: "USD" })
+					.success
+			).toBe(true);
+		});
+
+		it("accepts AQD — Midday location dataset includes Antarctica currency", () => {
 			const result = onboardingInputSchema.safeParse({
 				...VALID_INPUT,
-				baseCurrency: "GHS",
+				baseCurrency: "AQD",
 			});
 			expect(result.success).toBe(true);
 		});
 
-		it("rejects a code shorter than 3 letters", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				baseCurrency: "GH",
-			});
-			expect(result.success).toBe(false);
-			if (!result.success) {
-				expect(result.error.issues[0]?.message).toMatch(RE_3_LETTER);
-			}
-		});
-
-		it("rejects a code longer than 3 letters", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				baseCurrency: "GHSS",
-			});
-			expect(result.success).toBe(false);
-		});
-
-		it("rejects non-alphabetic currency codes", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				baseCurrency: "G12",
-			});
-			expect(result.success).toBe(false);
-			if (!result.success) {
-				expect(result.error.issues[0]?.message).toMatch(RE_VALID_3_LETTER);
-			}
-		});
-
-		it("accepts lowercase letters (schema normalizes them)", () => {
+		it("accepts lowercase letters (schema normalizes before dataset check)", () => {
 			const result = onboardingInputSchema.safeParse({
 				...VALID_INPUT,
 				baseCurrency: "eur",
 			});
-			// The schema uses trim + min/max + regex which accepts lowercase
-			// normalizeOnboardingInput uppercases it afterward
 			expect(result.success).toBe(true);
+		});
+
+		it("accepts GHS in lowercase", () => {
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, baseCurrency: "ghs" })
+					.success
+			).toBe(true);
 		});
 
 		it("rejects an empty currency code", () => {
@@ -121,73 +117,59 @@ describe("onboardingInputSchema", () => {
 				baseCurrency: "",
 			});
 			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error.issues[0]?.message).toMatch(RE_SELECT_CURRENCY);
+			}
 		});
 
-		it("rejects a semantically invalid code that passes shape checks (ZZZ)", () => {
+		it("rejects an arbitrary code not in the Midday dataset (ZZZ)", () => {
 			const result = onboardingInputSchema.safeParse({
 				...VALID_INPUT,
 				baseCurrency: "ZZZ",
 			});
 			expect(result.success).toBe(false);
 			if (!result.success) {
-				expect(result.error.issues[0]?.message).toMatch(RE_ISO_4217);
+				expect(result.error.issues[0]?.message).toMatch(RE_SELECT_CURRENCY);
 			}
 		});
 
-		it("accepts the canonical Ghana cedi code (GHS)", () => {
+		it("rejects a code not found in the selector dataset (XYZ)", () => {
 			const result = onboardingInputSchema.safeParse({
 				...VALID_INPUT,
-				baseCurrency: "GHS",
+				baseCurrency: "XYZ",
 			});
-			expect(result.success).toBe(true);
-		});
-
-		it("accepts GHS in lowercase (schema normalizes before canonical check)", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				baseCurrency: "ghs",
-			});
-			expect(result.success).toBe(true);
+			expect(result.success).toBe(false);
 		});
 	});
 
 	describe("countryCode", () => {
-		it("accepts a valid 2-letter country code", () => {
+		it("accepts a valid country code from the Midday selector dataset", () => {
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, countryCode: "GH" })
+					.success
+			).toBe(true);
+		});
+
+		it("accepts the Ghana country code (GH)", () => {
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, countryCode: "GH" })
+					.success
+			).toBe(true);
+		});
+
+		it("accepts EU — Midday location dataset includes European Union", () => {
 			const result = onboardingInputSchema.safeParse({
 				...VALID_INPUT,
-				countryCode: "GH",
+				countryCode: "EU",
 			});
 			expect(result.success).toBe(true);
 		});
 
-		it("rejects a code shorter than 2 letters", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				countryCode: "G",
-			});
-			expect(result.success).toBe(false);
-			if (!result.success) {
-				expect(result.error.issues[0]?.message).toMatch(RE_2_LETTER);
-			}
-		});
-
-		it("rejects a code longer than 2 letters", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				countryCode: "GHA",
-			});
-			expect(result.success).toBe(false);
-		});
-
-		it("rejects non-alphabetic country codes", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				countryCode: "G1",
-			});
-			expect(result.success).toBe(false);
-			if (!result.success) {
-				expect(result.error.issues[0]?.message).toMatch(RE_VALID_2_LETTER);
-			}
+		it("accepts GH in lowercase", () => {
+			expect(
+				onboardingInputSchema.safeParse({ ...VALID_INPUT, countryCode: "gh" })
+					.success
+			).toBe(true);
 		});
 
 		it("rejects an empty country code", () => {
@@ -196,33 +178,28 @@ describe("onboardingInputSchema", () => {
 				countryCode: "",
 			});
 			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error.issues[0]?.message).toMatch(RE_SELECT_COUNTRY);
+			}
 		});
 
-		it("rejects a semantically invalid code that passes shape checks (ZZ)", () => {
+		it("rejects an arbitrary code not in the Midday dataset (ZZ)", () => {
 			const result = onboardingInputSchema.safeParse({
 				...VALID_INPUT,
 				countryCode: "ZZ",
 			});
 			expect(result.success).toBe(false);
 			if (!result.success) {
-				expect(result.error.issues[0]?.message).toMatch(RE_ISO_3166);
+				expect(result.error.issues[0]?.message).toMatch(RE_SELECT_COUNTRY);
 			}
 		});
 
-		it("accepts the canonical Ghana country code (GH)", () => {
+		it("rejects a code not found in the selector dataset (XX)", () => {
 			const result = onboardingInputSchema.safeParse({
 				...VALID_INPUT,
-				countryCode: "GH",
+				countryCode: "XX",
 			});
-			expect(result.success).toBe(true);
-		});
-
-		it("accepts GH in lowercase (schema normalizes before canonical check)", () => {
-			const result = onboardingInputSchema.safeParse({
-				...VALID_INPUT,
-				countryCode: "gh",
-			});
-			expect(result.success).toBe(true);
+			expect(result.success).toBe(false);
 		});
 	});
 });

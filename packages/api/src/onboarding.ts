@@ -1,9 +1,16 @@
 import z from "zod";
 
-import {
-	CANONICAL_COUNTRY_CODES,
-	CANONICAL_CURRENCY_CODES,
-} from "./canonical-codes";
+import countryFlags from "./country-flags";
+import { uniqueCurrencies } from "./currencies";
+
+// Derive validation sets directly from Midday's location datasets so the
+// server-side boundary matches exactly the selector surface presented to users.
+const LOCATION_COUNTRY_CODES = new Set(
+	Object.keys(countryFlags).map((k) => k.toUpperCase())
+);
+const LOCATION_CURRENCY_CODES = new Set(
+	uniqueCurrencies.map((c) => c.toUpperCase())
+);
 
 export const DEFAULT_INDUSTRY_KEY = "fashion" as const;
 export const DEFAULT_INDUSTRY_CONFIG_VERSION = "v1" as const;
@@ -17,22 +24,18 @@ export const onboardingInputSchema = z.object({
 	baseCurrency: z
 		.string()
 		.trim()
-		.min(3, "Use a 3-letter currency code")
-		.max(3, "Use a 3-letter currency code")
-		.regex(/^[A-Za-z]{3}$/, "Use a valid 3-letter currency code")
+		.min(1, "Please select a currency")
 		.refine(
-			(code) => CANONICAL_CURRENCY_CODES.has(code.toUpperCase()),
-			"Use a recognized ISO 4217 currency code (e.g. GHS, EUR, USD)"
+			(code) => LOCATION_CURRENCY_CODES.has(code.toUpperCase()),
+			"Please select a valid currency from the list"
 		),
 	countryCode: z
 		.string()
 		.trim()
-		.min(2, "Use a 2-letter country code")
-		.max(2, "Use a 2-letter country code")
-		.regex(/^[A-Za-z]{2}$/, "Use a valid 2-letter country code")
+		.min(1, "Please select a country")
 		.refine(
-			(code) => CANONICAL_COUNTRY_CODES.has(code.toUpperCase()),
-			"Use a recognized ISO 3166-1 country code (e.g. GH, FR, US)"
+			(code) => LOCATION_COUNTRY_CODES.has(code.toUpperCase()),
+			"Please select a valid country from the list"
 		),
 });
 
