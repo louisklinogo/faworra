@@ -12,6 +12,8 @@ const RE_3_LETTER = /3-letter/i;
 const RE_VALID_3_LETTER = /valid 3-letter/i;
 const RE_2_LETTER = /2-letter/i;
 const RE_VALID_2_LETTER = /valid 2-letter/i;
+const RE_ISO_4217 = /iso 4217/i;
+const RE_ISO_3166 = /iso 3166/i;
 
 const VALID_INPUT: OnboardingInput = {
 	companyName: "Maison Paco",
@@ -120,6 +122,33 @@ describe("onboardingInputSchema", () => {
 			});
 			expect(result.success).toBe(false);
 		});
+
+		it("rejects a semantically invalid code that passes shape checks (ZZZ)", () => {
+			const result = onboardingInputSchema.safeParse({
+				...VALID_INPUT,
+				baseCurrency: "ZZZ",
+			});
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error.issues[0]?.message).toMatch(RE_ISO_4217);
+			}
+		});
+
+		it("accepts the canonical Ghana cedi code (GHS)", () => {
+			const result = onboardingInputSchema.safeParse({
+				...VALID_INPUT,
+				baseCurrency: "GHS",
+			});
+			expect(result.success).toBe(true);
+		});
+
+		it("accepts GHS in lowercase (schema normalizes before canonical check)", () => {
+			const result = onboardingInputSchema.safeParse({
+				...VALID_INPUT,
+				baseCurrency: "ghs",
+			});
+			expect(result.success).toBe(true);
+		});
 	});
 
 	describe("countryCode", () => {
@@ -167,6 +196,33 @@ describe("onboardingInputSchema", () => {
 				countryCode: "",
 			});
 			expect(result.success).toBe(false);
+		});
+
+		it("rejects a semantically invalid code that passes shape checks (ZZ)", () => {
+			const result = onboardingInputSchema.safeParse({
+				...VALID_INPUT,
+				countryCode: "ZZ",
+			});
+			expect(result.success).toBe(false);
+			if (!result.success) {
+				expect(result.error.issues[0]?.message).toMatch(RE_ISO_3166);
+			}
+		});
+
+		it("accepts the canonical Ghana country code (GH)", () => {
+			const result = onboardingInputSchema.safeParse({
+				...VALID_INPUT,
+				countryCode: "GH",
+			});
+			expect(result.success).toBe(true);
+		});
+
+		it("accepts GH in lowercase (schema normalizes before canonical check)", () => {
+			const result = onboardingInputSchema.safeParse({
+				...VALID_INPUT,
+				countryCode: "gh",
+			});
+			expect(result.success).toBe(true);
 		});
 	});
 });
