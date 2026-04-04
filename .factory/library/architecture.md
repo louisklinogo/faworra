@@ -72,11 +72,20 @@ Workers should diverge only where Faworra has an explicit approved difference:
 - **modular schema modules** instead of one monolithic schema file
 - Faworra’s current product scope and naming where the domain differs
 
+### Next.js 16 proxy.ts convention (Faworra divergence)
+
+Next.js 16.x renamed `middleware.ts` to `proxy.ts` as the file convention for
+routing middleware. Having BOTH files causes a conflict. Faworra's dashboard uses
+`src/proxy.ts` as the sole middleware file. Do NOT create `src/middleware.ts`.
+
+The Midday reference still uses `middleware.ts` (Next.js 15 convention).
+When adapting Midday middleware patterns, use `proxy.ts` instead.
+
 ### Concrete Midday reference points for this mission
 
 Workers should use these Midday files/patterns as the primary shape reference:
 
-- protected middleware: `midday/apps/dashboard/src/middleware.ts`
+- protected middleware: `midday/apps/dashboard/src/middleware.ts` (adapt to `proxy.ts` in Faworra)
 - protected app shell bootstrap: `midday/apps/dashboard/src/app/[locale]/(app)/(sidebar)/layout.tsx`
 - request-context headers: `midday/apps/dashboard/src/trpc/request-context.ts`
 - user/team primitives: `midday/apps/api/src/trpc/routers/user.ts`, `midday/apps/api/src/trpc/routers/team.ts`
