@@ -1,0 +1,26 @@
+{
+  "milestone": "preflight-structure",
+  "round": 1,
+  "status": "pass",
+  "generatedAt": "2026-04-04T01:24:03.581529+00:00",
+  "assertionsSummary": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "blocked": 0
+  },
+  "passedAssertions": [
+    "VAL-RUNTIME-001",
+    "VAL-RUNTIME-002"
+  ],
+  "failedAssertions": [],
+  "blockedAssertions": [],
+  "appliedUpdates": [
+    {
+      "target": "user-testing.md",
+      "description": "Added flow validator guidance sections for browser and API surfaces, including isolation and evidence rules for the preflight runtime checks.",
+      "source": "setup"
+    }
+  ],
+  "previousRound": null
+}

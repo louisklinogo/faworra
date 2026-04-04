@@ -92,3 +92,19 @@ Pre-mission dry run findings:
 Mission implication:
 
 - Milestone 1 must restore a billing-free validation path before downstream browser validation can pass
+
+## Flow Validator Guidance: Browser surface
+
+- Use the `agent-browser` skill and never use the default session.
+- For this worker session, browser validators must use isolated session ids derived from `b7573f126b70`, such as `b7573f126b70__login`.
+- Stay on the Portless dashboard origin: `http://dashboard.faworra.localhost:1355`.
+- Do not create or mutate shared authenticated state unless the assigned assertion explicitly requires it; the preflight browser assertion is guest-only and should remain signed out.
+- Capture at least one screenshot, console errors, and the network requests relevant to `/login` and its guest bootstrap/session calls.
+- Save browser evidence only under the assigned mission evidence directory for the validator group.
+
+## Flow Validator Guidance: API surface
+
+- Use `curl` against the real API origin: `http://api.faworra.localhost:1355`.
+- Do not mutate database or auth state for preflight checks; the API preflight assertion is a health-only read.
+- Record exact HTTP status codes and response bodies for the health surface.
+- Save terminal evidence only under the assigned mission evidence directory for the validator group.

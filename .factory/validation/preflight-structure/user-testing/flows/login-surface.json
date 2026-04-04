@@ -1,0 +1,48 @@
+{
+  "groupId": "login-surface",
+  "testedAt": "2026-04-04T01:22:39+00:00",
+  "isolation": {
+    "missionDir": "/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00",
+    "dashboardUrl": "http://dashboard.faworra.localhost:1355/login",
+    "browserSession": "b7573f126b70__login",
+    "authState": "guest-only"
+  },
+  "toolsUsed": ["agent-browser"],
+  "assertions": [
+    {
+      "id": "VAL-RUNTIME-002",
+      "title": "Dashboard login surface loads without server errors",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "Open /login in the assigned browser session and wait for the initial load to settle",
+          "expected": "The dashboard login surface renders without a 5xx failure",
+          "observed": "The page stayed on http://dashboard.faworra.localhost:1355/login and rendered the auth entry UI."
+        },
+        {
+          "action": "Inspect the rendered auth entry UI after load",
+          "expected": "The auth UI becomes actionable for a signed-out guest",
+          "observed": "The page showed actionable Name, Email, and Password fields plus Sign Up / Sign In controls; Email, Password, and Sign Up controls reported enabled=true."
+        },
+        {
+          "action": "Review console output and network activity for /login and guest session bootstrap",
+          "expected": "No 5xx render failure, no console errors, and guest bootstrap/session requests succeed",
+          "observed": "No page errors were reported. Browser network log captured GET /login and GET http://api.faworra.localhost:1355/api/auth/get-session. Browser-context fetch checks returned /login -> 200 text/html and /api/auth/get-session -> 200 with body null."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "preflight-structure/login-surface/VAL-RUNTIME-002-login-ui.png"
+        ],
+        "consoleErrors": "none",
+        "network": "Browser reload captured GET /login (document) and GET http://api.faworra.localhost:1355/api/auth/get-session (fetch). Additional browser-context GET checks returned /login status 200 and /api/auth/get-session status 200 with guest body null; no 5xx requests were observed.",
+        "finalUrl": "http://dashboard.faworra.localhost:1355/login",
+        "renderedState": "Auth entry card rendered with Name, Email, Password, Sign Up, and Already have an account? Sign In controls visible and actionable."
+      },
+      "issues": null
+    }
+  ],
+  "frictions": [],
+  "blockers": [],
+  "summary": "Tested 1 assertion: 1 passed. The guest /login surface rendered successfully, stayed actionable after initial load, showed no page errors, and its guest session bootstrap request succeeded without any observed 5xx failure."
+}
