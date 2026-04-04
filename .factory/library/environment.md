@@ -30,6 +30,7 @@ Workers should expect these env files to exist:
 
 - The active database for this mission is the cloud Supabase dev project `faworra-new` (`nwhsdbihxxobasadahbq`).
 - Keep the project connection string only in local env files such as `apps/api/.env`; never commit credentials or paste them into tracked mission artifacts.
+- If `apps/api/.env` changes, restart the API service so Better Auth and Drizzle pick up the new `DATABASE_URL`.
 - Supabase MCP may be used for read-only checks (project status, tables, advisors, logs), but not for writes.
 - All schema creation and migration work must go through the repo’s Drizzle commands.
 
