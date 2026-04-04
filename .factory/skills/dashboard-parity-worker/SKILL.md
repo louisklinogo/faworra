@@ -31,17 +31,19 @@ Use this skill for features that touch:
    - login/onboarding routing
    - team dropdown
    - teams/invite recovery surface
+   - the exact Midday component(s) or selector(s) that should be copied/cloned for the target UI
 3. Identify the exact browser assertions the feature completes. Do not invent new flows outside the contract.
 4. Write tests first for the nearest stable seam:
    - redirect/return helpers
    - route-state utilities
    - component behavior or rendering tests where feasible
    If a feature is mostly shell/routing work, add at least one focused automated test for the core non-visual decision logic before implementing the UI flow. For `return_to` changes, include slash-backslash and encoded external regressions, not just obvious `https://` and `//` cases.
-   For onboarding/input validation work, validate against canonical code sets or other approved domain sources when the product depends on real codes; length/regex checks alone are insufficient.
-5. Implement the smallest Midday-shaped UI and routing change that satisfies the mission contract.
+   For onboarding/input validation work, follow the actual Midday input surface and data source first; do not invent stricter code sets or alternate validation rules unless the user explicitly approves that divergence.
+5. Implement the smallest Midday-shaped UI and routing change that satisfies the mission contract by copying/cloning Midday UI components and interaction patterns into Faworra. Do not invent substitute UI primitives, substitute free-text forms for Midday selectors, or stricter/cleaner UX rules unless the user has explicitly approved that divergence.
 6. Run the scoped validators from `.factory/services.yaml`.
 7. Use `agent-browser` to manually verify every changed browser flow end-to-end. Each verified flow must be recorded in the handoff.
-8. If the UI depends on a missing API primitive or unresolved routing/product decision, stop and return to the orchestrator instead of inventing a workaround.
+8. If the Midday reference and the current implementation idea disagree, stop and return to the orchestrator instead of inventing a workaround or a “better” alternative.
+9. If the UI depends on a missing API primitive or unresolved routing/product decision, stop and return to the orchestrator instead of inventing a workaround.
 
 ## Example Handoff
 
