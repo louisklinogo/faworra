@@ -1,0 +1,205 @@
+{
+  "apiBaseUrl": "http://api.faworra.localhost:1355",
+  "dashboardBaseUrl": "http://dashboard.faworra.localhost:1355",
+  "generatedAt": "2026-04-05T00:28:30.962Z",
+  "namespace": "auth-shell-round1",
+  "users": {
+    "ready": {
+      "email": "auth-shell-round1-ready@example.com",
+      "id": "EH5rTYcouLhuYxxLBL5A5Z6IurSndEUS",
+      "label": "ready",
+      "name": "Auth Shell ready"
+    },
+    "teamless": {
+      "email": "auth-shell-round1-teamless@example.com",
+      "id": "1DySdbfDObDqmL3OVrh3naoTAsL9UM2o",
+      "label": "teamless",
+      "name": "Auth Shell teamless"
+    },
+    "reactivation": {
+      "email": "auth-shell-round1-reactivation@example.com",
+      "id": "opABg07XZPvMVNZRFuA8Hx4LAOvDMgLu",
+      "label": "reactivation",
+      "name": "Auth Shell reactivation"
+    },
+    "staleFallback": {
+      "email": "auth-shell-round1-stale-fallback@example.com",
+      "id": "mzVCUFCIdQ4xrxhezn7Ur9bGffoNokiz",
+      "label": "stale-fallback",
+      "name": "Auth Shell stale-fallback"
+    },
+    "conflicting": {
+      "email": "auth-shell-round1-conflicting@example.com",
+      "id": "BkvFYYMu3rBj3QLSoBMIonFXlhC8Hs3h",
+      "label": "conflicting",
+      "name": "Auth Shell conflicting"
+    },
+    "foreign": {
+      "email": "auth-shell-round1-foreign@example.com",
+      "id": "wiCS7BlZoe4kb2j3cHJLGSV0kQKcg9EO",
+      "label": "foreign",
+      "name": "Auth Shell foreign"
+    }
+  },
+  "workspaces": {
+    "ready": {
+      "membership": {
+        "id": "3c1f323c-bd32-45af-aa84-a42d260c37cf",
+        "userId": "EH5rTYcouLhuYxxLBL5A5Z6IurSndEUS",
+        "teamId": "8df502bc-76a5-4125-b77f-f34d708f20de",
+        "role": "owner",
+        "createdAt": "2026-04-05T00:28:28.608Z",
+        "updatedAt": "2026-04-05T00:28:28.608Z"
+      },
+      "settings": {
+        "teamId": "8df502bc-76a5-4125-b77f-f34d708f20de",
+        "baseCurrency": "GHS",
+        "countryCode": "GH",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-05T00:28:28.776Z",
+        "updatedAt": "2026-04-05T00:28:28.776Z"
+      },
+      "team": {
+        "id": "8df502bc-76a5-4125-b77f-f34d708f20de",
+        "name": "auth-shell-round1 Ready Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-05T00:28:28.425Z",
+        "updatedAt": "2026-04-05T00:28:28.425Z"
+      }
+    },
+    "foreign": {
+      "membership": {
+        "id": "81a80fae-4c4b-4bfb-8f27-637768fc6be9",
+        "userId": "wiCS7BlZoe4kb2j3cHJLGSV0kQKcg9EO",
+        "teamId": "fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+        "role": "owner",
+        "createdAt": "2026-04-05T00:28:29.416Z",
+        "updatedAt": "2026-04-05T00:28:29.416Z"
+      },
+      "settings": {
+        "teamId": "fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+        "baseCurrency": "USD",
+        "countryCode": "US",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-05T00:28:29.608Z",
+        "updatedAt": "2026-04-05T00:28:29.608Z"
+      },
+      "team": {
+        "id": "fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+        "name": "auth-shell-round1 Foreign Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-05T00:28:29.208Z",
+        "updatedAt": "2026-04-05T00:28:29.208Z"
+      }
+    },
+    "reactivation": {
+      "membership": {
+        "id": "46701e1d-e12e-40ac-80a0-00d8d78c80bf",
+        "userId": "opABg07XZPvMVNZRFuA8Hx4LAOvDMgLu",
+        "teamId": "76e63e57-e983-4e0b-8f44-fa4b364e12c2",
+        "role": "owner",
+        "createdAt": "2026-04-05T00:28:30.136Z",
+        "updatedAt": "2026-04-05T00:28:30.136Z"
+      },
+      "settings": {
+        "teamId": "76e63e57-e983-4e0b-8f44-fa4b364e12c2",
+        "baseCurrency": "EUR",
+        "countryCode": "FR",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-05T00:28:30.312Z",
+        "updatedAt": "2026-04-05T00:28:30.312Z"
+      },
+      "team": {
+        "id": "76e63e57-e983-4e0b-8f44-fa4b364e12c2",
+        "name": "auth-shell-round1 Reactivation Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-05T00:28:29.968Z",
+        "updatedAt": "2026-04-05T00:28:29.968Z"
+      }
+    },
+    "staleFallback": {
+      "membership": {
+        "id": "b5229a57-6c7c-4fb9-a6b4-62dfd2201fab",
+        "userId": "mzVCUFCIdQ4xrxhezn7Ur9bGffoNokiz",
+        "teamId": "569a489d-660c-44aa-8c86-762f470b33ff",
+        "role": "owner",
+        "createdAt": "2026-04-05T00:28:30.680Z",
+        "updatedAt": "2026-04-05T00:28:30.680Z"
+      },
+      "settings": {
+        "teamId": "569a489d-660c-44aa-8c86-762f470b33ff",
+        "baseCurrency": "GBP",
+        "countryCode": "GB",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-05T00:28:30.856Z",
+        "updatedAt": "2026-04-05T00:28:30.856Z"
+      },
+      "team": {
+        "id": "569a489d-660c-44aa-8c86-762f470b33ff",
+        "name": "auth-shell-round1 Stale Fallback Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-05T00:28:30.496Z",
+        "updatedAt": "2026-04-05T00:28:30.496Z"
+      }
+    },
+    "conflictingPrimary": {
+      "membership": {
+        "id": "c5b4bb10-bc6e-44e0-b2e3-ae250791bfd5",
+        "userId": "BkvFYYMu3rBj3QLSoBMIonFXlhC8Hs3h",
+        "teamId": "53713ba0-d149-4238-a438-8686245623a9",
+        "role": "owner",
+        "createdAt": "2026-04-05T00:28:31.408Z",
+        "updatedAt": "2026-04-05T00:28:31.408Z"
+      },
+      "settings": {
+        "teamId": "53713ba0-d149-4238-a438-8686245623a9",
+        "baseCurrency": "KES",
+        "countryCode": "KE",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-05T00:28:31.576Z",
+        "updatedAt": "2026-04-05T00:28:31.576Z"
+      },
+      "team": {
+        "id": "53713ba0-d149-4238-a438-8686245623a9",
+        "name": "auth-shell-round1 Conflicting Primary Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-05T00:28:31.224Z",
+        "updatedAt": "2026-04-05T00:28:31.224Z"
+      }
+    },
+    "conflictingSecondaryMembership": {
+      "id": "bf549277-0498-4564-acd2-889aae6f41dc",
+      "userId": "BkvFYYMu3rBj3QLSoBMIonFXlhC8Hs3h",
+      "teamId": "fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+      "role": "member",
+      "createdAt": "2026-04-05T00:28:31.744Z",
+      "updatedAt": "2026-04-05T00:28:31.744Z"
+    }
+  },
+  "pendingInvite": {
+    "id": "f262be97-f5b9-4ad5-a932-4c34c78e9af4",
+    "teamId": "fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+    "email": "auth-shell-round1-ready@example.com",
+    "normalizedEmail": "auth-shell-round1-ready@example.com",
+    "role": "member",
+    "status": "pending",
+    "tokenHash": "114dc3d0c2b79d772921888a6bfe393591fff4fe51e4b10cd9ffad08a2e1ee00",
+    "invitedByUserId": "wiCS7BlZoe4kb2j3cHJLGSV0kQKcg9EO",
+    "acceptedByUserId": null,
+    "expiresAt": "2026-04-19T00:28:30.782Z",
+    "acceptedAt": null,
+    "createdAt": "2026-04-05T00:28:32.112Z",
+    "updatedAt": "2026-04-05T00:28:32.112Z"
+  },
+  "invalidSwitchMembershipId": "81a80fae-4c4b-4bfb-8f27-637768fc6be9"
+}

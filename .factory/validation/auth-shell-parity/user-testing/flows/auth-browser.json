@@ -1,0 +1,215 @@
+{
+  "groupId": "auth-browser",
+  "testedAt": "2026-04-05T01:10:00+00:00",
+  "isolation": {
+    "missionDir": "/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00",
+    "dashboardUrl": "http://dashboard.faworra.localhost:1355",
+    "apiUrl": "http://api.faworra.localhost:1355",
+    "browserSession": "1d4e1874b95b__auth",
+    "fixtureUser": "auth-shell-round1-ready@example.com"
+  },
+  "toolsUsed": [
+    "agent-browser"
+  ],
+  "assertions": [
+    {
+      "id": "VAL-AUTH-001",
+      "title": "Protected routes redirect guests to login with destination preserved",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "Open /dashboard as a signed-out guest in the assigned browser session.",
+          "expected": "The app redirects to /login with return_to preserving /dashboard.",
+          "observed": "The browser landed on http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard and rendered the login surface."
+        },
+        {
+          "action": "Open /dashboard?tab=settings as a signed-out guest.",
+          "expected": "The redirect keeps the intended protected destination including the query string.",
+          "observed": "The browser landed on http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard%3Ftab%3Dsettings."
+        },
+        {
+          "action": "Open /onboarding as a signed-out guest.",
+          "expected": "The app redirects to /login with return_to preserving /onboarding.",
+          "observed": "The browser landed on http://dashboard.faworra.localhost:1355/login?return_to=%2Fonboarding."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "auth-shell-parity/auth-browser/VAL-AUTH-001-dashboard-redirect.png",
+          "auth-shell-parity/auth-browser/VAL-AUTH-001-dashboard-settings-redirect.png",
+          "auth-shell-parity/auth-browser/VAL-AUTH-001-onboarding-redirect.png"
+        ],
+        "consoleErrors": "none",
+        "network": "Browser navigation showed guest protected-entry redirects to /login?return_to=... for /dashboard, /dashboard?tab=settings, and /onboarding. The request log captured protected document requests such as GET /dashboard?tab=settings and GET /onboarding followed by GET /login?return_to=%2Fdashboard%3Ftab%3Dsettings and GET /login?return_to=%2Fonboarding, plus GET http://api.faworra.localhost:1355/api/auth/get-session as the guest bootstrap request.",
+        "finalUrls": [
+          "http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard",
+          "http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard%3Ftab%3Dsettings",
+          "http://dashboard.faworra.localhost:1355/login?return_to=%2Fonboarding"
+        ]
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-AUTH-002",
+      "title": "Unsafe return destinations are neutralized",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "Open /login?return_to=https%3A%2F%2Fevil.example as a guest and sign in with the assigned ready user.",
+          "expected": "Successful sign-in stays on the app origin and falls back to a safe in-app destination.",
+          "observed": "After sign-in the browser landed on http://dashboard.faworra.localhost:1355/dashboard and did not navigate to the external origin."
+        },
+        {
+          "action": "Open /login?return_to=%2F%2Fevil.example and sign in again.",
+          "expected": "Protocol-relative external navigation is neutralized.",
+          "observed": "After sign-in the browser again landed on http://dashboard.faworra.localhost:1355/dashboard."
+        },
+        {
+          "action": "Open /login?return_to=%2F%5Cevil.example and sign in again.",
+          "expected": "The encoded slash-backslash variant does not escape the app.",
+          "observed": "After sign-in the browser again landed on http://dashboard.faworra.localhost:1355/dashboard."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "auth-shell-parity/auth-browser/VAL-AUTH-002-https-external-fallback.png",
+          "auth-shell-parity/auth-browser/VAL-AUTH-002-protocol-relative-fallback.png",
+          "auth-shell-parity/auth-browser/VAL-AUTH-002-slash-backslash-fallback.png"
+        ],
+        "consoleErrors": "none",
+        "network": "Each unsafe login URL kept the browser on the dashboard.faworra.localhost origin and resolved to /dashboard after successful sign-in. The better-auth.session_token cookie was present after sign-in. In this environment agent-browser did not surface the intermediate sign-in form POST in its request log, so the safe-final-URL and authenticated cookie state were used as supporting network evidence.",
+        "finalUrls": [
+          "http://dashboard.faworra.localhost:1355/dashboard",
+          "http://dashboard.faworra.localhost:1355/dashboard",
+          "http://dashboard.faworra.localhost:1355/dashboard"
+        ]
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-AUTH-003",
+      "title": "Authenticated sessions are redirected away from login appropriately",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "While authenticated as the assigned ready user, open /login.",
+          "expected": "The user cannot remain on the public login page and is sent to the protected dashboard.",
+          "observed": "Opening /login immediately landed on http://dashboard.faworra.localhost:1355/dashboard with the authenticated dashboard shell visible."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "auth-shell-parity/auth-browser/VAL-AUTH-003-login-redirect-dashboard.png"
+        ],
+        "consoleErrors": "none",
+        "network": "GET /login in an authenticated ready-user session resolved to the protected dashboard URL without any observed 5xx render failure.",
+        "finalUrl": "http://dashboard.faworra.localhost:1355/dashboard"
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-AUTH-004",
+      "title": "Sign-out returns to the public surface and restores route protection",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "From the dashboard, open the user menu for the assigned ready user.",
+          "expected": "Signed-in UI state is visible before sign-out.",
+          "observed": "The dashboard showed the Auth Shell ready user menu button and its Sign Out menu action."
+        },
+        {
+          "action": "Use the dashboard Sign Out action.",
+          "expected": "The app returns to a usable signed-out auth surface.",
+          "observed": "The browser landed on http://dashboard.faworra.localhost:1355/login and rendered the signed-out auth form."
+        },
+        {
+          "action": "Revisit /dashboard after sign-out.",
+          "expected": "The protected route redirects back to login again.",
+          "observed": "The browser landed on http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard and no auth cookie remained in the session."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "auth-shell-parity/auth-browser/VAL-AUTH-004-before-signout.png",
+          "auth-shell-parity/auth-browser/VAL-AUTH-004-after-signout.png"
+        ],
+        "consoleErrors": "none",
+        "network": "The dashboard Sign Out action returned the browser to /login, and a follow-up visit to GET /dashboard redirected to /login?return_to=%2Fdashboard. The browser cookie jar was empty afterward, confirming the signed-out session state.",
+        "finalUrls": [
+          "http://dashboard.faworra.localhost:1355/login",
+          "http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard"
+        ]
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-AUTH-005",
+      "title": "Invalid or stale session cookies recover to a usable login surface",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "Open the login surface in a fresh assigned browser session and inject better-auth.session_token=invalid-stale-token for the dashboard origin.",
+          "expected": "The browser holds an invalid auth cookie before testing protected-route recovery.",
+          "observed": "The session cookie jar showed better-auth.session_token=invalid-stale-token before visiting a protected route."
+        },
+        {
+          "action": "With the invalid cookie still present, open /dashboard.",
+          "expected": "The app recovers to a usable login surface without an infinite redirect loop.",
+          "observed": "The browser landed on http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard, settled normally, and showed actionable Email/Password login controls without a redirect loop."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "auth-shell-parity/auth-browser/VAL-AUTH-005-stale-cookie-recovery.png"
+        ],
+        "consoleErrors": "none",
+        "network": "With better-auth.session_token manually set to an invalid value, protected-route entry recovered to /login?return_to=%2Fdashboard and stabilized on the signed-out auth surface; no looping navigation was observed during load settlement.",
+        "finalUrl": "http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard",
+        "cookieState": "better-auth.session_token remained set to the invalid value, but the app treated the session as unauthenticated and rendered the usable login surface."
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-CROSS-001",
+      "title": "Existing-user protected entry resumes after sign-in and readiness",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "As a signed-out guest, open /dashboard?tab=settings.",
+          "expected": "The app redirects to /login with the intended destination preserved in return_to.",
+          "observed": "The browser landed on http://dashboard.faworra.localhost:1355/login?return_to=%2Fdashboard%3Ftab%3Dsettings."
+        },
+        {
+          "action": "From that login redirect, sign in with the existing ready fixture user.",
+          "expected": "The app resumes the originally requested protected destination after authentication.",
+          "observed": "After sign-in the browser resumed http://dashboard.faworra.localhost:1355/dashboard?tab=settings instead of leaving the user on /login or dropping the intended destination."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "auth-shell-parity/auth-browser/VAL-CROSS-001-login-redirect.png",
+          "auth-shell-parity/auth-browser/VAL-CROSS-001-resumed-destination.png"
+        ],
+        "consoleErrors": "none",
+        "network": "The guest protected-entry navigation landed on /login?return_to=%2Fdashboard%3Ftab%3Dsettings, and successful sign-in resumed the exact protected URL /dashboard?tab=settings on the same app origin.",
+        "finalUrl": "http://dashboard.faworra.localhost:1355/dashboard?tab=settings"
+      },
+      "issues": null
+    }
+  ],
+  "frictions": [
+    {
+      "description": "agent-browser's request log did not reliably surface the intermediate sign-in form POSTs after successful login, even though the redirect/document requests and resulting auth cookie state were observable.",
+      "resolved": true,
+      "resolution": "Used the browser's final URL, rendered protected destination, and cookie presence/absence as supporting auth-network evidence for the login and sign-out assertions.",
+      "affectedAssertions": [
+        "VAL-AUTH-002",
+        "VAL-AUTH-003",
+        "VAL-AUTH-004",
+        "VAL-CROSS-001"
+      ]
+    }
+  ],
+  "blockers": [],
+  "summary": "Tested 6 browser assertions for auth-shell-parity: 6 passed, 0 failed, 0 blocked. Guest protected-entry redirects preserved destinations, unsafe return_to values were neutralized, authenticated /login redirected to the dashboard, protected-entry sign-in resumed the intended route, sign-out restored signed-out protection, and invalid session-cookie recovery returned to a usable login surface without a redirect loop."
+}

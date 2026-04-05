@@ -1,0 +1,149 @@
+{
+  "groupId": "api-onboarding-recovery",
+  "testedAt": "2026-04-05T00:37:16.055871+00:00",
+  "isolation": {
+    "missionDir": "/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00",
+    "apiUrl": "http://api.faworra.localhost:1355",
+    "fixturesFile": "/home/louis/developer/faworra/faworra-new/.factory/validation/auth-shell-parity/user-testing/fixtures.json",
+    "assignedUsers": {
+      "reactivation": "auth-shell-round1-reactivation@example.com",
+      "staleFallback": "auth-shell-round1-stale-fallback@example.com",
+      "conflicting": "auth-shell-round1-conflicting@example.com"
+    },
+    "cookieHandling": "Captured the exact set-cookie header from POST /api/auth/sign-in/email for each user and reused the resulting cookie pair in explicit Cookie headers per request.",
+    "mutationBoundary": "Only POST /trpc/onboarding.complete for the reactivation fixture user was mutated."
+  },
+  "toolsUsed": [
+    "curl"
+  ],
+  "assertions": [
+    {
+      "id": "VAL-ONBOARD-005",
+      "title": "Existing accepted membership is reactivated instead of duplicated",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "Sign in as the seeded reactivation user auth-shell-round1-reactivation@example.com and capture the exact auth cookie from POST /api/auth/sign-in/email",
+          "expected": "HTTP 200 and an isolated auth cookie for the reactivation user",
+          "observed": "POST /api/auth/sign-in/email -> 200 and an auth cookie was captured for reuse in explicit Cookie headers."
+        },
+        {
+          "action": "Call POST /trpc/onboarding.complete with valid onboarding data for the reactivation user",
+          "expected": "The mutation reactivates the pre-seeded workspace 76e63e57-e983-4e0b-8f44-fa4b364e12c2 instead of bootstrapping a duplicate team",
+          "observed": "POST /trpc/onboarding.complete -> 200 and returned activeTeam.id 76e63e57-e983-4e0b-8f44-fa4b364e12c2."
+        },
+        {
+          "action": "Fetch GET /trpc/user.me with the same cookie",
+          "expected": "user.me reports needsOnboarding false and activeTeam.id 76e63e57-e983-4e0b-8f44-fa4b364e12c2",
+          "observed": "GET /trpc/user.me -> 200 with activeTeam.id 76e63e57-e983-4e0b-8f44-fa4b364e12c2 and needsOnboarding False."
+        },
+        {
+          "action": "Fetch GET /trpc/team.current with the same cookie",
+          "expected": "team.current resolves the same pre-seeded workspace 76e63e57-e983-4e0b-8f44-fa4b364e12c2",
+          "observed": "GET /trpc/team.current -> 200 with id 76e63e57-e983-4e0b-8f44-fa4b364e12c2."
+        }
+      ],
+      "evidence": {
+        "commands": [
+          "curl -sS -X POST \"http://api.faworra.localhost:1355/api/auth/sign-in/email\" -H \"content-type: application/json\" --data \"{\"email\":\"auth-shell-round1-reactivation@example.com\",\"password\":\"Password123!\"}\"",
+          "curl -sS -X POST \"http://api.faworra.localhost:1355/trpc/onboarding.complete\" -H \"content-type: application/json\" -H \"Cookie: <captured-cookie>\" --data \"{\"companyName\":\"Reactivation Atelier\",\"baseCurrency\":\"EUR\",\"countryCode\":\"FR\"}\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/user.me\" -H \"Cookie: <captured-cookie>\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/team.current\" -H \"Cookie: <captured-cookie>\""
+        ],
+        "terminalOutput": [
+          "auth-shell-parity/api-onboarding-recovery/VAL-ONBOARD-005-onboarding-complete.txt",
+          "auth-shell-parity/api-onboarding-recovery/VAL-ONBOARD-005-user-me.txt",
+          "auth-shell-parity/api-onboarding-recovery/VAL-ONBOARD-005-team-current.txt"
+        ],
+        "network": "POST /trpc/onboarding.complete -> 200; GET /trpc/user.me -> 200; GET /trpc/team.current -> 200; all responses resolved team 76e63e57-e983-4e0b-8f44-fa4b364e12c2 (auth-shell-round1 Reactivation Workspace).",
+        "resolvedTeamId": "76e63e57-e983-4e0b-8f44-fa4b364e12c2",
+        "resolvedTeamName": "auth-shell-round1 Reactivation Workspace"
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-CROSS-003",
+      "title": "Stale stored team context recovers before forcing onboarding",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "Sign in as the seeded staleFallback user auth-shell-round1-stale-fallback@example.com and capture the exact auth cookie from POST /api/auth/sign-in/email",
+          "expected": "HTTP 200 and an isolated cookie for the stale fallback user",
+          "observed": "POST /api/auth/sign-in/email -> 200 and an auth cookie was captured for the stale fallback user."
+        },
+        {
+          "action": "Fetch GET /trpc/user.me for the stale-pointer fallback user",
+          "expected": "user.me recovers to fallback workspace 569a489d-660c-44aa-8c86-762f470b33ff and does not force onboarding",
+          "observed": "GET /trpc/user.me -> 200 with activeTeam.id 569a489d-660c-44aa-8c86-762f470b33ff and needsOnboarding False."
+        },
+        {
+          "action": "Fetch GET /trpc/team.current for the stale-pointer fallback user",
+          "expected": "team.current resolves fallback workspace 569a489d-660c-44aa-8c86-762f470b33ff",
+          "observed": "GET /trpc/team.current -> 200 with id 569a489d-660c-44aa-8c86-762f470b33ff."
+        },
+        {
+          "action": "Fetch GET /trpc/privateData for the stale-pointer fallback user",
+          "expected": "protected team data succeeds against fallback workspace 569a489d-660c-44aa-8c86-762f470b33ff",
+          "observed": "GET /trpc/privateData -> 200 with activeTeam.id 569a489d-660c-44aa-8c86-762f470b33ff."
+        },
+        {
+          "action": "Sign in as the seeded conflicting user auth-shell-round1-conflicting@example.com and capture the exact auth cookie from POST /api/auth/sign-in/email",
+          "expected": "HTTP 200 and an isolated cookie for the conflicting user",
+          "observed": "POST /api/auth/sign-in/email -> 200 and an auth cookie was captured for the conflicting user."
+        },
+        {
+          "action": "Fetch GET /trpc/user.me for the conflicting-pointer user",
+          "expected": "user.me honors activeMembershipId precedence and resolves workspace 53713ba0-d149-4238-a438-8686245623a9 instead of foreign workspace fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+          "observed": "GET /trpc/user.me -> 200 with activeTeam.id 53713ba0-d149-4238-a438-8686245623a9 and needsOnboarding False."
+        },
+        {
+          "action": "Fetch GET /trpc/team.current for the conflicting-pointer user",
+          "expected": "team.current resolves workspace 53713ba0-d149-4238-a438-8686245623a9 instead of foreign workspace fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+          "observed": "GET /trpc/team.current -> 200 with id 53713ba0-d149-4238-a438-8686245623a9."
+        },
+        {
+          "action": "Fetch GET /trpc/privateData for the conflicting-pointer user",
+          "expected": "protected team data succeeds for workspace 53713ba0-d149-4238-a438-8686245623a9 and not fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+          "observed": "GET /trpc/privateData -> 200 with activeTeam.id 53713ba0-d149-4238-a438-8686245623a9."
+        }
+      ],
+      "evidence": {
+        "commands": [
+          "curl -sS -X POST \"http://api.faworra.localhost:1355/api/auth/sign-in/email\" -H \"content-type: application/json\" --data \"{\"email\":\"auth-shell-round1-stale-fallback@example.com\",\"password\":\"Password123!\"}\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/user.me\" -H \"Cookie: <captured-cookie>\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/team.current\" -H \"Cookie: <captured-cookie>\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/privateData\" -H \"Cookie: <captured-cookie>\"",
+          "curl -sS -X POST \"http://api.faworra.localhost:1355/api/auth/sign-in/email\" -H \"content-type: application/json\" --data \"{\"email\":\"auth-shell-round1-conflicting@example.com\",\"password\":\"Password123!\"}\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/user.me\" -H \"Cookie: <captured-cookie>\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/team.current\" -H \"Cookie: <captured-cookie>\"",
+          "curl -sS -X GET \"http://api.faworra.localhost:1355/trpc/privateData\" -H \"Cookie: <captured-cookie>\""
+        ],
+        "terminalOutput": [
+          "auth-shell-parity/api-onboarding-recovery/VAL-CROSS-003-stale-user-me.txt",
+          "auth-shell-parity/api-onboarding-recovery/VAL-CROSS-003-stale-team-current.txt",
+          "auth-shell-parity/api-onboarding-recovery/VAL-CROSS-003-stale-private-data.txt",
+          "auth-shell-parity/api-onboarding-recovery/VAL-CROSS-003-conflicting-user-me.txt",
+          "auth-shell-parity/api-onboarding-recovery/VAL-CROSS-003-conflicting-team-current.txt",
+          "auth-shell-parity/api-onboarding-recovery/VAL-CROSS-003-conflicting-private-data.txt"
+        ],
+        "network": "staleFallback: GET /trpc/user.me -> 200, GET /trpc/team.current -> 200, GET /trpc/privateData -> 200 with recovered team 569a489d-660c-44aa-8c86-762f470b33ff (auth-shell-round1 Stale Fallback Workspace); conflicting: GET /trpc/user.me -> 200, GET /trpc/team.current -> 200, GET /trpc/privateData -> 200 with membership-precedence team 53713ba0-d149-4238-a438-8686245623a9 (auth-shell-round1 Conflicting Primary Workspace) instead of fba2a6b4-3f7f-4da8-a553-b0a2242cb894 (auth-shell-round1 Foreign Workspace).",
+        "resolvedTeams": {
+          "staleFallback": {
+            "expectedTeamId": "569a489d-660c-44aa-8c86-762f470b33ff",
+            "expectedTeamName": "auth-shell-round1 Stale Fallback Workspace"
+          },
+          "conflicting": {
+            "expectedTeamId": "53713ba0-d149-4238-a438-8686245623a9",
+            "expectedTeamName": "auth-shell-round1 Conflicting Primary Workspace",
+            "rejectedLegacyTeamId": "fba2a6b4-3f7f-4da8-a553-b0a2242cb894",
+            "rejectedLegacyTeamName": "auth-shell-round1 Foreign Workspace"
+          }
+        }
+      },
+      "issues": null
+    }
+  ],
+  "frictions": [],
+  "blockers": [],
+  "summary": "Tested 2 assertions: 2 passed. Reactivation returned the seeded workspace, stale pointers fell back to the valid membership workspace, and conflicting activeTeamId state yielded to activeMembershipId precedence across user.me, team.current, and privateData."
+}
