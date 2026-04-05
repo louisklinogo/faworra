@@ -42,18 +42,21 @@ describe("resolveShellRedirect", () => {
 	});
 
 	describe("authenticated but teamless users", () => {
-		it("redirects users who need onboarding to /onboarding", () => {
+		it("redirects users who need onboarding to /teams (invite-recovery surface)", () => {
 			const result = resolveShellRedirect(teamlessState, "/dashboard");
-			expect(result).toBe("/onboarding");
+			expect(result).toBe("/teams");
 		});
 
-		it("redirects users with no activeTeam to /onboarding regardless of needsOnboarding flag", () => {
+		it("redirects users with no activeTeam to /teams regardless of needsOnboarding flag", () => {
+			// The teams page splits further: pending invites → invite-recovery UI;
+			// no invites at all → onboarding.  The shell simply sends teamless
+			// users to the recovery surface unconditionally.
 			const withTeam: ShellViewerState = {
 				isAuthenticated: true,
 				needsOnboarding: false, // flag says ready but no team yet
 				activeTeam: null,
 			};
-			expect(resolveShellRedirect(withTeam, "/dashboard")).toBe("/onboarding");
+			expect(resolveShellRedirect(withTeam, "/dashboard")).toBe("/teams");
 		});
 	});
 

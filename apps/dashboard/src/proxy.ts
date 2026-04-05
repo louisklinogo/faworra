@@ -19,7 +19,9 @@ export function proxy(request: NextRequest) {
 	const sessionCookie = getSessionCookie(request);
 	const { pathname } = request.nextUrl;
 	const isProtectedPath =
-		pathname === "/onboarding" || pathname.startsWith("/dashboard");
+		pathname === "/onboarding" ||
+		pathname === "/teams" ||
+		pathname.startsWith("/dashboard");
 
 	// Guests on protected paths → redirect to login with return_to preserved.
 	if (isProtectedPath && !sessionCookie) {
@@ -57,5 +59,5 @@ export function proxy(request: NextRequest) {
  * paths checked inside the `proxy` function above.
  */
 export const config = {
-	matcher: ["/dashboard/:path*", "/onboarding", "/login"],
+	matcher: ["/dashboard/:path*", "/onboarding", "/teams", "/login"],
 };

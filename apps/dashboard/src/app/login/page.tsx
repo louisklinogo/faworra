@@ -18,12 +18,12 @@ export default async function LoginPage({
 	const { return_to } = await searchParams;
 
 	if (viewer.isAuthenticated) {
-		// Authenticated users who need workspace setup go to onboarding.
-		// Everyone else is redirected to their intended destination (or /dashboard
-		// as the safe fallback).  getSafeReturnTo neutralises unsafe external
-		// destinations before we use them in the redirect.
+		// Authenticated users without a usable workspace go to the recovery
+		// surface (/teams) rather than directly to /onboarding.  The teams page
+		// handles the final split: pending invites → invite-recovery UI; no
+		// invites either → /onboarding.
 		if (viewer.needsOnboarding || !viewer.activeTeam) {
-			redirect("/onboarding");
+			redirect("/teams");
 		}
 
 		// getSafeReturnTo guarantees this is a safe in-app path (starts with /,

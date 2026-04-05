@@ -17,8 +17,13 @@ export interface ShellViewerState {
  * Using precise template-literal and literal types (rather than plain
  * `string`) lets Next.js typed-routes verify these destinations are valid
  * in-app routes without requiring a type assertion at the call site.
+ *
+ * Teamless authenticated users are sent to `/teams` — the Midday-shaped
+ * recovery surface — rather than directly to `/onboarding`.  The teams page
+ * then redirects to `/onboarding` if the user has no pending invites either.
+ * This keeps invite-recovery and default-team-bootstrap as separate concerns.
  */
-export type ShellRedirect = `/login?return_to=${string}` | "/onboarding" | null;
+export type ShellRedirect = `/login?return_to=${string}` | "/teams" | null;
 
 /**
  * Pure function that maps a viewer state + current path to the redirect
@@ -42,7 +47,12 @@ export const resolveShellRedirect = (
 	}
 
 	if (viewer.needsOnboarding || !viewer.activeTeam) {
-		return "/onboarding";
+		// Route teamless users to the recovery surface (/teams) rather than
+		// directly to /onboarding.  The teams page handles the final split:
+		// users with pending invites see the invite-recovery UI; users with
+		// neither an accepted workspace nor a pending invite are redirected to
+		// /onboarding from there.
+		return "/teams";
 	}
 
 	return null;
