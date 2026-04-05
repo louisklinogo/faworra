@@ -270,6 +270,26 @@ describe("listTeamInvites", () => {
 			}),
 		]);
 	});
+
+	it("excludes accepted and revoked invites from the owner's pending list", async () => {
+		state.listResult = [
+			createInvite({ id: "invite_pending" }),
+			createInvite({
+				id: "invite_accepted",
+				status: "accepted",
+				acceptedByUserId: "user_1",
+			}),
+			createInvite({ id: "invite_revoked", status: "revoked" }),
+		];
+
+		const result = await listTeamInvites("team_1");
+
+		expect(result).toHaveLength(1);
+		expect(result[0]).toMatchObject({
+			id: "invite_pending",
+			status: "pending",
+		});
+	});
 });
 
 describe("listInvitesByEmail", () => {
@@ -292,6 +312,23 @@ describe("listInvitesByEmail", () => {
 				},
 			}),
 		]);
+	});
+
+	it("excludes accepted and revoked invites from the recipient's inbox", async () => {
+		state.listResult = [
+			createInvite({ id: "invite_pending" }),
+			createInvite({
+				id: "invite_accepted",
+				status: "accepted",
+				acceptedByUserId: "user_1",
+			}),
+			createInvite({ id: "invite_revoked", status: "revoked" }),
+		];
+
+		const result = await listInvitesByEmail("buyer@example.com");
+
+		expect(result).toHaveLength(1);
+		expect(result[0]).toMatchObject({ id: "invite_pending" });
 	});
 });
 
@@ -519,5 +556,146 @@ describe("acceptTeamInvite", () => {
 			code: "FORBIDDEN",
 			message: "This invite is for a different email address",
 		});
+	});
+
+	it("activates the invited workspace as the first usable workspace when the user has no prior membership", async () => {
+		// Scenario: brand-new user accepting their very first invite — VAL-CROSS-005.
+		// The invited workspace must become their active workspace immediately; no
+		// default onboarding team should be created.
+		state.inviteLookupQueue = [createInvite({ id: "invite_1" })];
+		state.membershipLookupQueue = [
+			null,
+			createMembership({ id: "membership_new" }),
+		];
+		state.createdMembershipRows = [
+			{
+				id: "membership_new",
+				userId: "new_user",
+				teamId: "team_1",
+				role: "member",
+			},
+		];
+
+		const result = await acceptTeamInvite({
+			inviteId: "invite_1",
+			userId: "new_user",
+			userEmail: "buyer@example.com",
+		});
+
+		// Invited workspace is active immediately — no onboarding required
+		expect(result).toMatchObject({
+			needsOnboarding: false,
+			activeTeam: { id: "team_1" },
+			membership: { role: "member" },
+		});
+
+		// Only a membership and a user-context were inserted.
+		// No default (onboarding) team workspace was created.
+		expect(state.insertedValues).toHaveLength(2);
+		expect(state.insertedValues[0]).toMatchObject({
+			table: "teamMemberships",
+			values: expect.objectContaining({ userId: "new_user", teamId: "team_1" }),
+		});
+		expect(state.insertedValues[1]).toMatchObject({
+			table: "userContext",
+			values: expect.objectContaining({
+				userId: "new_user",
+				activeMembershipId: "membership_new",
+			}),
+		});
+	});
+
+	it("rejects a revoked invite and does not mutate the active workspace", async () => {
+		state.inviteLookupQueue = [createInvite({ status: "revoked" })];
+
+		await expect(
+			acceptTeamInvite({
+				inviteId: "invite_1",
+				userId: "user_1",
+				userEmail: "buyer@example.com",
+			})
+		).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+			message: "This invite has been revoked",
+		});
+
+		expect(state.insertedValues).toHaveLength(0);
+		expect(state.updatedValues).toHaveLength(0);
+		expect(state.upsertCalls).toHaveLength(0);
+	});
+
+	it("rejects an invite already marked expired and does not mutate the active workspace", async () => {
+		state.inviteLookupQueue = [
+			createInvite({
+				status: "expired",
+				expiresAt: new Date("2020-01-01T00:00:00.000Z"),
+			}),
+		];
+
+		await expect(
+			acceptTeamInvite({
+				inviteId: "invite_1",
+				userId: "user_1",
+				userEmail: "buyer@example.com",
+			})
+		).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+			message: "This invite has expired",
+		});
+
+		expect(state.insertedValues).toHaveLength(0);
+		expect(state.updatedValues).toHaveLength(0);
+		expect(state.upsertCalls).toHaveLength(0);
+	});
+
+	it("rejects a pending invite past its expiry, marks the invite expired, and does not mutate workspace context", async () => {
+		state.inviteLookupQueue = [
+			createInvite({
+				status: "pending",
+				expiresAt: new Date("2020-01-01T00:00:00.000Z"),
+			}),
+		];
+
+		await expect(
+			acceptTeamInvite({
+				inviteId: "invite_1",
+				userId: "user_1",
+				userEmail: "buyer@example.com",
+			})
+		).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+			message: "This invite has expired",
+		});
+
+		// The invite row is updated to expired in the DB
+		expect(state.updatedValues).toHaveLength(1);
+		expect(state.updatedValues[0]).toMatchObject({
+			table: "teamInvites",
+			values: expect.objectContaining({ status: "expired" }),
+		});
+		// But no membership was created and no workspace context was mutated
+		expect(state.insertedValues).toHaveLength(0);
+		expect(state.upsertCalls).toHaveLength(0);
+	});
+
+	it("rejects when a different user attempts to accept an already-accepted invite, without mutating workspace", async () => {
+		state.inviteLookupQueue = [
+			createInvite({ status: "accepted", acceptedByUserId: "other_user" }),
+		];
+
+		await expect(
+			acceptTeamInvite({
+				inviteId: "invite_1",
+				userId: "user_1",
+				userEmail: "buyer@example.com",
+			})
+		).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+			message: "This invite has already been accepted",
+		});
+
+		expect(state.insertedValues).toHaveLength(0);
+		expect(state.updatedValues).toHaveLength(0);
+		expect(state.upsertCalls).toHaveLength(0);
 	});
 });
