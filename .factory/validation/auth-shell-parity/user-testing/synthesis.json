@@ -17,6 +17,11 @@
       "target": "user-testing.md",
       "description": "Documented auth-shell rerun guidance to reseed a fresh fixture namespace before browser validation and to use browser session ids from the current validator session instead of a stale prior-run prefix.",
       "source": "setup"
+    },
+    {
+      "target": "orchestrator",
+      "description": "Closed the duplicate validator rerun after confirming round 2 had already passed in commit 4e15db8 and all auth-shell-parity assertions fulfilled by completed implementation features were already marked passed.",
+      "source": "orchestrator-override"
     }
   ],
   "previousRound": ".factory/validation/auth-shell-parity/user-testing/synthesis.round1.json"
