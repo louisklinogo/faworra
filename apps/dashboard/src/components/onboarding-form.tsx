@@ -85,26 +85,35 @@ export default function OnboardingForm({
 
 				<form.Field
 					name="companyName"
-					validators={{ onBlur: onboardingInputSchema.shape.companyName }}
+					validators={{
+						onBlur: onboardingInputSchema.shape.companyName,
+						onSubmit: onboardingInputSchema.shape.companyName,
+					}}
 				>
-					{(field) => (
-						<div className="space-y-2">
-							<Label htmlFor={field.name}>Brand or company name</Label>
-							<Input
-								id={field.name}
-								name={field.name}
-								onBlur={field.handleBlur}
-								onChange={(event) => field.handleChange(event.target.value)}
-								placeholder="Afi Threads"
-								value={field.state.value}
-							/>
-							{field.state.meta.errors.map((error) => (
-								<p className="text-red-500 text-sm" key={error?.message}>
-									{error?.message}
-								</p>
-							))}
-						</div>
-					)}
+					{(field) => {
+						const hasError = field.state.meta.errors.length > 0;
+						const errorId = `${field.name}-error`;
+						return (
+							<div className="space-y-2">
+								<Label htmlFor={field.name}>Brand or company name</Label>
+								<Input
+									aria-describedby={hasError ? errorId : undefined}
+									aria-invalid={hasError}
+									id={field.name}
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									placeholder="Afi Threads"
+									value={field.state.value}
+								/>
+								{hasError && (
+									<p className="text-destructive text-sm" id={errorId}>
+										{field.state.meta.errors[0]?.message}
+									</p>
+								)}
+							</div>
+						);
+					}}
 				</form.Field>
 
 				<div className="grid gap-5 md:grid-cols-2">
