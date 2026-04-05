@@ -1,0 +1,74 @@
+{
+  "groupId": "onboarding-browser-rerun",
+  "testedAt": "2026-04-05T01:49:17.553903+00:00",
+  "isolation": {
+    "missionDir": "/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00",
+    "dashboardUrl": "http://dashboard.faworra.localhost:1355",
+    "apiUrl": "http://api.faworra.localhost:1355",
+    "browserSession": "utfv_bf937643__onboard002",
+    "fixtureNamespace": "auth-shell-rerun-20260405T014431Z",
+    "signupEntry": "http://dashboard.faworra.localhost:1355/login",
+    "signupEmail": "auth-shell-rerun-onboard002-20260405T014619Z-682c0e@example.com"
+  },
+  "toolsUsed": ["agent-browser"],
+  "assertions": [
+    {
+      "id": "VAL-ONBOARD-002",
+      "title": "Onboarding validates required fields before submit",
+      "status": "pass",
+      "steps": [
+        {
+          "action": "Open /login as a signed-out user and create a brand-new disposable account.",
+          "expected": "Successful sign-up should land the fresh session on /onboarding.",
+          "observed": "The disposable account sign-up completed through POST /api/auth/sign-up/email and the browser landed on http://dashboard.faworra.localhost:1355/onboarding."
+        },
+        {
+          "action": "Open the Country selector and search for an arbitrary raw value (ZZZINVALID).",
+          "expected": "The selector should return no selectable result and preserve the default country selection.",
+          "observed": "The selector rendered 'No country found.' while the country combobox still showed Ghana as the selected value."
+        },
+        {
+          "action": "Open the Base currency selector and search for an arbitrary raw value (ZZZINVALID).",
+          "expected": "The selector should return no selectable result and preserve the default currency selection.",
+          "observed": "The selector rendered 'No currency found.' while the base-currency combobox still showed GHS as the selected value."
+        },
+        {
+          "action": "Enter a one-character company name ('a'), blur the field, and attempt submission from the invalid form state.",
+          "expected": "Client-side validation should block onboarding completion and provide field-level invalid feedback.",
+          "observed": "The form showed inline text 'Company name must be at least 2 characters', the Create fashion workspace button became disabled, pressing Enter from the field kept the session on /onboarding, and no onboarding.complete network entry appeared."
+        },
+        {
+          "action": "Inspect invalid-state semantics on the company-name control after the blur/submit attempt.",
+          "expected": "The field should expose programmatic invalid semantics tied to the rendered error message.",
+          "observed": "The input had id='companyName', aria-invalid='true', and aria-describedby='companyName-error', which resolved to the visible error text 'Company name must be at least 2 characters'."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "auth-shell-parity/onboarding-browser-rerun/VAL-ONBOARD-002-login-annotated.png",
+          "auth-shell-parity/onboarding-browser-rerun/VAL-ONBOARD-002-onboarding-start-annotated.png",
+          "auth-shell-parity/onboarding-browser-rerun/VAL-ONBOARD-002-country-selector-open.png",
+          "auth-shell-parity/onboarding-browser-rerun/VAL-ONBOARD-002-country-invalid-search.png",
+          "auth-shell-parity/onboarding-browser-rerun/VAL-ONBOARD-002-currency-selector-open.png",
+          "auth-shell-parity/onboarding-browser-rerun/VAL-ONBOARD-002-currency-invalid-search.png",
+          "auth-shell-parity/onboarding-browser-rerun/VAL-ONBOARD-002-company-invalid-feedback.png"
+        ],
+        "consoleErrors": "none",
+        "network": "Resource timing recorded http://api.faworra.localhost:1355/api/auth/sign-up/email and the onboarding document fetch, but after the invalid company-name blur and Enter submit attempt there was no onboarding.complete request entry; the browser stayed on /onboarding with the submit button disabled.",
+        "fieldSemantics": "input#companyName exposed aria-invalid=\"true\" and aria-describedby=\"companyName-error\"; the associated element #companyName-error rendered 'Company name must be at least 2 characters'.",
+        "finalUrl": "http://dashboard.faworra.localhost:1355/onboarding"
+      },
+      "issues": null
+    }
+  ],
+  "frictions": [
+    {
+      "description": "agent-browser's network request log returned no entries in this session even after the real sign-up and onboarding interactions.",
+      "resolved": true,
+      "resolution": "Used the browser Performance resource entries, final URL, disabled submit state, and captured screenshots/ARIA attributes as corroborating network and validation evidence.",
+      "affectedAssertions": ["VAL-ONBOARD-002"]
+    }
+  ],
+  "blockers": [],
+  "summary": "Rechecked VAL-ONBOARD-002 after the company-name inline validation fix. The selector-driven country and currency controls rejected arbitrary raw search values while preserving Ghana/GHS, invalid company-name input was blocked client-side with no onboarding completion request, and the company field now shows Midday-style inline error feedback with aria-invalid and aria-describedby semantics tied to the rendered message."
+}

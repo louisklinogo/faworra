@@ -136,11 +136,12 @@ Important notes for this environment:
 - `curl --cookie-jar` does **not** reliably persist the secure localhost auth cookie in this environment; for authenticated API checks, capture the exact `set-cookie` value from the auth response and reuse it in a `Cookie:` header
 - keep all mutations scoped to the seeded fixture users for the current namespace
 - treat the seeded teamless fixture as single-use for browser retries; once a validator completes onboarding with that user, future reruns should create a fresh disposable teamless account instead of assuming the original fixture is still teamless
+- for reruns after a browser mutation round, reseed a fresh auth-shell fixture namespace and replace `.factory/validation/auth-shell-parity/user-testing/fixtures.json` before spawning new browser validators
 
 ## Flow Validator Guidance: Browser surface
 
 - Use the `agent-browser` skill and never use the default session.
-- For this worker session, browser validators must use isolated session ids derived from `1d4e1874b95b`, such as `1d4e1874b95b__auth` and `1d4e1874b95b__onboarding`.
+- Use only the browser session id assigned in your validator prompt; if you need additional suffixes, derive them from your own worker session id instead of reusing a prior run's prefix.
 - Stay on the Portless dashboard origin: `http://dashboard.faworra.localhost:1355`.
 - Browser validators may sign in, sign out, and complete onboarding only for the specific fixture account(s) assigned to their group.
 - Do not reuse another group's browser session, auth cookies, or seeded user.
