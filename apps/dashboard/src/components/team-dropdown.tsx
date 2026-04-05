@@ -4,6 +4,7 @@ import { Button } from "@faworra-new/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
@@ -111,6 +112,10 @@ export function TeamDropdown() {
 	// ── Multi-team affordance ────────────────────────────────────────────────
 	// Per VAL-TENANCY-003: current workspace distinctly marked, ≥1 actionable
 	// alternate target.
+	//
+	// All items must be inside a DropdownMenuGroup because DropdownMenuLabel
+	// maps to MenuPrimitive.GroupLabel which requires a MenuPrimitive.Group
+	// ancestor (Base UI invariant).
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger render={<Button size="sm" variant="ghost" />}>
@@ -118,31 +123,35 @@ export function TeamDropdown() {
 				<ChevronsUpDownIcon className="opacity-50" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
-				<DropdownMenuLabel>Workspaces</DropdownMenuLabel>
-				<DropdownMenuSeparator />
+				<DropdownMenuGroup>
+					<DropdownMenuLabel>Workspaces</DropdownMenuLabel>
+					<DropdownMenuSeparator />
 
-				{/* Current workspace — marked with a check to distinguish it */}
-				<DropdownMenuItem>
-					<CheckIcon />
-					<span className="font-medium">{switcherState.currentTeam.name}</span>
-				</DropdownMenuItem>
-
-				<DropdownMenuSeparator />
-
-				{/* Alternate workspaces — each is an actionable switch target */}
-				{switcherState.otherTeams.map((team) => (
-					<DropdownMenuItem
-						disabled={switchTeamMutation.isPending}
-						key={team.membershipId}
-						onClick={() => {
-							switchTeamMutation.mutate({ membershipId: team.membershipId });
-						}}
-					>
-						{/* Spacer aligns team names with the checked current-team label */}
-						<span className="size-4 shrink-0" />
-						{team.name}
+					{/* Current workspace — marked with a check to distinguish it */}
+					<DropdownMenuItem>
+						<CheckIcon />
+						<span className="font-medium">
+							{switcherState.currentTeam.name}
+						</span>
 					</DropdownMenuItem>
-				))}
+
+					<DropdownMenuSeparator />
+
+					{/* Alternate workspaces — each is an actionable switch target */}
+					{switcherState.otherTeams.map((team) => (
+						<DropdownMenuItem
+							disabled={switchTeamMutation.isPending}
+							key={team.membershipId}
+							onClick={() => {
+								switchTeamMutation.mutate({ membershipId: team.membershipId });
+							}}
+						>
+							{/* Spacer aligns team names with the checked current-team label */}
+							<span className="size-4 shrink-0" />
+							{team.name}
+						</DropdownMenuItem>
+					))}
+				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
