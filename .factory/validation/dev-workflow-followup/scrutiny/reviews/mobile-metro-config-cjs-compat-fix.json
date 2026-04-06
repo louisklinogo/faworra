@@ -1,0 +1,26 @@
+{
+  "featureId": "mobile-metro-config-cjs-compat-fix",
+  "reviewedAt": "2026-04-06T12:23:47+00:00",
+  "commitId": "b2ac7e1",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "pass",
+  "codeReview": {
+    "summary": "The change fixes the actual Metro config loader mismatch: the config file is now explicitly CommonJS via `.cjs`, the invalid mixed-module `import.meta.dirname` usage is replaced with `__dirname`, and Metro's own loader supports `.cjs` discovery. The accompanying Expo-generated `tsconfig.json` and `.gitignore` updates are consistent with the workspace's current Expo tooling.",
+    "issues": []
+  },
+  "sharedStateObservations": [
+    {
+      "area": "services",
+      "observation": "The mission treats mobile/startup compatibility as part of the supported local dev workflow, but `.factory/services.yaml` does not document any `mobile` or root `dev` service/healthcheck. Workers reviewing or validating this seam have to step outside the shared service contract.",
+      "evidence": "Mission AGENTS.md says root `bun dev` / `turbo dev` is a supported local entrypoint and this feature's verification steps include `bun run dev:mobile` plus a manual root `bun dev` check, while `.factory/services.yaml` only defines `api` and `dashboard` services."
+    },
+    {
+      "area": "skills",
+      "observation": "The `runtime-parity-worker` skill could use an explicit fast-path exception for purely mechanical module-format/config-loader fixes. In practice this feature was handled successfully without the skill's full Midday-reference and library-reading procedure.",
+      "evidence": "The skill requires reading `.factory/library/architecture.md`, `.factory/library/environment.md`, `.factory/library/user-testing.md`, and invoking `midday-reference` before runtime changes; the transcript skeleton for session `6df904ce-1e52-4bd2-8d5a-4849cdd97d79` shows reads of mission artifacts, services, and the Metro config/package files, but no `midday-reference` invocation. The handoff's `skillFeedback.suggestedChanges` already notes that the tests-first step is not a good fit for this kind of mechanical fix."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "Pass. I reviewed the mission artifacts, transcript skeleton, handoff, commit `b2ac7e1`, and current mobile config. The implementation cleanly resolves the Metro module-format crash without introducing code-level regressions in the reviewed files. I noted shared-state gaps around documenting mobile/root-dev services and around the runtime-parity skill's procedure for mechanical config-format repairs."
+}
