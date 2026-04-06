@@ -43,8 +43,8 @@ Use this skill for features that touch:
    - current-team primitives
    - invalid team switch rejection
    - invite acceptance / invalid invite safety
-7. Run the scoped validators from `.factory/services.yaml`.
-8. In the handoff, include exact seeded scenarios, status codes, and post-mutation state observations. If behavior depends on precedence rules, state which seeded conflict was verified.
+7. Run validators using `.factory/services.yaml` as the default source of truth. If the manifest only exposes broader milestone-wide commands, you may run a narrower feature-scoped subset, but you must record the exact commands and why the narrower scope matches the feature.
+8. In the handoff, include exact seeded scenarios, status codes, post-mutation state observations, and whether the required skills were actually invoked. If a required step could not be completed, set `skillFeedback.followedProcedure` to `false` and explain the deviation explicitly.
 
 ## Example Handoff
 

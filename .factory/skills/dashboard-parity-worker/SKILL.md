@@ -40,10 +40,11 @@ Use this skill for features that touch:
    If a feature is mostly shell/routing work, add at least one focused automated test for the core non-visual decision logic before implementing the UI flow. For `return_to` changes, include slash-backslash and encoded external regressions, not just obvious `https://` and `//` cases.
    For onboarding/input validation work, follow the actual Midday input surface and data source first; do not invent stricter code sets or alternate validation rules unless the user explicitly approves that divergence.
 5. Implement the smallest Midday-shaped UI and routing change that satisfies the mission contract by copying/cloning Midday UI components and interaction patterns into Faworra. Do not invent substitute UI primitives, substitute free-text forms for Midday selectors, or stricter/cleaner UX rules unless the user has explicitly approved that divergence.
-6. Run the scoped validators from `.factory/services.yaml`.
-7. Use `agent-browser` to manually verify every changed browser flow end-to-end. Each verified flow must be recorded in the handoff.
-8. If the Midday reference and the current implementation idea disagree, stop and return to the orchestrator instead of inventing a workaround or a “better” alternative.
-9. If the UI depends on a missing API primitive or unresolved routing/product decision, stop and return to the orchestrator instead of inventing a workaround.
+6. Run validators using `.factory/services.yaml` as the default source of truth. If the manifest only exposes broader milestone-wide commands, you may run a narrower feature-scoped subset, but you must record the exact commands and why the narrower scope matches the feature.
+7. For dashboard route additions or route-literal changes, never hand-edit `apps/dashboard/.next/types/*`. Regenerate typed-route artifacts via tracked source workflows such as `bun x next typegen`, `next dev`, or `next build`, then verify a clean typecheck path.
+8. Use `agent-browser` to manually verify every changed browser flow end-to-end. Each verified flow must be recorded in the handoff. If browser verification is blocked, set `skillFeedback.followedProcedure` to `false` and explain the blocker explicitly instead of reporting full compliance.
+9. If the Midday reference and the current implementation idea disagree, stop and return to the orchestrator instead of inventing a workaround or a “better” alternative.
+10. If the UI depends on a missing API primitive or unresolved routing/product decision, stop and return to the orchestrator instead of inventing a workaround.
 
 ## Example Handoff
 
