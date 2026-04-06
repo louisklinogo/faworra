@@ -7,6 +7,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import { applyWorkspacePatchToViewer } from "@/lib/workspace-cache";
 import { trpc } from "@/utils/trpc";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
@@ -35,12 +36,24 @@ export function TeamInvite({ invite }: Props) {
 
 	const acceptMutation = useMutation(
 		trpc.teamInvites.accept.mutationOptions({
-			onSuccess: () => {
-				// acceptTeamInvite already activated the invited workspace in
-				// userContext, so a fresh /dashboard load will resolve the correct
-				// active team without any additional switch call.
+			onSuccess: (data) => {
+				// Immediately write the accepted workspace into the viewer cache so
+				// TeamDropdown in the destination /dashboard shell renders the
+				// correct current-workspace indicator instead of the stale teamless
+				// state (VAL-CROSS-007).  Without this pre-write, the Header's
+				// TeamDropdown reads a stale cache and returns null while the RSC
+				// body already shows the invited workspace.
+				queryClient.setQueryData(trpc.viewer.queryKey(), (old) =>
+					applyWorkspacePatchToViewer(old, data)
+				);
+				// Navigate to the dashboard — the viewer cache already reflects the
+				// invited workspace so TeamDropdown won't flash a teamless null
+				// state during the transition.
 				router.push("/dashboard");
-				router.refresh();
+				// Background-invalidate everything so the server-confirmed workspace
+				// state replaces the immediate pre-write above for full consistency,
+				// and the RSC shell picks up the new active workspace.
+				queryClient.invalidateQueries();
 			},
 		})
 	);

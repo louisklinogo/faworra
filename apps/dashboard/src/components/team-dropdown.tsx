@@ -14,8 +14,11 @@ import { Skeleton } from "@faworra-new/ui/components/skeleton";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 import { resolveTeamSwitcherState } from "@/lib/team-switcher";
+import {
+	applyWorkspacePatchToPrivateData,
+	applyWorkspacePatchToViewer,
+} from "@/lib/workspace-cache";
 import { trpc } from "@/utils/trpc";
 
 /**
@@ -35,10 +38,13 @@ import { trpc } from "@/utils/trpc";
  *   marked (✓) and all other accepted memberships as actionable switch targets.
  *
  * Post-switch behaviour (mirrors VAL-TENANCY-004 and VAL-CROSS-004):
- *   1. `queryClient.invalidateQueries()` — refreshes all TanStack Query
- *      client-side cache (viewer, team.list, privateData, etc.).
+ *   1. `queryClient.setQueryData` on `viewer` and `privateData` — immediately
+ *      aligns both caches with the mutation result so shell and body see the
+ *      new workspace atomically (no mismatch frame).
  *   2. `router.refresh()` — triggers Next.js RSC re-render so server
  *      components pick up the new active workspace from the API.
+ *   3. `queryClient.invalidateQueries()` — background refetch for eventual
+ *      server-confirmed consistency after the immediate writes above.
  */
 export function TeamDropdown() {
 	const router = useRouter();
@@ -61,13 +67,25 @@ export function TeamDropdown() {
 
 	const switchTeamMutation = useMutation(
 		trpc.user.switchTeam.mutationOptions({
-			onSuccess: async () => {
-				// 1. Refresh all client-side cached query data so the header, shell,
-				//    and protected content all see the new active workspace.
-				await queryClient.invalidateQueries();
-				// 2. Re-render RSC components (protected shell layout re-calls
-				//    getServerViewer, picking up the new activeMembershipId from the DB).
+			onSuccess: (data) => {
+				// Immediately align the viewer and privateData caches with the
+				// mutation result so the shell (TeamDropdown) and dashboard body
+				// both see the new active workspace without an intermediate
+				// mismatch frame.  Using setQueryData here prevents the race
+				// window where router.refresh() triggers an RSC re-render before
+				// the background query refetches from invalidateQueries settle.
+				queryClient.setQueryData(trpc.viewer.queryKey(), (old) =>
+					applyWorkspacePatchToViewer(old, data)
+				);
+				queryClient.setQueryData(trpc.privateData.queryKey(), (old) =>
+					applyWorkspacePatchToPrivateData(old, data)
+				);
+				// Re-render RSC components so server components (protected shell
+				// layout, DashboardPage) also pick up the new active workspace.
 				router.refresh();
+				// Background-invalidate everything so eventual server-confirmed
+				// data replaces the immediate writes above for full consistency.
+				queryClient.invalidateQueries();
 			},
 		})
 	);
