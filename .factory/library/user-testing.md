@@ -168,6 +168,7 @@ Important notes for this environment:
 - the API and dashboard must already be running before seeding, because the helper creates real Better Auth users via `POST /api/auth/sign-up/email`
 - the seeded fixture password is the shared disposable value `Password123!`
 - browser invite-recovery validators should use the dedicated `browserRecipient` and `browserDeclineRecipient` users; do not reuse the API recipient because API assertions mutate that invite into an accepted state
+- for tenancy-ux browser reruns after switch or invite mutations, reseed a fresh fixture namespace and replace `.factory/validation/tenancy-ux-parity/user-testing/fixtures.json` before spawning validators so immediate post-mutation checks are not polluted by prior accepted invites or switched memberships
 - API invite validators should keep mutations scoped to the `apiOwner` workspace and the specific invite ids recorded in the tenancy fixtures file
 - the seeded `expiredForOutsider` invite is inserted as `pending` with an already-past `expiresAt` so the first accept attempt exercises the real expiry transition path
 

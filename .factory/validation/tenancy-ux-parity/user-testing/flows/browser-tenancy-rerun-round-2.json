@@ -1,0 +1,176 @@
+{
+  "groupId": "browser-tenancy-rerun-round-2",
+  "testedAt": "2026-04-06T11:40:07.448695Z",
+  "isolation": {
+    "missionDir": "/home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00",
+    "dashboardUrl": "http://dashboard.faworra.localhost:1355",
+    "apiUrl": "http://api.faworra.localhost:1355",
+    "fixtureNamespace": "tenancy-ux-8dfe1fbb-r2-20260406T113240Z",
+    "fixturesFile": "/home/louis/developer/faworra/faworra-new/.factory/validation/tenancy-ux-parity/user-testing/fixtures.json",
+    "sharedPassword": "Password123!",
+    "browserSessions": {
+      "switch": "8dfe1fbb5b5f__switch",
+      "invite": "8dfe1fbb5b5f__invite"
+    },
+    "users": {
+      "switcher": "tenancy-ux-8dfe1fbb-r2-20260406T113240Z-switcher@example.com",
+      "browserRecipient": "tenancy-ux-8dfe1fbb-r2-20260406T113240Z-browser-recipient@example.com"
+    },
+    "workspaces": {
+      "switcherPrimary": {
+        "id": "bb1902b1-8592-4737-bb0a-ab422d878065",
+        "name": "tenancy-ux-8dfe1fbb-r2-20260406T113240Z Switcher Primary Workspace"
+      },
+      "switcherSecondary": {
+        "id": "008b2475-3ea4-422d-b837-e872340c9549",
+        "name": "tenancy-ux-8dfe1fbb-r2-20260406T113240Z Switcher Secondary Workspace"
+      },
+      "inviteTarget": {
+        "id": "6e7798cc-afc4-49dc-b011-16083ac70423",
+        "name": "tenancy-ux-8dfe1fbb-r2-20260406T113240Z Single Workspace"
+      }
+    },
+    "ids": {
+      "switcherPrimaryMembership": "d347a736-3f15-44ad-963b-958be62a351c",
+      "switcherSecondaryMembership": "ffad53e7-b37b-460f-8380-31bc66aaade8",
+      "browserAcceptInviteId": "8d514ae2-5deb-4870-b82e-08d0c2371053"
+    }
+  },
+  "toolsUsed": [
+    "agent-browser"
+  ],
+  "assertions": [
+    {
+      "id": "VAL-TENANCY-004",
+      "title": "Team switching updates the active workspace and persists",
+      "status": "pass",
+      "immediateObservedState": "Immediately after POST /trpc/user.switchTeam?batch=1 returned 200 and the shell trigger changed, the first captured post-mutation /dashboard state already showed the secondary workspace in both the shell indicator and the dashboard body: 'tenancy-ux-8dfe1fbb-r2-20260406T113240Z Switcher Secondary Workspace'.",
+      "laterSettledState": "After a 2s settle, reload, and protected revisit to /dashboard?tab=tenancy-check, the shell and dashboard body continued to show the secondary workspace without re-authentication.",
+      "steps": [
+        {
+          "action": "Sign in as the switcher user and load /dashboard.",
+          "expected": "The starting shell and protected body should agree on the primary workspace before mutation.",
+          "observed": "The initial dashboard state showed 'tenancy-ux-8dfe1fbb-r2-20260406T113240Z Switcher Primary Workspace' in both the shell indicator and the body line 'Workspace: ...'."
+        },
+        {
+          "action": "Open the workspace switcher and choose the secondary workspace.",
+          "expected": "The first rendered state immediately after the successful switch should show the newly selected workspace consistently in shell and body.",
+          "observed": "The first captured post-switch /dashboard state showed 'tenancy-ux-8dfe1fbb-r2-20260406T113240Z Switcher Secondary Workspace' in both the shell and the body with no mismatch frame observed."
+        },
+        {
+          "action": "Allow the UI to settle, then reload and revisit a protected dashboard URL.",
+          "expected": "The selected workspace should persist across refresh and protected navigation.",
+          "observed": "The settled /dashboard state, a reload on /dashboard, and a revisit to /dashboard?tab=tenancy-check all continued to render the secondary workspace consistently."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-TENANCY-004-before-switch-primary.png",
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-TENANCY-004-after-switch-immediate.png",
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-TENANCY-004-after-switch-settled.png",
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-CROSS-004-after-refresh-secondary.png"
+        ],
+        "consoleErrors": "none",
+        "network": "Browser performance entries recorded GET /api/auth/get-session -> 200, GET /trpc/viewer,privateData?batch=1&input=%7B%7D -> 200, GET /trpc/team.list?batch=1&input=%7B%7D -> 200 before the switch, then POST /trpc/user.switchTeam?batch=1 -> 200 for the mutation. After reload/revisit, protected requests again resolved successfully on the secondary workspace.",
+        "finalUrls": [
+          "http://dashboard.faworra.localhost:1355/dashboard",
+          "http://dashboard.faworra.localhost:1355/dashboard?tab=tenancy-check"
+        ]
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-CROSS-004",
+      "title": "Team switch state stays consistent across shell and protected queries",
+      "status": "pass",
+      "immediateObservedState": "The first post-switch /dashboard render showed the same secondary workspace in the protected shell indicator and the protected dashboard body/current-team line, so shell and protected data stayed aligned immediately after the mutation.",
+      "laterSettledState": "Reloading /dashboard and then opening /dashboard?tab=tenancy-check kept the same secondary workspace visible across the protected surface.",
+      "steps": [
+        {
+          "action": "Switch the authenticated switcher session from the primary workspace to the secondary workspace.",
+          "expected": "The protected shell and protected queries/body should reflect the same newly selected workspace immediately.",
+          "observed": "The immediate post-mutation render showed 'tenancy-ux-8dfe1fbb-r2-20260406T113240Z Switcher Secondary Workspace' in both the shell indicator and the body workspace line."
+        },
+        {
+          "action": "Refresh the page and revisit a protected dashboard URL.",
+          "expected": "Protected navigation should continue to agree on the selected workspace.",
+          "observed": "Both the reload and the /dashboard?tab=tenancy-check revisit kept the secondary workspace visible in shell and body with no regression to the primary workspace."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-TENANCY-004-after-switch-immediate.png",
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-TENANCY-004-after-switch-settled.png",
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-CROSS-004-after-refresh-secondary.png"
+        ],
+        "consoleErrors": "none",
+        "network": "The switch mutation completed via POST /trpc/user.switchTeam?batch=1 -> 200, and the protected dashboard continued to resolve viewer/privateData/team-list requests successfully after reload and protected navigation.",
+        "finalUrls": [
+          "http://dashboard.faworra.localhost:1355/dashboard",
+          "http://dashboard.faworra.localhost:1355/dashboard?tab=tenancy-check"
+        ]
+      },
+      "issues": null
+    },
+    {
+      "id": "VAL-CROSS-007",
+      "title": "Invite-driven browser recovery reaches a usable dashboard session",
+      "status": "pass",
+      "immediateObservedState": "After sign-in routed the recipient to /teams, accepting the pending invite transitioned to /dashboard and the first captured dashboard state already showed the shell current-workspace indicator 'tenancy-ux-8dfe1fbb-r2-20260406T113240Z Single Workspace' plus the matching body line 'Workspace: tenancy-ux-8dfe1fbb-r2-20260406T113240Z Single Workspace'. No 'Authentication required' fallback appeared in page errors.",
+      "laterSettledState": "After an additional settle, the dashboard remained on /dashboard with the same workspace shown in shell and body, and the private data line completed to 'API: This is private'.",
+      "steps": [
+        {
+          "action": "Sign in as browserRecipient.",
+          "expected": "A teamless user with a pending invite should recover to /teams instead of entering a broken dashboard shell.",
+          "observed": "The authenticated recipient landed on http://dashboard.faworra.localhost:1355/teams and the invite recovery surface showed the pending invite card for 'tenancy-ux-8dfe1fbb-r2-20260406T113240Z Single Workspace' with Accept and Decline actions."
+        },
+        {
+          "action": "Accept the pending invite and inspect the first dashboard state immediately after the transition.",
+          "expected": "The destination dashboard should immediately show the invited workspace consistently in the protected shell and body/current-team data, with no Authentication required render fallback.",
+          "observed": "The first captured /dashboard state after the accept transition showed the shell indicator and body workspace line both set to 'tenancy-ux-8dfe1fbb-r2-20260406T113240Z Single Workspace'. The page errors panel remained empty; the only incomplete part of the first frame was that the API text had not yet filled in."
+        },
+        {
+          "action": "Wait for the destination dashboard to settle.",
+          "expected": "The invited workspace should remain active and the dashboard should become fully usable.",
+          "observed": "After settling, the session stayed on /dashboard with the same workspace in shell and body and the private data line completed to 'API: This is private'."
+        }
+      ],
+      "evidence": {
+        "screenshots": [
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-CROSS-007-invite-recovery.png",
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-CROSS-007-dashboard-after-accept-immediate.png",
+          "tenancy-ux-parity/browser-tenancy-rerun-round-2/VAL-CROSS-007-dashboard-after-accept-settled.png"
+        ],
+        "consoleErrors": "none",
+        "network": "Browser performance entries recorded GET /api/auth/get-session -> 200, GET /trpc/viewer,teamInvites.invitesByEmail?batch=1&input=%7B%7D -> 200, GET /trpc/team.list?batch=1&input=%7B%7D -> 200 on /teams, then POST /trpc/teamInvites.accept?batch=1 -> 200 during acceptance. After the dashboard settled, GET /trpc/privateData?batch=1&input=%7B%7D -> 200 was also present.",
+        "finalUrls": [
+          "http://dashboard.faworra.localhost:1355/teams",
+          "http://dashboard.faworra.localhost:1355/dashboard"
+        ]
+      },
+      "issues": null
+    }
+  ],
+  "frictions": [
+    {
+      "description": "agent-browser's request log did not capture these localhost app requests reliably during the rerun.",
+      "resolved": true,
+      "resolution": "Used browser performance resource entries with responseStatus as corroborating network evidence for auth, switch, invite, and protected-data requests.",
+      "affectedAssertions": [
+        "VAL-TENANCY-004",
+        "VAL-CROSS-004",
+        "VAL-CROSS-007"
+      ]
+    },
+    {
+      "description": "The invite-accept transition reached /dashboard before the privateData message text had fully populated.",
+      "resolved": true,
+      "resolution": "Captured both the immediate dashboard frame for the primary verdict and a later settled screenshot/state for context.",
+      "affectedAssertions": [
+        "VAL-CROSS-007"
+      ]
+    }
+  ],
+  "blockers": [],
+  "summary": "Retested 3 browser tenancy assertions on the fresh tenancy-ux-8dfe1fbb-r2-20260406T113240Z fixture namespace. VAL-TENANCY-004 and VAL-CROSS-004 now pass because the immediate post-switch shell/body state was already consistent on the secondary workspace and persisted across refresh/navigation. VAL-CROSS-007 now passes because invite recovery routed through /teams, the immediate destination dashboard showed the invited workspace consistently in shell/body, and no Authentication required render fallback appeared."
+}

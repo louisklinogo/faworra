@@ -1,51 +1,27 @@
 {
   "milestone": "tenancy-ux-parity",
-  "round": 1,
-  "status": "fail",
-  "generatedAt": "2026-04-06T10:16:56.448081+00:00",
+  "round": 2,
+  "status": "pass",
+  "generatedAt": "2026-04-06T11:41:58.675710+00:00",
   "assertionsSummary": {
-    "total": 12,
-    "passed": 9,
-    "failed": 3,
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
     "blocked": 0
   },
   "passedAssertions": [
-    "VAL-AUTH-007",
-    "VAL-TENANCY-003",
-    "VAL-TENANCY-006",
-    "VAL-TENANCY-007",
-    "VAL-TENANCY-008",
-    "VAL-TENANCY-009",
-    "VAL-TENANCY-010",
-    "VAL-CROSS-005",
-    "VAL-CROSS-006"
+    "VAL-TENANCY-004",
+    "VAL-CROSS-004",
+    "VAL-CROSS-007"
   ],
-  "failedAssertions": [
-    {
-      "id": "VAL-TENANCY-004",
-      "reason": "The successful user.switchTeam mutation updated the shell to the secondary workspace before the dashboard body/privateData caught up, so the active workspace did not change immediately across the rendered UI."
-    },
-    {
-      "id": "VAL-CROSS-004",
-      "reason": "Right after switching teams, the shell and protected dashboard content disagreed on the active workspace until a later re-render corrected the mismatch."
-    },
-    {
-      "id": "VAL-CROSS-007",
-      "reason": "Invite recovery reached /dashboard with privateData for the invited workspace, but the shell lost the current-workspace indicator and the transition emitted Authentication required server-render errors."
-    }
-  ],
+  "failedAssertions": [],
   "blockedAssertions": [],
   "appliedUpdates": [
     {
       "target": "user-testing.md",
-      "description": "Documented the low-memory tenancy round concurrency cap (1 browser validator) and the tenancy-specific fixture workflow, including which seeded users belong to browser versus API invite validation.",
-      "source": "setup"
-    },
-    {
-      "target": ".factory/library/tenancy-ux-seed-fixtures.ts",
-      "description": "Added a reusable fixture seeder that provisions disposable tenancy-ux users, workspaces, memberships, and invite states for real API/browser validation against the dev database.",
+      "description": "Documented that tenancy-ux browser reruns must reseed a fresh fixture namespace and replace the tenancy fixtures file before immediate post-mutation validation.",
       "source": "setup"
     }
   ],
-  "previousRound": null
+  "previousRound": ".factory/validation/tenancy-ux-parity/user-testing/synthesis.round-1.json"
 }
