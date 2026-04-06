@@ -1,0 +1,394 @@
+{
+  "apiBaseUrl": "http://api.faworra.localhost:1355",
+  "dashboardBaseUrl": "http://dashboard.faworra.localhost:1355",
+  "generatedAt": "2026-04-06T09:47:45.123Z",
+  "namespace": "tenancy-ux-fedb5c00",
+  "users": {
+    "apiOwner": {
+      "email": "tenancy-ux-fedb5c00-api-owner@example.com",
+      "id": "Vj3XdZaIqlkw0V9IgV0ZIQiesZybqPud",
+      "label": "api-owner",
+      "name": "Tenancy UX api-owner"
+    },
+    "apiRecipient": {
+      "email": "tenancy-ux-fedb5c00-api-recipient@example.com",
+      "id": "nc4oxvVE4u02K7gwTVBoAkMcsOVnWZxh",
+      "label": "api-recipient",
+      "name": "Tenancy UX api-recipient"
+    },
+    "browserDeclineRecipient": {
+      "email": "tenancy-ux-fedb5c00-browser-decline-recipient@example.com",
+      "id": "Mh48R8MQUDmYPTO7H2pkLoROlWl8cmAE",
+      "label": "browser-decline-recipient",
+      "name": "Tenancy UX browser-decline-recipient"
+    },
+    "browserRecipient": {
+      "email": "tenancy-ux-fedb5c00-browser-recipient@example.com",
+      "id": "oSYsbzE14w48VaDZ0ePXdnR1EvbXIiO9",
+      "label": "browser-recipient",
+      "name": "Tenancy UX browser-recipient"
+    },
+    "duplicatePending": {
+      "email": "tenancy-ux-fedb5c00-duplicate-pending@example.com",
+      "id": "aKKkE1sOfCzb0Q1PPAoUucoCCug73eur",
+      "label": "duplicate-pending",
+      "name": "Tenancy UX duplicate-pending"
+    },
+    "mixedRole": {
+      "email": "tenancy-ux-fedb5c00-mixed-role@example.com",
+      "id": "ejehX3tElnnXAheQhBLSkmk8XzyP2T6K",
+      "label": "mixed-role",
+      "name": "Tenancy UX mixed-role"
+    },
+    "outsider": {
+      "email": "tenancy-ux-fedb5c00-outsider@example.com",
+      "id": "TH22wCJrjb4CoRRo6122QVSVy4zOg0b7",
+      "label": "outsider",
+      "name": "Tenancy UX outsider"
+    },
+    "repeatRecipient": {
+      "email": "tenancy-ux-fedb5c00-repeat-recipient@example.com",
+      "id": "s8yoCDu3vC2TEctXGh06SEUO5Fc3VTvv",
+      "label": "repeat-recipient",
+      "name": "Tenancy UX repeat-recipient"
+    },
+    "singleOwner": {
+      "email": "tenancy-ux-fedb5c00-single-owner@example.com",
+      "id": "rTed5xgrtswS19tCVmfKbjnZYv0WuaXs",
+      "label": "single-owner",
+      "name": "Tenancy UX single-owner"
+    },
+    "switcher": {
+      "email": "tenancy-ux-fedb5c00-switcher@example.com",
+      "id": "gv9S6jkH9tBTR2zuC8zbpI1MC1UbKUAf",
+      "label": "switcher",
+      "name": "Tenancy UX switcher"
+    }
+  },
+  "workspaces": {
+    "apiOwner": {
+      "membership": {
+        "id": "95ed1e16-ef78-453b-aa41-825648cead3e",
+        "userId": "Vj3XdZaIqlkw0V9IgV0ZIQiesZybqPud",
+        "teamId": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+        "role": "owner",
+        "createdAt": "2026-04-06T09:47:43.289Z",
+        "updatedAt": "2026-04-06T09:47:43.289Z"
+      },
+      "settings": {
+        "teamId": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+        "baseCurrency": "KES",
+        "countryCode": "KE",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-06T09:47:43.449Z",
+        "updatedAt": "2026-04-06T09:47:43.449Z"
+      },
+      "team": {
+        "id": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+        "name": "tenancy-ux-fedb5c00 API Owner Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-06T09:47:43.120Z",
+        "updatedAt": "2026-04-06T09:47:43.120Z"
+      }
+    },
+    "mixedOwned": {
+      "membership": {
+        "id": "5fc29c90-1367-439e-a624-b479fe3d3f6c",
+        "userId": "ejehX3tElnnXAheQhBLSkmk8XzyP2T6K",
+        "teamId": "497fc4f9-811e-4a86-8f74-12f719801eaf",
+        "role": "owner",
+        "createdAt": "2026-04-06T09:47:43.988Z",
+        "updatedAt": "2026-04-06T09:47:43.988Z"
+      },
+      "settings": {
+        "teamId": "497fc4f9-811e-4a86-8f74-12f719801eaf",
+        "baseCurrency": "GBP",
+        "countryCode": "GB",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-06T09:47:44.168Z",
+        "updatedAt": "2026-04-06T09:47:44.168Z"
+      },
+      "team": {
+        "id": "497fc4f9-811e-4a86-8f74-12f719801eaf",
+        "name": "tenancy-ux-fedb5c00 Mixed Owner Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-06T09:47:43.820Z",
+        "updatedAt": "2026-04-06T09:47:43.820Z"
+      }
+    },
+    "outsider": {
+      "membership": {
+        "id": "3c65d3db-44cf-4b94-b22d-5081c7bc6387",
+        "userId": "TH22wCJrjb4CoRRo6122QVSVy4zOg0b7",
+        "teamId": "1efb51ea-495e-4d97-9247-18e699867bc2",
+        "role": "owner",
+        "createdAt": "2026-04-06T09:47:44.948Z",
+        "updatedAt": "2026-04-06T09:47:44.948Z"
+      },
+      "settings": {
+        "teamId": "1efb51ea-495e-4d97-9247-18e699867bc2",
+        "baseCurrency": "CAD",
+        "countryCode": "CA",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-06T09:47:45.100Z",
+        "updatedAt": "2026-04-06T09:47:45.100Z"
+      },
+      "team": {
+        "id": "1efb51ea-495e-4d97-9247-18e699867bc2",
+        "name": "tenancy-ux-fedb5c00 Outsider Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-06T09:47:44.780Z",
+        "updatedAt": "2026-04-06T09:47:44.780Z"
+      }
+    },
+    "single": {
+      "membership": {
+        "id": "758e6de0-b8d3-48a0-bfc0-b86b5e31f196",
+        "userId": "rTed5xgrtswS19tCVmfKbjnZYv0WuaXs",
+        "teamId": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+        "role": "owner",
+        "createdAt": "2026-04-06T09:47:41.461Z",
+        "updatedAt": "2026-04-06T09:47:41.461Z"
+      },
+      "settings": {
+        "teamId": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+        "baseCurrency": "GHS",
+        "countryCode": "GH",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-06T09:47:41.641Z",
+        "updatedAt": "2026-04-06T09:47:41.641Z"
+      },
+      "team": {
+        "id": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+        "name": "tenancy-ux-fedb5c00 Single Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-06T09:47:41.308Z",
+        "updatedAt": "2026-04-06T09:47:41.308Z"
+      }
+    },
+    "switcherPrimary": {
+      "membership": {
+        "id": "7dcca22d-7677-4018-a904-708aa5d76223",
+        "userId": "gv9S6jkH9tBTR2zuC8zbpI1MC1UbKUAf",
+        "teamId": "80fd8f3e-f82a-47de-a3a2-ae81aad0bb7b",
+        "role": "owner",
+        "createdAt": "2026-04-06T09:47:42.148Z",
+        "updatedAt": "2026-04-06T09:47:42.148Z"
+      },
+      "settings": {
+        "teamId": "80fd8f3e-f82a-47de-a3a2-ae81aad0bb7b",
+        "baseCurrency": "USD",
+        "countryCode": "US",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-06T09:47:42.309Z",
+        "updatedAt": "2026-04-06T09:47:42.309Z"
+      },
+      "team": {
+        "id": "80fd8f3e-f82a-47de-a3a2-ae81aad0bb7b",
+        "name": "tenancy-ux-fedb5c00 Switcher Primary Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-06T09:47:41.981Z",
+        "updatedAt": "2026-04-06T09:47:41.981Z"
+      }
+    },
+    "switcherSecondary": {
+      "membership": {
+        "id": "a5d99f82-0b55-4393-911a-27a808e51985",
+        "userId": "gv9S6jkH9tBTR2zuC8zbpI1MC1UbKUAf",
+        "teamId": "596d365b-de0c-4b1e-bb4e-785ceae28017",
+        "role": "owner",
+        "createdAt": "2026-04-06T09:47:42.648Z",
+        "updatedAt": "2026-04-06T09:47:42.648Z"
+      },
+      "settings": {
+        "teamId": "596d365b-de0c-4b1e-bb4e-785ceae28017",
+        "baseCurrency": "EUR",
+        "countryCode": "DE",
+        "fiscalYearStartMonth": null,
+        "industryKey": "fashion",
+        "industryConfigVersion": "v1",
+        "createdAt": "2026-04-06T09:47:42.810Z",
+        "updatedAt": "2026-04-06T09:47:42.810Z"
+      },
+      "team": {
+        "id": "596d365b-de0c-4b1e-bb4e-785ceae28017",
+        "name": "tenancy-ux-fedb5c00 Switcher Secondary Workspace",
+        "logoUrl": null,
+        "createdAt": "2026-04-06T09:47:42.460Z",
+        "updatedAt": "2026-04-06T09:47:42.460Z"
+      }
+    }
+  },
+  "memberships": {
+    "mixedRoleApiWorkspace": {
+      "id": "67a85223-6c24-4009-9f86-7ec1354b3556",
+      "userId": "ejehX3tElnnXAheQhBLSkmk8XzyP2T6K",
+      "teamId": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+      "role": "member",
+      "createdAt": "2026-04-06T09:47:44.441Z",
+      "updatedAt": "2026-04-06T09:47:44.441Z"
+    },
+    "repeatRecipient": {
+      "id": "6b75ba31-28df-4fa1-ad10-6da8187492de",
+      "userId": "s8yoCDu3vC2TEctXGh06SEUO5Fc3VTvv",
+      "teamId": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+      "role": "member",
+      "createdAt": "2026-04-06T09:47:45.421Z",
+      "updatedAt": "2026-04-06T09:47:45.421Z"
+    }
+  },
+  "invites": {
+    "apiRecipient": {
+      "id": "aa739873-4c71-420e-8911-5efb3834e5ab",
+      "teamId": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+      "email": "tenancy-ux-fedb5c00-api-recipient@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-api-recipient@example.com",
+      "role": "member",
+      "status": "pending",
+      "tokenHash": "ad20f2a3b3ffbc1eb6b94144d30ac7fb7d4c90963e91287ce6bba5050cec40f9",
+      "invitedByUserId": "Vj3XdZaIqlkw0V9IgV0ZIQiesZybqPud",
+      "acceptedByUserId": null,
+      "expiresAt": "2026-04-20T09:47:44.087Z",
+      "acceptedAt": null,
+      "createdAt": "2026-04-06T09:47:46.120Z",
+      "updatedAt": "2026-04-06T09:47:46.120Z"
+    },
+    "browserAccept": {
+      "id": "24a659b6-945c-49fc-bc51-85cb6ab6462b",
+      "teamId": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+      "email": "tenancy-ux-fedb5c00-browser-recipient@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-browser-recipient@example.com",
+      "role": "member",
+      "status": "pending",
+      "tokenHash": "5fa25a2655d50a405ff1ef8651c479657905972372b3d3831725ba46d7336252",
+      "invitedByUserId": "rTed5xgrtswS19tCVmfKbjnZYv0WuaXs",
+      "acceptedByUserId": null,
+      "expiresAt": "2026-04-20T09:47:43.753Z",
+      "acceptedAt": null,
+      "createdAt": "2026-04-06T09:47:45.749Z",
+      "updatedAt": "2026-04-06T09:47:45.749Z"
+    },
+    "browserDecline": {
+      "id": "f90304de-e214-434b-a2e5-866a05b1e929",
+      "teamId": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+      "email": "tenancy-ux-fedb5c00-browser-decline-recipient@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-browser-decline-recipient@example.com",
+      "role": "member",
+      "status": "pending",
+      "tokenHash": "c9fdc9c17e3eb8e5cad91b5a1558a68ea1c291e06fa4a3cf4b7ece2e8ccca172",
+      "invitedByUserId": "rTed5xgrtswS19tCVmfKbjnZYv0WuaXs",
+      "acceptedByUserId": null,
+      "expiresAt": "2026-04-20T09:47:43.902Z",
+      "acceptedAt": null,
+      "createdAt": "2026-04-06T09:47:45.920Z",
+      "updatedAt": "2026-04-06T09:47:45.920Z"
+    },
+    "duplicatePending": {
+      "id": "a989c4ee-0140-4c92-8357-5c7968e93223",
+      "teamId": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+      "email": "tenancy-ux-fedb5c00-duplicate-pending@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-duplicate-pending@example.com",
+      "role": "member",
+      "status": "pending",
+      "tokenHash": "478e75996cd6fd926005b925f281419c506cec5c007109eee99f332783cb667c",
+      "invitedByUserId": "Vj3XdZaIqlkw0V9IgV0ZIQiesZybqPud",
+      "acceptedByUserId": null,
+      "expiresAt": "2026-04-20T09:47:44.279Z",
+      "acceptedAt": null,
+      "createdAt": "2026-04-06T09:47:46.320Z",
+      "updatedAt": "2026-04-06T09:47:46.320Z"
+    },
+    "expiredForOutsider": {
+      "id": "b2e6680e-fca2-49bc-a608-21c961eef6cc",
+      "teamId": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+      "email": "tenancy-ux-fedb5c00-outsider@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-outsider@example.com",
+      "role": "member",
+      "status": "pending",
+      "tokenHash": "07d31d9151d352f48433de4e2789692f6e5fc2f0e282819135ba383b7d89ee00",
+      "invitedByUserId": "rTed5xgrtswS19tCVmfKbjnZYv0WuaXs",
+      "acceptedByUserId": null,
+      "expiresAt": "2026-04-04T09:47:44.781Z",
+      "acceptedAt": null,
+      "createdAt": "2026-04-06T09:47:46.892Z",
+      "updatedAt": "2026-04-06T09:47:46.892Z"
+    },
+    "repeatAccepted": {
+      "id": "bc434cfa-da03-414b-af84-5127535581ac",
+      "teamId": "32ba831b-8daf-4e8d-a874-ebe34db54802",
+      "email": "tenancy-ux-fedb5c00-repeat-recipient@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-repeat-recipient@example.com",
+      "role": "member",
+      "status": "accepted",
+      "tokenHash": "74d65a581dd6caece2fe2ff2827ef31458164e08ebdf46c334b3e7e36277d14b",
+      "invitedByUserId": "Vj3XdZaIqlkw0V9IgV0ZIQiesZybqPud",
+      "acceptedByUserId": "s8yoCDu3vC2TEctXGh06SEUO5Fc3VTvv",
+      "expiresAt": "2026-04-20T09:47:44.456Z",
+      "acceptedAt": "2026-04-06T09:47:44.456Z",
+      "createdAt": "2026-04-06T09:47:46.520Z",
+      "updatedAt": "2026-04-06T09:47:46.520Z"
+    },
+    "revokedForOutsider": {
+      "id": "746159e5-4a97-4230-a37b-e7e81ff91dda",
+      "teamId": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+      "email": "tenancy-ux-fedb5c00-outsider@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-outsider@example.com",
+      "role": "member",
+      "status": "revoked",
+      "tokenHash": "6b0bd48b9498aa076a6e849110b37e9a47a46423de0894fc88a19a23743c31db",
+      "invitedByUserId": "rTed5xgrtswS19tCVmfKbjnZYv0WuaXs",
+      "acceptedByUserId": null,
+      "expiresAt": "2026-04-20T09:47:44.616Z",
+      "acceptedAt": null,
+      "createdAt": "2026-04-06T09:47:46.708Z",
+      "updatedAt": "2026-04-06T09:47:46.708Z"
+    },
+    "wrongEmail": {
+      "id": "eece1771-8dc5-449b-8155-fd737a22ae33",
+      "teamId": "2f18deec-184e-4df5-b3fc-9816ac07da95",
+      "email": "tenancy-ux-fedb5c00-wrong-email-target@example.com",
+      "normalizedEmail": "tenancy-ux-fedb5c00-wrong-email-target@example.com",
+      "role": "member",
+      "status": "pending",
+      "tokenHash": "4c717edeff05d04f8a8dcf24522adb1754957466c0be10d0d0379a4dd8227f66",
+      "invitedByUserId": "rTed5xgrtswS19tCVmfKbjnZYv0WuaXs",
+      "acceptedByUserId": null,
+      "expiresAt": "2026-04-20T09:47:44.953Z",
+      "acceptedAt": null,
+      "createdAt": "2026-04-06T09:47:47.079Z",
+      "updatedAt": "2026-04-06T09:47:47.079Z"
+    }
+  },
+  "bulkInviteBatch": [
+    {
+      "email": "tenancy-ux-fedb5c00-bulk-fresh-a@example.com",
+      "role": "member"
+    },
+    {
+      "email": "tenancy-ux-fedb5c00-bulk-fresh-b@example.com",
+      "role": "member"
+    },
+    {
+      "email": "tenancy-ux-fedb5c00-mixed-role@example.com",
+      "role": "member"
+    },
+    {
+      "email": "tenancy-ux-fedb5c00-duplicate-pending@example.com",
+      "role": "member"
+    },
+    {
+      "email": "tenancy-ux-fedb5c00-bulk-fresh-a@example.com",
+      "role": "member"
+    }
+  ]
+}

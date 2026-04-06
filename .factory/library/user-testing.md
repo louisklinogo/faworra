@@ -90,6 +90,11 @@ Current auth-shell-parity adjustment:
 - current machine state during this run is closer to ~2.4 GiB available while multiple droid processes and the dev servers are active
 - cap browser validators at **2 concurrent sessions** for this round to avoid memory pressure
 
+Current tenancy-ux-parity adjustment:
+
+- current machine state during this run is closer to ~0.49 GiB available while the dashboard/API dev servers and multiple droid processes are active
+- cap browser validators at **1 concurrent session** for this round to avoid renderer crashes or OOM pressure
+
 ### API surface
 
 Recommended maximum concurrent validators: **5**
@@ -137,6 +142,34 @@ Important notes for this environment:
 - keep all mutations scoped to the seeded fixture users for the current namespace
 - treat the seeded teamless fixture as single-use for browser retries; once a validator completes onboarding with that user, future reruns should create a fresh disposable teamless account instead of assuming the original fixture is still teamless
 - for reruns after a browser mutation round, reseed a fresh auth-shell fixture namespace and replace `.factory/validation/auth-shell-parity/user-testing/fixtures.json` before spawning new browser validators
+
+## Tenancy-ux-parity seeded fixtures
+
+The current tenancy-ux validation run uses disposable seeded accounts and workspace state written to:
+
+- `.factory/validation/tenancy-ux-parity/user-testing/fixtures.json`
+
+The fixture seeding helper lives at:
+
+- `.factory/library/tenancy-ux-seed-fixtures.ts`
+
+It provisions these tenancy-ux test states against the real dev database:
+
+- single-team owner for the non-interactive switcher state
+- multi-team owner with primary + secondary workspaces for switch persistence
+- API owner workspace with pending, accepted, and duplicate-invite fixtures
+- mixed-role user who is an owner elsewhere but only a member on the API owner workspace
+- teamless invite recipients for browser accept and decline recovery
+- teamless API recipient for first-workspace invite acceptance
+- outsider user with an already-active workspace for invalid-invite safety checks
+
+Important notes for this environment:
+
+- the API and dashboard must already be running before seeding, because the helper creates real Better Auth users via `POST /api/auth/sign-up/email`
+- the seeded fixture password is the shared disposable value `Password123!`
+- browser invite-recovery validators should use the dedicated `browserRecipient` and `browserDeclineRecipient` users; do not reuse the API recipient because API assertions mutate that invite into an accepted state
+- API invite validators should keep mutations scoped to the `apiOwner` workspace and the specific invite ids recorded in the tenancy fixtures file
+- the seeded `expiredForOutsider` invite is inserted as `pending` with an already-past `expiresAt` so the first accept attempt exercises the real expiry transition path
 
 ## Flow Validator Guidance: Browser surface
 
