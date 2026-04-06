@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import OnboardingForm from "@/components/onboarding-form";
+import { resolveOnboardingEntry } from "@/lib/onboarding-redirect";
+import { createServerTrpcClient } from "@/lib/server-trpc";
 import { getServerViewer } from "@/lib/server-viewer";
 
 async function getDefaultCountryCode(): Promise<string> {
@@ -25,6 +27,20 @@ export default async function OnboardingPage() {
 
 	if (!viewer.needsOnboarding) {
 		redirect("/dashboard");
+	}
+
+	// Before rendering the onboarding form, check whether the signed-in user
+	// already has pending team invites.  If so, redirect to the invite-recovery
+	// surface (/teams) so they can accept or decline before starting
+	// default-team bootstrap.  This prevents a pending-invite user from
+	// bypassing the recovery surface by navigating directly to /onboarding.
+	const trpcClient = await createServerTrpcClient();
+	const pendingInvites = await trpcClient.teamInvites.invitesByEmail.query();
+	const inviteRecoveryRedirect = resolveOnboardingEntry(
+		pendingInvites.length > 0
+	);
+	if (inviteRecoveryRedirect) {
+		redirect(inviteRecoveryRedirect);
 	}
 
 	const countryCode = await getDefaultCountryCode();

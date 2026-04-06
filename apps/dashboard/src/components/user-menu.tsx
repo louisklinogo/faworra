@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@faworra-new/ui/components/button";
 import {
 	DropdownMenu,
