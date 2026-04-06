@@ -1,0 +1,39 @@
+{
+  "featureId": "browser-invite-recovery-surface",
+  "reviewedAt": "2026-04-06T09:00:47Z",
+  "commitId": "28a676b",
+  "transcriptSkeletonReviewed": true,
+  "diffReviewed": true,
+  "status": "fail",
+  "codeReview": {
+    "summary": "Fail. Commit `28a676b` adds the new `/teams` invite-recovery surface and routes `/dashboard` and `/login` through it, but the feature is still incomplete in two blocking ways: authenticated pending-invite users can still bypass recovery by opening `/onboarding` directly, and the change was only made to type-check locally after manual edits to ignored `.next/types/*` files that were not committed.",
+    "issues": [
+      {
+        "file": "apps/dashboard/src/app/onboarding/page.tsx",
+        "line": 20,
+        "severity": "blocking",
+        "description": "The onboarding route still treats every authenticated `needsOnboarding` user as an onboarding candidate and never checks for pending invites or redirects to `/teams`. That contradicts the feature contract (`features.json` says pending-invite users must be routed to recovery instead of onboarding), so a signed-in invite recipient who lands on `/onboarding` directly can bypass the new recovery surface and start default-team bootstrap instead."
+      },
+      {
+        "file": "apps/dashboard/src/lib/protected-shell.ts",
+        "line": 26,
+        "severity": "blocking",
+        "description": "This feature is not self-contained on a clean checkout. The worker transcript shows `bun x tsc -p apps/dashboard/tsconfig.json --noEmit` only passed after manually editing `apps/dashboard/.next/types/routes.d.ts` and `apps/dashboard/.next/types/link.d.ts` to add `/teams`, but those generated files are ignored by `apps/dashboard/.gitignore` and are absent from commit `28a676b`. The new `/teams` typed-route literals introduced here therefore depend on uncommitted local `.next` state instead of tracked source."
+      }
+    ]
+  },
+  "sharedStateObservations": [
+    {
+      "area": "skills",
+      "observation": "The `dashboard-parity-worker` skill says browser verification with `agent-browser` is mandatory before handoff for every changed browser flow, but this session still reported `followedProcedure: true` after browser verification was blocked and no `agent-browser` usage appears in the transcript skeleton.",
+      "evidence": "/home/louis/developer/faworra/faworra-new/.factory/skills/dashboard-parity-worker/SKILL.md:23 and :44 make `agent-browser` mandatory. Parsing /home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/worker-transcripts.jsonl for session `01e7d814-63ab-467c-95da-4c821214e6a2` shows no `agent-browser` invocation in the skeleton, while /home/louis/.factory/missions/bf937643-326f-44d3-a49d-533fd744ae00/handoffs/2026-04-05T21-23-50-011Z__browser-invite-recovery-surface__01e7d814-63ab-467c-95da-4c821214e6a2.json records `skillFeedback.followedProcedure: true` even though `interactiveChecks` says the dashboard browser UI was not accessible because a stale process held `.next/dev/lock`."
+    },
+    {
+      "area": "knowledge",
+      "observation": "There is no shared-state guidance for regenerating Next typed-route files after adding a new app route, which led the worker to hand-edit ignored `.next/types` artifacts to satisfy TypeScript.",
+      "evidence": "The transcript skeleton for session `01e7d814-63ab-467c-95da-4c821214e6a2` shows manual edits to `apps/dashboard/.next/types/routes.d.ts` and `apps/dashboard/.next/types/link.d.ts`. Those files are ignored by /home/louis/developer/faworra/faworra-new/apps/dashboard/.gitignore:15, while /home/louis/developer/faworra/faworra-new/apps/dashboard/tsconfig.json:32-33 includes `.next/types/**/*.ts` in the TypeScript program. Neither `.factory/library/architecture.md` nor the dashboard skill explains the correct regeneration workflow, so workers can end up depending on untracked generated state."
+    }
+  ],
+  "addressesFailureFrom": null,
+  "summary": "Fail. I reviewed the feature metadata, handoff, transcript skeleton, commit `28a676b`, and the touched dashboard files. The `/teams` recovery surface itself is implemented, but pending-invite users can still reach `/onboarding` directly, and the commit depended on uncommitted edits to ignored Next-generated route types, so the feature does not fully satisfy the invite-recovery contract."
+}
