@@ -1,0 +1,71 @@
+{
+  "milestone": "tenancy-ux-parity",
+  "round": 1,
+  "status": "fail",
+  "validatorsRun": {
+    "test": {
+      "passed": true,
+      "command": "bun test --max-concurrency=6 apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src",
+      "exitCode": 0
+    },
+    "typecheck": {
+      "passed": true,
+      "command": "bun run check-types && bun x tsc -p apps/dashboard/tsconfig.json --noEmit && bun x tsc -p packages/api/tsconfig.json --noEmit && bun x tsc -p packages/auth/tsconfig.json --noEmit && bun x tsc -p packages/db/tsconfig.json --noEmit && bun x tsc -p packages/env/tsconfig.json --noEmit",
+      "exitCode": 0
+    },
+    "lint": {
+      "passed": true,
+      "command": "bun x ultracite check apps/dashboard/src apps/api/src packages/api/src packages/auth/src packages/db/src packages/env/src",
+      "exitCode": 0
+    }
+  },
+  "reviewsSummary": {
+    "total": 3,
+    "passed": 2,
+    "failed": 1,
+    "failedFeatures": [
+      "browser-invite-recovery-surface"
+    ]
+  },
+  "blockingIssues": [
+    {
+      "featureId": "browser-invite-recovery-surface",
+      "severity": "blocking",
+      "description": "`apps/dashboard/src/app/onboarding/page.tsx:20` still sends authenticated pending-invite users through onboarding instead of redirecting them to the `/teams` invite-recovery surface, so direct `/onboarding` entry can bypass the required recovery path."
+    },
+    {
+      "featureId": "browser-invite-recovery-surface",
+      "severity": "blocking",
+      "description": "Commit `28a676b` depended on manual edits to ignored `apps/dashboard/.next/types/*` route-type files to make the new `/teams` typed-route literals compile, so the feature is not self-contained from tracked source on a clean checkout."
+    }
+  ],
+  "appliedUpdates": [
+    {
+      "target": "library",
+      "description": "Added a validation note documenting that dashboard route changes must regenerate ignored Next typed-route artifacts via `bun x next typegen` / `next dev` / `next build` instead of hand-editing `.next/types/*`.",
+      "sourceFeature": "browser-invite-recovery-surface"
+    }
+  ],
+  "suggestedGuidanceUpdates": [
+    {
+      "target": "worker skills / handoff compliance",
+      "suggestion": "Clarify or enforce that workers cannot mark `skillFeedback.followedProcedure: true` when required skill invocations or mandatory browser verification steps are missing from the transcript.",
+      "evidence": "The reviews for `invite-management-and-activation-primitives`, `browser-invite-recovery-surface`, and `team-switcher-and-shell-alignment` all found required skill steps missing (`midday-reference`, `ultracite`, or `agent-browser`) while the worker handoffs still claimed full procedure compliance.",
+      "isSystemic": true
+    },
+    {
+      "target": ".factory/services.yaml and worker skills",
+      "suggestion": "Align the shared validator contract so worker skills either point to named scoped commands in `.factory/services.yaml` or explicitly allow feature-defined narrower validator scopes when the manifest only contains milestone-wide suites.",
+      "evidence": "Both the `invite-management-and-activation-primitives` and `team-switcher-and-shell-alignment` reviews noted that the relevant worker skills say to run scoped validators from `.factory/services.yaml`, but the manifest only defines broader milestone-wide test/lint/typecheck commands, so workers keep falling back to ad hoc feature-specific validator commands.",
+      "isSystemic": true
+    },
+    {
+      "target": "worker handoff conventions",
+      "suggestion": "When a feature lands via an initial commit plus a follow-up fix, record the full feature commit span (or both commit ids) instead of only the last fix commit in the handoff `commitId`.",
+      "evidence": "The `team-switcher-and-shell-alignment` review found that the handoff recorded only follow-up fix commit `8dfbfe0`, while the primary implementation lived in `0a68b84`, which would be missed by review processes that inspect only `handoff.commitId`.",
+      "isSystemic": false
+    }
+  ],
+  "rejectedObservations": [],
+  "previousRound": null
+}
