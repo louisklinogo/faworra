@@ -1,0 +1,8 @@
+{
+  "extends": "@faworra-new/config/tsconfig.base.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

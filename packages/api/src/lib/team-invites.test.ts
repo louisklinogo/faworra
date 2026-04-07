@@ -3,11 +3,6 @@ import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { userContext } from "@faworra-new/db/schema/core";
 import { teamInvites, teamMemberships } from "@faworra-new/db/schema/team";
 
-import {
-	DEFAULT_INDUSTRY_CONFIG_VERSION,
-	DEFAULT_INDUSTRY_KEY,
-} from "../onboarding";
-
 type InviteStatus = "pending" | "accepted" | "revoked" | "expired";
 
 interface TeamInviteRecord {
@@ -78,7 +73,7 @@ const createInvite = (
 	},
 	team: {
 		id: "team_1",
-		name: "Maison Paco",
+		name: "Akwa Trading",
 		logoUrl: null,
 	},
 	acceptedByUserId: null,
@@ -97,14 +92,14 @@ const createMembership = (
 	teamId: "team_1",
 	team: {
 		id: "team_1",
-		name: "Maison Paco",
+		name: "Akwa Trading",
 		logoUrl: null,
 		settings: {
 			baseCurrency: "EUR",
 			countryCode: "FR",
 			fiscalYearStartMonth: null,
-			industryKey: DEFAULT_INDUSTRY_KEY,
-			industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+			industryKey: null,
+			industryConfigVersion: null,
 		},
 	},
 	...overrides,
@@ -307,7 +302,7 @@ describe("listInvitesByEmail", () => {
 				id: "invite_1",
 				team: {
 					id: "team_1",
-					name: "Maison Paco",
+					name: "Akwa Trading",
 					logoUrl: null,
 				},
 			}),
@@ -465,14 +460,14 @@ describe("acceptTeamInvite", () => {
 		).resolves.toEqual({
 			activeTeam: {
 				id: "team_1",
-				name: "Maison Paco",
+				name: "Akwa Trading",
 				logoUrl: null,
 				settings: {
 					baseCurrency: "EUR",
 					countryCode: "FR",
 					fiscalYearStartMonth: null,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			membership: {

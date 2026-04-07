@@ -10,13 +10,7 @@ import { getSafeReturnTo } from "@/lib/return-to";
 
 import Loader from "./loader";
 
-export default function SignInForm({
-	onSwitchToSignUp,
-	returnTo,
-}: {
-	onSwitchToSignUp: () => void;
-	returnTo?: string;
-}) {
+export default function SignInForm({ returnTo }: { returnTo?: string }) {
 	const { isPending } = authClient.useSession();
 	const safeReturnTo = getSafeReturnTo(returnTo);
 
@@ -55,90 +49,76 @@ export default function SignInForm({
 	}
 
 	return (
-		<div className="mx-auto mt-10 w-full max-w-md p-6">
-			<h1 className="mb-6 text-center font-bold text-3xl">Welcome Back</h1>
-
-			<form
-				className="space-y-4"
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-			>
-				<div>
-					<form.Field name="email">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Email</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									type="email"
-									value={field.state.value}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p className="text-red-500" key={error?.message}>
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<div>
-					<form.Field name="password">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Password</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									type="password"
-									value={field.state.value}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p className="text-red-500" key={error?.message}>
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<form.Subscribe
-					selector={(state) => ({
-						canSubmit: state.canSubmit,
-						isSubmitting: state.isSubmitting,
-					})}
-				>
-					{({ canSubmit, isSubmitting }) => (
-						<Button
-							className="w-full"
-							disabled={!canSubmit || isSubmitting}
-							type="submit"
-						>
-							{isSubmitting ? "Submitting..." : "Sign In"}
-						</Button>
+		<form
+			className="w-full space-y-4"
+			onSubmit={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				form.handleSubmit();
+			}}
+		>
+			<div>
+				<form.Field name="email">
+					{(field) => (
+						<div className="space-y-2">
+							<Label htmlFor={field.name}>Email</Label>
+							<Input
+								id={field.name}
+								name={field.name}
+								onBlur={field.handleBlur}
+								onChange={(e) => field.handleChange(e.target.value)}
+								type="email"
+								value={field.state.value}
+							/>
+							{field.state.meta.errors.map((error) => (
+								<p className="text-destructive text-sm" key={error?.message}>
+									{error?.message}
+								</p>
+							))}
+						</div>
 					)}
-				</form.Subscribe>
-			</form>
-
-			<div className="mt-4 text-center">
-				<Button
-					className="text-indigo-600 hover:text-indigo-800"
-					onClick={onSwitchToSignUp}
-					variant="link"
-				>
-					Need an account? Sign Up
-				</Button>
+				</form.Field>
 			</div>
-		</div>
+
+			<div>
+				<form.Field name="password">
+					{(field) => (
+						<div className="space-y-2">
+							<Label htmlFor={field.name}>Password</Label>
+							<Input
+								id={field.name}
+								name={field.name}
+								onBlur={field.handleBlur}
+								onChange={(e) => field.handleChange(e.target.value)}
+								type="password"
+								value={field.state.value}
+							/>
+							{field.state.meta.errors.map((error) => (
+								<p className="text-destructive text-sm" key={error?.message}>
+									{error?.message}
+								</p>
+							))}
+						</div>
+					)}
+				</form.Field>
+			</div>
+
+			<form.Subscribe
+				selector={(state) => ({
+					canSubmit: state.canSubmit,
+					isSubmitting: state.isSubmitting,
+				})}
+			>
+				{({ canSubmit, isSubmitting }) => (
+					<Button
+						className="w-full"
+						disabled={!canSubmit || isSubmitting}
+						type="submit"
+					>
+						{isSubmitting ? "Submitting..." : "Sign In"}
+					</Button>
+				)}
+			</form.Subscribe>
+		</form>
 	);
 }

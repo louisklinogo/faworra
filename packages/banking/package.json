@@ -1,0 +1,16 @@
+{
+  "name": "@faworra-new/banking",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@faworra-new/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

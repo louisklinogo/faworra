@@ -16,7 +16,7 @@ This repository is the scaffold for **Faworra**. It started from Better-T-Stack,
 - **Drizzle** - TypeScript-first ORM
 - **Supabase Postgres** - Database platform
 - **Authentication** - Better Auth
-- **Fashion-first onboarding** - creates a team, owner membership, team settings, and active team context after signup
+- **Onboarding flow** - creates a team, owner membership, team settings, and active team context after signup
 - **Biome** - Linting and formatting
 - **PWA** - Progressive Web App support
 - **Turborepo** - Optimized monorepo build system
@@ -54,13 +54,11 @@ This repository is the scaffold for **Faworra**. It started from Better-T-Stack,
 - Portless wired into dashboard/API/docs dev scripts
 - dashboard route gating now uses a Next 16 `proxy.ts` with Better Auth session-cookie checks
 - API/tRPC context now resolves `session -> userId -> activeTeam -> membership` centrally
-- signup now routes into a fashion-first onboarding flow that bootstraps team, membership, settings, and active team
+- signup now routes into an industry-neutral onboarding flow that bootstraps team, membership, settings, and active team
 - targeted validation completed with `bun run check-types` and `bun x ultracite check packages/api/src apps/dashboard/src`
 
 #### Still open
 
-- API local-dev cleanup around billing env requirements
-- billing/Polar env requirements documentation for local boot
 - multi-membership team switching once invites and additional memberships exist
 
 ### Current onboarding flow
@@ -70,9 +68,9 @@ This repository is the scaffold for **Faworra**. It started from Better-T-Stack,
 - Onboarding collects company name, base currency, and country code
 - The bootstrap transaction creates:
   - a `teams` row
-  - an owner `users_on_team` row
-  - a `team_settings` row with `industry_key = "fashion"`
-  - a `user_context` row pointing `activeTeamId` at the new team
+  - an owner `team_memberships` row
+  - a `team_settings` row with `industry_key = null` (industry configuration deferred to `packages/industry-config`)
+  - a `user_context` row with `activeMembershipId` as the primary active-workspace pointer and `activeTeamId` kept as a compatibility fallback during the migration window
 - Authenticated users without an active team are redirected into onboarding before they can use `/dashboard`
 
 ## Getting Started
@@ -113,6 +111,24 @@ Local auth and dashboard/API communication are expected to use the `*.faworra.lo
 Portless currently supports macOS and Linux. On Windows, the dev scripts automatically fall back to the legacy localhost ports while keeping the repo Portless-ready.
 
 The mobile app still uses Expo's normal local development flow for now. Use the Expo Go app to run it.
+
+### Local auth and billing envs
+
+For local API boot and Polar checkout, `apps/api/.env` must include:
+
+- `DATABASE_URL`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `POLAR_ACCESS_TOKEN`
+- `POLAR_PRO_PRODUCT_ID`
+- `POLAR_SUCCESS_URL`
+- `CORS_ORIGIN`
+
+For the dashboard, `apps/dashboard/.env` must include:
+
+- `NEXT_PUBLIC_SERVER_URL`
+
+`POLAR_PRO_PRODUCT_ID` must be a real Polar product id for the `pro` plan. The API now rejects the old placeholder value `your-product-id` so checkout misconfiguration fails fast.
 
 ## UI Customization
 

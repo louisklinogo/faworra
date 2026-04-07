@@ -6,7 +6,8 @@ This plan revises the next implementation phase for `faworra-new` using the conf
 - The core auth/team foundation described here is now landed.
 - Next 16 uses `apps/dashboard/src/proxy.ts` instead of `middleware.ts` for optimistic route gating.
 - The dashboard now relies on centralized `viewer` context for session + active-team resolution.
-- The first onboarding flow is fashion-first and bootstraps `teams`, `users_on_team`, `team_settings`, and `user_context` together.
+- The onboarding flow bootstraps `teams`, `team_memberships`, `team_settings` (industry-neutral, no hardcoded industry key), and `user_context` together.
+- The tenancy design checkpoint is now documented in `docs/plans/2026-03-11-team-tenancy-architecture.md`.
 
 ### Goals / success criteria
 - Finalize local hostname + session transport **before** auth/middleware work.
@@ -27,7 +28,7 @@ This plan revises the next implementation phase for `faworra-new` using the conf
 - Better Auth currently lives in `packages/auth/src/index.ts`.
 - API mounts auth at `apps/api/src/index.ts -> /api/auth/*` and tRPC at `/trpc/*`.
 - Dashboard currently talks to the API directly via `apps/dashboard/src/lib/auth-client.ts` and `apps/dashboard/src/utils/trpc.ts`.
-- Current DB package only exposes auth tables under `packages/db/src/schema/auth.ts`.
+- Current DB package already includes auth, core, and team schema modules; the current foundation is no longer auth-only.
 
 ### Discovery questions / decisions to close before Milestone 1
 1. **Canonical host map:** confirm `api.faworra.localhost`, `dashboard.faworra.localhost`, and `docs.faworra.localhost` as the actual Portless/dev entrypoints.
@@ -42,17 +43,18 @@ This plan revises the next implementation phase for `faworra-new` using the conf
 - Keep Better Auth tables in `packages/db/src/schema/auth.ts` limited to identity/session/account concerns.
 - Add app-level tenancy tables in a new schema module, e.g. `packages/db/src/schema/team.ts`:
   - `teams`
-  - `users_on_team` (or `team_memberships`) with `role`, status, timestamps
+  - `team_memberships` with `role`, status, timestamps
   - `team_settings`
 - Add a lightweight app-level user-context table in `packages/db/src/schema/core.ts` (or similar) keyed to Better Auth `user.id` that stores:
   - `userId`
-  - `activeTeamId`
+  - `activeMembershipId` as the primary active-workspace pointer
+  - `activeTeamId` as a compatibility fallback during the migration window
   - optional onboarding/default-team metadata
 
 ### Why this is the right adaptation
-- Midday’s core behavior is: membership join table is the source of truth, while the user also has a direct current/default team reference.
+- Midday’s core behavior is: membership join table is the source of truth, while the user may also keep a direct current/default team reference for compatibility or convenience.
 - Better Auth already owns the auth `user` table here; keeping tenancy outside auth avoids turning auth schema into business schema.
-- `activeTeamId` should be validated against membership in API middleware/context, not trusted from client state.
+- `activeMembershipId` should be the primary active-workspace invariant, with `activeTeamId` validated and retained only as a compatibility fallback until the migration window closes.
 
 ### Default / active team behavior
 - On first successful signup, create a default team, owner membership, and user-context row in one transaction.
@@ -74,7 +76,8 @@ This plan revises the next implementation phase for `faworra-new` using the conf
 ### Milestone 1 — Tenancy design checkpoint (pre-schema)
 **Files:** design note under `docs/plans/` or inline ADR; no migration yet.
 - Lock the table set, foreign keys, membership roles, unique constraints, and default-team bootstrap rules.
-- Decide exact naming: `users_on_team` vs `team_memberships`, plus whether `activeTeamId` lives in `core`/`user_context`.
+- Decide when the compatibility fallback can be removed so `user_context.activeMembershipId` becomes the only active-workspace pointer.
+- Canonical reference: `docs/plans/2026-03-11-team-tenancy-architecture.md`.
 **Validation:**
 - Review schema sketch against current auth table keys in `packages/db/src/schema/auth.ts`.
 - Confirm every tenant-owned future table will carry `team_id` and resolve team from middleware/context only.
@@ -112,7 +115,7 @@ This plan revises the next implementation phase for `faworra-new` using the conf
 ### Milestone 5 — Dashboard team flow and startup QA
 **Files:** `apps/dashboard/src/app/login/page.tsx`, auth forms/components, onboarding/team-selection routes as needed, docs/README.
 - Route new users into the default-team flow.
-- Add team selection only if/when multiple memberships exist; otherwise use stored `activeTeamId`.
+- Add team selection only if/when multiple memberships exist; otherwise use the stored active workspace context, with `activeMembershipId` as primary.
 - Document the required Polar envs for local development instead of bypassing them.
 **Validation:**
 - Fresh signup lands in a usable default team.

@@ -15,6 +15,27 @@
       "when": 1773254407658,
       "tag": "0001_oval_christian_walker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775491505078,
+      "tag": "0002_dizzy_shadowcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775493130856,
+      "tag": "0003_zippy_bullseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1775516516158,
+      "tag": "0004_serious_wong",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { uniqueCurrencies } from "@faworra-new/api/currencies";
 import { onboardingInputSchema } from "@faworra-new/api/onboarding";
+import { uniqueCurrencies } from "@faworra-new/location/currencies";
 import { Button } from "@faworra-new/ui/components/button";
 import { Input } from "@faworra-new/ui/components/input";
 import { Label } from "@faworra-new/ui/components/label";
@@ -40,7 +40,7 @@ export default function OnboardingForm({
 		onSubmit: async ({ value }) => {
 			try {
 				await completeOnboarding.mutateAsync(value);
-				toast.success("Your fashion workspace is ready");
+				toast.success("Your workspace is ready");
 				router.push("/dashboard");
 				router.refresh();
 			} catch (error) {
@@ -57,14 +57,14 @@ export default function OnboardingForm({
 		<div className="mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-xl flex-col justify-center px-6 py-10">
 			<div className="mb-8 space-y-3">
 				<p className="font-medium text-sm text-zinc-500 uppercase tracking-[0.2em]">
-					Faworra for fashion businesses
+					Faworra
 				</p>
 				<h1 className="font-semibold text-3xl tracking-tight">
-					Set up your brand workspace
+					Set up your workspace
 				</h1>
 				<p className="max-w-lg text-muted-foreground text-sm">
-					We'll use this to create your team, owner access, and your first
-					fashion workspace settings.
+					We'll use this to create your team, owner access, and your workspace
+					settings.
 				</p>
 			</div>
 
@@ -76,13 +76,6 @@ export default function OnboardingForm({
 					form.handleSubmit();
 				}}
 			>
-				<div className="rounded-lg border bg-card p-4 text-sm">
-					<p className="font-medium">Industry focus</p>
-					<p className="mt-1 text-muted-foreground">
-						This Phase 1 workspace is intentionally configured for fashion.
-					</p>
-				</div>
-
 				<form.Field
 					name="companyName"
 					validators={{
@@ -95,7 +88,7 @@ export default function OnboardingForm({
 						const errorId = `${field.name}-error`;
 						return (
 							<div className="space-y-2">
-								<Label htmlFor={field.name}>Brand or company name</Label>
+								<Label htmlFor={field.name}>Business or company name</Label>
 								<Input
 									aria-describedby={hasError ? errorId : undefined}
 									aria-invalid={hasError}
@@ -103,7 +96,7 @@ export default function OnboardingForm({
 									name={field.name}
 									onBlur={field.handleBlur}
 									onChange={(event) => field.handleChange(event.target.value)}
-									placeholder="Afi Threads"
+									placeholder="Akwa Trading"
 									value={field.state.value}
 								/>
 								{hasError && (
@@ -179,7 +172,7 @@ export default function OnboardingForm({
 						>
 							{isSubmitting || completeOnboarding.isPending
 								? "Creating workspace..."
-								: "Create fashion workspace"}
+								: "Create workspace"}
 						</Button>
 					)}
 				</form.Subscribe>

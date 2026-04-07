@@ -1,7 +1,12 @@
 import z from "zod";
 
 export const TEAM_INVITE_TTL_DAYS = 7;
-export const teamInviteRoleSchema = z.enum(["owner", "member"]);
+export const teamInviteRoleSchema = z.enum([
+	"owner",
+	"admin",
+	"accountant",
+	"member",
+]);
 export const teamInviteInputSchema = z.object({
 	email: z.email().trim().max(320, "Email must be 320 characters or fewer"),
 	role: teamInviteRoleSchema.default("member"),

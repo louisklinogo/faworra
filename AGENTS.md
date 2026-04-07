@@ -101,6 +101,14 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 
 - Use `class` and `for` attributes (not `className` or `htmlFor`)
 
+### Midday Parity Rule
+
+- When a task requests **Midday parity**, treat that as **literal copy-first parity**, not visual approximation.
+- For any touched UI surface, copy Midday's implementation, styling approach, fonts, globals, component structure, and directory/subdirectory placement where technically possible.
+- Do **not** create substitute local components, wrappers, or redesigned variants when an equivalent Midday source exists.
+- If Midday code is technically incompatible with Faworra's stack or business logic, stop and explicitly call out the required deviation before proceeding.
+- Keep Faworra-specific auth, routing, and business semantics only where Midday behavior would be functionally incorrect; keep the presentation layer Midday-aligned.
+
 ---
 
 ## Testing

@@ -12,7 +12,12 @@ import {
 
 import { user } from "./auth";
 
-export const teamRole = pgEnum("team_role", ["owner", "member"]);
+export const teamRole = pgEnum("team_role", [
+	"owner",
+	"admin",
+	"accountant",
+	"member",
+]);
 export const teamInviteStatus = pgEnum("team_invite_status", [
 	"pending",
 	"accepted",

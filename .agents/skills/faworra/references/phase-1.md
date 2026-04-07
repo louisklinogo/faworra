@@ -10,7 +10,7 @@ Phase 1 is about normalizing `faworra-new` into a Midday-aligned foundation. It 
 - keeping the scaffold aligned to the renamed `apps/dashboard`, `apps/api`, and `apps/mobile` structure
 - Better Auth + Midday-style middleware and request context
 - team model and multi-tenant foundation
-- fashion-first onboarding that creates the first workspace after signup
+- industry-neutral onboarding that creates the first workspace after signup
 - schema separation between auth, core/team, and later business domains
 - Portless local-dev conventions
 - documentation cleanup so the scaffold no longer reads like a generic starter
@@ -19,8 +19,8 @@ Phase 1 is about normalizing `faworra-new` into a Midday-aligned foundation. It 
 
 - `apps/dashboard/src/proxy.ts` handles optimistic route gating for `/dashboard`, `/onboarding`, and `/login`
 - authoritative auth + team resolution lives in centralized API/tRPC context, not ad hoc page logic
-- the first onboarding flow is intentionally fashion-first rather than generic multi-industry setup
-- onboarding creates `team`, owner membership, `team_settings`, and `user_context.activeTeamId` in one transaction
+- the onboarding flow is industry-neutral; fashion is only the pilot domain of familiarity, not a hardcoded product assumption
+- onboarding creates `team`, owner membership, `team_settings`, and user context in one transaction, with `activeMembershipId` as the primary active-workspace pointer and `activeTeamId` retained as a compatibility fallback
 - signed-in users without an active team are redirected into onboarding before entering the dashboard
 
 ## Midday-first working rule for Phase 1

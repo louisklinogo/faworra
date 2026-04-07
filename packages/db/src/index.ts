@@ -11,7 +11,17 @@ import {
 	userRelations,
 	verification,
 } from "./schema/auth";
-import { userContext, userContextRelations } from "./schema/core";
+import {
+	userContextRelations,
+	userContext as userContextSchema,
+} from "./schema/core";
+import {
+	transactionCategories,
+	transactionCategoriesRelations,
+	transactionKind,
+	transactions,
+	transactionsRelations,
+} from "./schema/financial";
 import {
 	teamInviteStatus,
 	teamInvites,
@@ -47,8 +57,13 @@ const schema = {
 	teamRole,
 	teamSettings,
 	teamSettingsRelations,
+	transactionCategories,
+	transactionCategoriesRelations,
+	transactionKind,
+	transactions,
+	transactionsRelations,
 	user,
-	userContext,
+	userContext: userContextSchema,
 	userContextRelations,
 	userRelations,
 	verification,

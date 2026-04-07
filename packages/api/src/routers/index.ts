@@ -1,8 +1,10 @@
 import { protectedTeamProcedure, publicProcedure, router } from "../index";
 
 import { onboardingRouter } from "./onboarding";
+import { overviewRouter } from "./overview";
 import { teamRouter } from "./team";
 import { teamInvitesRouter } from "./team-invites";
+import { transactionsRouter } from "./transactions";
 import { userRouter } from "./user";
 
 export const appRouter = router({
@@ -18,10 +20,12 @@ export const appRouter = router({
 			needsOnboarding: ctx.session ? ctx.needsOnboarding : false,
 		};
 	}),
+	overview: overviewRouter,
 	user: userRouter,
 	team: teamRouter,
 	onboarding: onboardingRouter,
 	teamInvites: teamInvitesRouter,
+	transactions: transactionsRouter,
 	privateData: protectedTeamProcedure.query(({ ctx }) => {
 		return {
 			message: "This is private",

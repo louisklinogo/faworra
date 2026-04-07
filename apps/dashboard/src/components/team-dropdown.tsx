@@ -136,9 +136,11 @@ export function TeamDropdown() {
 	// ancestor (Base UI invariant).
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button size="sm" variant="ghost" />}>
-				{switcherState.currentTeam.name}
-				<ChevronsUpDownIcon className="opacity-50" />
+			<DropdownMenuTrigger asChild>
+				<Button size="sm" variant="ghost">
+					{switcherState.currentTeam.name}
+					<ChevronsUpDownIcon className="opacity-50" />
+				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				<DropdownMenuGroup>

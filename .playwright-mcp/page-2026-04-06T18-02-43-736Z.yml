@@ -1,0 +1,26 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation:
+      - link "F" [ref=e3] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e4]: F
+    - generic [ref=e10]:
+      - paragraph [ref=e11]: “Clearer financial visibility helps small teams move faster and make better decisions every day.”
+      - paragraph [ref=e12]: Akosua Mensah, Retail operations • Ghana
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - heading "Welcome to Faworra" [level=1] [ref=e17]
+          - paragraph [ref=e18]: Sign in or create an account
+        - img [ref=e21]
+        - generic [ref=e27]: or
+        - button "Show other options" [ref=e29]
+      - paragraph [ref=e31]: By signing in you agree to our Terms of service & Privacy policy
+  - generic [ref=e32]:
+    - img [ref=e34]
+    - button "Open Tanstack query devtools" [ref=e82] [cursor=pointer]:
+      - img [ref=e83]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e136] [cursor=pointer]:
+    - img [ref=e137]
+  - alert [ref=e140]

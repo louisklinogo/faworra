@@ -2,6 +2,11 @@ import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
 import { switchTeam } from "../lib/team";
+import {
+	getUserPreferences,
+	updateUserPreferences,
+	userPreferencesUpdateSchema,
+} from "../lib/user";
 
 export const userRouter = router({
 	/**
@@ -10,17 +15,29 @@ export const userRouter = router({
 	 * - Active team and membership are null for teamless authenticated users.
 	 * - needsOnboarding indicates no accepted membership could be resolved.
 	 */
-	me: protectedProcedure.query(({ ctx }) => {
+	me: protectedProcedure.query(async ({ ctx }) => {
+		const preferences = await getUserPreferences(
+			ctx.userId,
+			ctx.requestLocation
+		);
+
 		return {
 			id: ctx.session.user.id,
 			name: ctx.session.user.name,
 			email: ctx.session.user.email,
 			image: ctx.session.user.image ?? null,
+			...preferences,
 			activeTeam: ctx.activeTeam,
 			membership: ctx.membership,
 			needsOnboarding: ctx.needsOnboarding,
 		};
 	}),
+
+	update: protectedProcedure
+		.input(userPreferencesUpdateSchema)
+		.mutation(({ ctx, input }) => {
+			return updateUserPreferences(ctx.userId, input, ctx.requestLocation);
+		}),
 
 	/**
 	 * Switches the active workspace for the current user by membership ID.

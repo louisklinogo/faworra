@@ -1,7 +1,6 @@
+import countryFlags from "@faworra-new/location/country-flags";
+import { uniqueCurrencies } from "@faworra-new/location/currencies";
 import z from "zod";
-
-import countryFlags from "./country-flags";
-import { uniqueCurrencies } from "./currencies";
 
 // Derive validation sets directly from Midday's location datasets so the
 // server-side boundary matches exactly the selector surface presented to users.
@@ -11,9 +10,6 @@ const LOCATION_COUNTRY_CODES = new Set(
 const LOCATION_CURRENCY_CODES = new Set(
 	uniqueCurrencies.map((c) => c.toUpperCase())
 );
-
-export const DEFAULT_INDUSTRY_KEY = "fashion" as const;
-export const DEFAULT_INDUSTRY_CONFIG_VERSION = "v1" as const;
 
 export const onboardingInputSchema = z.object({
 	companyName: z

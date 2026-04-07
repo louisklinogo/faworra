@@ -7,11 +7,7 @@ import {
 	teams,
 } from "@faworra-new/db/schema/team";
 
-import {
-	DEFAULT_INDUSTRY_CONFIG_VERSION,
-	DEFAULT_INDUSTRY_KEY,
-	type OnboardingInput,
-} from "../onboarding";
+import type { OnboardingInput } from "../onboarding";
 
 interface Membership {
 	id: string;
@@ -39,7 +35,7 @@ interface UserContextValue {
 type UserContextRow = UserContextValue | null;
 
 const onboardingInput: OnboardingInput = {
-	companyName: "Maison Paco",
+	companyName: "Akwa Trading",
 	baseCurrency: "EUR",
 	countryCode: "FR",
 };
@@ -50,14 +46,14 @@ const createMembership = (overrides?: Partial<Membership>): Membership => ({
 	teamId: "team_1",
 	team: {
 		id: "team_1",
-		name: "Maison Paco",
+		name: "Akwa Trading",
 		logoUrl: null,
 		settings: {
 			baseCurrency: "EUR",
 			countryCode: "FR",
 			fiscalYearStartMonth: null,
-			industryKey: DEFAULT_INDUSTRY_KEY,
-			industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+			industryKey: null,
+			industryConfigVersion: null,
 		},
 	},
 	...overrides,
@@ -79,14 +75,14 @@ const state = {
 	],
 	insertedValues: [] as Array<{ table: string; values: unknown }>,
 	upsertCalls: [] as Array<{ table: string; config: unknown }>,
-	createdTeam: [{ id: "team_new", name: "Maison Paco", logoUrl: null }],
+	createdTeam: [{ id: "team_new", name: "Akwa Trading", logoUrl: null }],
 	createdSettings: [
 		{
 			baseCurrency: "EUR",
 			countryCode: "FR",
 			fiscalYearStartMonth: null,
-			industryKey: DEFAULT_INDUSTRY_KEY,
-			industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+			industryKey: null,
+			industryConfigVersion: null,
 		},
 	],
 };
@@ -204,14 +200,14 @@ beforeEach(() => {
 	];
 	state.insertedValues = [];
 	state.upsertCalls = [];
-	state.createdTeam = [{ id: "team_new", name: "Maison Paco", logoUrl: null }];
+	state.createdTeam = [{ id: "team_new", name: "Akwa Trading", logoUrl: null }];
 	state.createdSettings = [
 		{
 			baseCurrency: "EUR",
 			countryCode: "FR",
 			fiscalYearStartMonth: null,
-			industryKey: DEFAULT_INDUSTRY_KEY,
-			industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+			industryKey: null,
+			industryConfigVersion: null,
 		},
 	];
 });
@@ -241,8 +237,8 @@ describe("getViewerState", () => {
 					baseCurrency: "GBP",
 					countryCode: "GB",
 					fiscalYearStartMonth: 4,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 		});
@@ -256,8 +252,8 @@ describe("getViewerState", () => {
 					baseCurrency: "GBP",
 					countryCode: "GB",
 					fiscalYearStartMonth: 4,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			membership: {
@@ -280,8 +276,8 @@ describe("getViewerState", () => {
 					baseCurrency: "USD",
 					countryCode: "US",
 					fiscalYearStartMonth: 1,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 		});
@@ -295,8 +291,8 @@ describe("getViewerState", () => {
 					baseCurrency: "USD",
 					countryCode: "US",
 					fiscalYearStartMonth: 1,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			membership: {
@@ -317,14 +313,14 @@ describe("completeOnboarding", () => {
 		).resolves.toEqual({
 			activeTeam: {
 				id: "team_1",
-				name: "Maison Paco",
+				name: "Akwa Trading",
 				logoUrl: null,
 				settings: {
 					baseCurrency: "EUR",
 					countryCode: "FR",
 					fiscalYearStartMonth: null,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			membership: {
@@ -353,14 +349,14 @@ describe("completeOnboarding", () => {
 		expect(result).toEqual({
 			activeTeam: {
 				id: "team_new",
-				name: "Maison Paco",
+				name: "Akwa Trading",
 				logoUrl: null,
 				settings: {
 					baseCurrency: "EUR",
 					countryCode: "FR",
 					fiscalYearStartMonth: null,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			membership: {
@@ -374,7 +370,7 @@ describe("completeOnboarding", () => {
 			{
 				table: "teams",
 				values: {
-					name: "Maison Paco",
+					name: "Akwa Trading",
 				},
 			},
 			{
@@ -391,8 +387,8 @@ describe("completeOnboarding", () => {
 					teamId: "team_new",
 					baseCurrency: "EUR",
 					countryCode: "FR",
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			{
@@ -421,14 +417,14 @@ describe("getTeamList", () => {
 				teamId: "team_1",
 				team: {
 					id: "team_1",
-					name: "Maison Paco",
+					name: "Akwa Trading",
 					logoUrl: null,
 					settings: {
 						baseCurrency: "EUR",
 						countryCode: "FR",
 						fiscalYearStartMonth: null,
-						industryKey: DEFAULT_INDUSTRY_KEY,
-						industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+						industryKey: null,
+						industryConfigVersion: null,
 					},
 				},
 			}),
@@ -444,8 +440,8 @@ describe("getTeamList", () => {
 						baseCurrency: "NGN",
 						countryCode: "NG",
 						fiscalYearStartMonth: null,
-						industryKey: DEFAULT_INDUSTRY_KEY,
-						industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+						industryKey: null,
+						industryConfigVersion: null,
 					},
 				},
 			}),
@@ -455,7 +451,7 @@ describe("getTeamList", () => {
 			{
 				membershipId: "membership_1",
 				teamId: "team_1",
-				name: "Maison Paco",
+				name: "Akwa Trading",
 				logoUrl: null,
 				role: "owner",
 			},
@@ -478,14 +474,14 @@ describe("switchTeam", () => {
 			teamId: "team_1",
 			team: {
 				id: "team_1",
-				name: "Maison Paco",
+				name: "Akwa Trading",
 				logoUrl: null,
 				settings: {
 					baseCurrency: "EUR",
 					countryCode: "FR",
 					fiscalYearStartMonth: null,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 		});
@@ -493,14 +489,14 @@ describe("switchTeam", () => {
 		await expect(switchTeam("user_1", "membership_1")).resolves.toEqual({
 			activeTeam: {
 				id: "team_1",
-				name: "Maison Paco",
+				name: "Akwa Trading",
 				logoUrl: null,
 				settings: {
 					baseCurrency: "EUR",
 					countryCode: "FR",
 					fiscalYearStartMonth: null,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			membership: {
@@ -551,8 +547,8 @@ describe("switchTeam", () => {
 					baseCurrency: "GBP",
 					countryCode: "GB",
 					fiscalYearStartMonth: 4,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 		});
@@ -567,8 +563,8 @@ describe("switchTeam", () => {
 					baseCurrency: "GBP",
 					countryCode: "GB",
 					fiscalYearStartMonth: 4,
-					industryKey: DEFAULT_INDUSTRY_KEY,
-					industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+					industryKey: null,
+					industryConfigVersion: null,
 				},
 			},
 			membership: {

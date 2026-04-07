@@ -58,3 +58,19 @@ export const protectedOwnerTeamProcedure = protectedTeamProcedure.use(
 		});
 	}
 );
+
+export const protectedAdminTeamProcedure = protectedTeamProcedure.use(
+	({ ctx, next }) => {
+		const role = ctx.membership.role;
+		if (role !== "owner" && role !== "admin") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "Admin or Owner permissions required",
+			});
+		}
+
+		return next({
+			ctx,
+		});
+	}
+);

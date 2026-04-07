@@ -1,5 +1,6 @@
 import type { AppRouter } from "@faworra-new/api/routers/index";
 import { env } from "@faworra-new/env/web";
+import { getLocationHeaders } from "@faworra-new/location";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { headers } from "next/headers";
 
@@ -19,12 +20,18 @@ import { portlessAwareFetch } from "./portless-fetch.server";
 export const createServerTrpcClient = async () => {
 	const requestHeaders = await headers();
 	const cookie = requestHeaders.get("cookie");
+	const location = getLocationHeaders(requestHeaders);
 
 	return createTRPCClient<AppRouter>({
 		links: [
 			httpBatchLink({
 				url: `${env.NEXT_PUBLIC_SERVER_URL}/trpc`,
-				headers: () => (cookie ? { cookie } : {}),
+				headers: () => ({
+					...(cookie ? { cookie } : {}),
+					"x-user-country": location.country,
+					"x-user-locale": location.locale,
+					"x-user-timezone": location.timezone,
+				}),
 				fetch(url, options) {
 					return portlessAwareFetch(url, {
 						...options,

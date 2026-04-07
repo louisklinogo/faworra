@@ -12,7 +12,7 @@ const RE_SELECT_CURRENCY = /please select a (valid )?currency/i;
 const RE_SELECT_COUNTRY = /please select a (valid )?country/i;
 
 const VALID_INPUT: OnboardingInput = {
-	companyName: "Maison Paco",
+	companyName: "Akwa Trading",
 	baseCurrency: "EUR",
 	countryCode: "FR",
 };
@@ -207,7 +207,7 @@ describe("onboardingInputSchema", () => {
 describe("normalizeOnboardingInput", () => {
 	it("uppercases the currency code", () => {
 		const result = normalizeOnboardingInput({
-			companyName: "Maison Paco",
+			companyName: "Akwa Trading",
 			baseCurrency: "eur",
 			countryCode: "FR",
 		});
@@ -216,7 +216,7 @@ describe("normalizeOnboardingInput", () => {
 
 	it("uppercases the country code", () => {
 		const result = normalizeOnboardingInput({
-			companyName: "Maison Paco",
+			companyName: "Akwa Trading",
 			baseCurrency: "EUR",
 			countryCode: "fr",
 		});
@@ -225,21 +225,21 @@ describe("normalizeOnboardingInput", () => {
 
 	it("trims whitespace from company name", () => {
 		const result = normalizeOnboardingInput({
-			companyName: "  Maison Paco  ",
+			companyName: "  Akwa Trading  ",
 			baseCurrency: "EUR",
 			countryCode: "FR",
 		});
-		expect(result.companyName).toBe("Maison Paco");
+		expect(result.companyName).toBe("Akwa Trading");
 	});
 
 	it("normalizes all fields at once", () => {
 		const result = normalizeOnboardingInput({
-			companyName: "  Afi Threads  ",
+			companyName: "  Akwa Trading  ",
 			baseCurrency: "ghs",
 			countryCode: "gh",
 		});
 		expect(result).toEqual({
-			companyName: "Afi Threads",
+			companyName: "Akwa Trading",
 			baseCurrency: "GHS",
 			countryCode: "GH",
 		});

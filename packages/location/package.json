@@ -1,0 +1,22 @@
+{
+  "name": "@faworra-new/location",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./countries": "./src/countries.ts",
+    "./countries-intl": "./src/countries-intl.ts",
+    "./currencies": "./src/currencies.ts",
+    "./country-flags": "./src/country-flags.ts",
+    "./timezones": "./src/timezones.ts"
+  },
+  "devDependencies": {
+    "@faworra-new/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,30 @@
+import { eq, sql } from "drizzle-orm";
+
+import { db } from "../index";
+import { transactions } from "../schema/financial";
+
+export interface OverviewSummary {
+	expenseTotal: number;
+	incomeTotal: number;
+	netTotal: number;
+	transactionCount: number;
+}
+
+export const getOverviewSummary = async ({ teamId }: { teamId: string }) => {
+	const [summary] = await db
+		.select({
+			expenseTotal: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.kind} = 'expense' THEN ${transactions.amount} ELSE 0 END), 0)`,
+			incomeTotal: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.kind} = 'income' THEN ${transactions.amount} ELSE 0 END), 0)`,
+			netTotal: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.kind} = 'income' THEN ${transactions.amount} ELSE -${transactions.amount} END), 0)`,
+			transactionCount: sql<number>`COUNT(*)`,
+		})
+		.from(transactions)
+		.where(eq(transactions.teamId, teamId));
+
+	return {
+		expenseTotal: Number(summary?.expenseTotal ?? 0),
+		incomeTotal: Number(summary?.incomeTotal ?? 0),
+		netTotal: Number(summary?.netTotal ?? 0),
+		transactionCount: Number(summary?.transactionCount ?? 0),
+	};
+};

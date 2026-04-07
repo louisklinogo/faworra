@@ -7,11 +7,7 @@ import {
 } from "@faworra-new/db/schema/team";
 import { TRPCError } from "@trpc/server";
 
-import {
-	DEFAULT_INDUSTRY_CONFIG_VERSION,
-	DEFAULT_INDUSTRY_KEY,
-	type OnboardingInput,
-} from "../onboarding";
+import type { OnboardingInput } from "../onboarding";
 
 export const mapViewerStateFromMembership = (
 	membership: {
@@ -199,8 +195,8 @@ export const completeOnboarding = (userId: string, input: OnboardingInput) => {
 				teamId: team.id,
 				baseCurrency: input.baseCurrency,
 				countryCode: input.countryCode,
-				industryKey: DEFAULT_INDUSTRY_KEY,
-				industryConfigVersion: DEFAULT_INDUSTRY_CONFIG_VERSION,
+				industryKey: null,
+				industryConfigVersion: null,
 			})
 			.returning();
 

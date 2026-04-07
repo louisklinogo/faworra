@@ -14,8 +14,10 @@
   },
   "dependencies": {
     "@faworra-new/auth": "workspace:*",
+    "@faworra-new/categories": "workspace:*",
     "@faworra-new/db": "workspace:*",
     "@faworra-new/env": "workspace:*",
+    "@faworra-new/location": "workspace:*",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "dotenv": "catalog:",
