@@ -794,39 +794,51 @@ The enforcement system is successful if:
 
 ## Appendix: Parity-Sensitive Directories
 
-The following directories are considered parity-sensitive and subject to write-time enforcement:
+The following directories are considered parity-sensitive and subject to write-time enforcement.
 
-### Dashboard App
+Based on Midday's architecture from `midday-wiki/`:
 
-| Directory | Reason |
-|-----------|--------|
-| `apps/dashboard/src/components/**` | UI components should mirror Midday |
-| `apps/dashboard/src/app/**` | Routing and page structure |
-| `apps/dashboard/src/hooks/**` | State and interaction patterns |
-| `apps/dashboard/src/lib/**` | Utility patterns |
-| `apps/dashboard/src/store/**` | State management patterns |
-
-### UI Package
+### Dashboard Application (UI and routing)
 
 | Directory | Reason |
 |-----------|--------|
-| `packages/ui/src/components/**` | Shared UI primitives |
-| `packages/ui/src/styles/**` | Global styles and tokens |
+| `apps/dashboard/src/components/**` | UI components (canvas, charts, forms, modals, sheets, tables, widgets, metrics, sidebar, menus) |
+| `apps/dashboard/src/app/**` | Routing and page structure (including `[locale]` routes) |
+| `apps/dashboard/src/store/**` | State management |
+| `apps/dashboard/src/hooks/**` | Custom hooks (use-dashboard-store, use-local-storage) |
+| `apps/dashboard/src/utils/**` | Utilities (responsive, styling) |
+| `apps/dashboard/src/lib/**` | Design system configuration |
+| `apps/dashboard/src/middleware.ts` | Auth and routing middleware |
+| `apps/dashboard/src/actions/**` | Server actions (safe-action, revalidate-action) |
+| `apps/dashboard/src/trpc/**` | tRPC client configuration |
 
-### API Package
+### API Application
 
 | Directory | Reason |
 |-----------|--------|
-| `packages/api/src/context/**` | Request context pattern |
-| `packages/api/src/middleware/**` | Auth and team middleware |
-| `packages/api/src/routers/**` | tRPC router patterns (where Midday-derived) |
+| `apps/api/src/**` | All routers, context, middleware (tRPC patterns, protected procedures) |
 
-### DB Package
+### Mobile Application (Phase 2)
 
 | Directory | Reason |
 |-----------|--------|
-| `packages/db/src/schema/**` | Team-scoped schema patterns |
-| `packages/db/src/queries/**` | Query patterns (where Midday-derived) |
+| `apps/mobile/src/**` | Will follow Midday patterns when developed |
+
+### Shared Packages
+
+| Directory | Reason |
+|-----------|--------|
+| `packages/ui/src/**` | Shared UI primitives (design tokens, components) |
+| `packages/db/src/**` | Database schema, queries, client (team-scoped patterns) |
+| `packages/auth/src/**` | Better Auth configuration (adapted from Midday) |
+| `packages/api/src/**` | tRPC routers, context |
+| `packages/banking/src/**` | Banking integration |
+| `packages/accounting/src/**` | Accounting logic |
+| `packages/categories/src/**` | Category management |
+| `packages/location/src/**` | Location data |
+| `packages/plans/src/**` | Subscription plans |
+| `packages/config/**` | Configuration |
+| `packages/env/src/**` | Environment utilities |
 
 ### Exceptions
 
@@ -835,8 +847,8 @@ The following are NOT parity-sensitive:
 - `apps/api/.env` (local secrets)
 - `apps/dashboard/.env` (local secrets)
 - `apps/docs/**` (documentation surface)
-- `apps/mobile/**` (Phase 2, not yet parity-mapped)
-- Faworra-specific business logic (Mono, Kapso, Ghana-specific)
+- Any file with declared `no-equivalent` mode (Faworra-native business logic)
+- Files outside the protected scopes listed above
 
 ---
 

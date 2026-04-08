@@ -1,0 +1,3 @@
+# Ignore runtime artifacts but keep the directory structure
+parity/current-task.json
+!.gitignore
