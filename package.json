@@ -50,6 +50,7 @@
     "@faworra-new/env": "workspace:*",
     "date-fns": "^4.1.0",
     "dotenv": "catalog:",
+    "react-day-picker": "^9.14.0",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -13,6 +13,7 @@ import { Input } from "@faworra-new/ui/components/input";
 import { Label } from "@faworra-new/ui/components/label";
 import { Switch } from "@faworra-new/ui/components/switch";
 import { Textarea } from "@faworra-new/ui/components/textarea";
+import { DatePicker } from "@faworra-new/ui/components/date-picker";
 import { cn } from "@faworra-new/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -324,10 +325,14 @@ export function TransactionCreateForm({
 								<FormItem>
 									<FormLabel>Date</FormLabel>
 									<FormControl>
-										<Input
-											{...field}
-											max={new Date().toISOString().slice(0, 10)}
-											type="date"
+										<DatePicker
+											date={field.value ? new Date(field.value) : undefined}
+											onSelect={(date) => {
+												if (date) {
+													field.onChange(date.toISOString().slice(0, 10));
+												}
+											}}
+											placeholder="Select date"
 										/>
 									</FormControl>
 									<FormMessage />

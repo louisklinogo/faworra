@@ -21,6 +21,7 @@ import { useTransactionFilterParams } from "@/hooks/use-transaction-filter-param
 import { useTransactionTab } from "@/hooks/use-transaction-tab";
 import { useTRPC } from "@/trpc/client";
 import { formatAccountName } from "@/utils/format";
+import { DateRangeFilter } from "./date-range-filter";
 import { FilterList } from "./filter-list";
 import { SelectCategory } from "./select-category";
 
@@ -319,20 +320,11 @@ export function TransactionsSearchFilter() {
 
 				<DropdownMenuContent align="start" className="w-[320px] p-1" sideOffset={10}>
 					<FilterMenuItem icon={Icons.CalendarMonth} label="Date">
-						<div className="p-3 space-y-3 min-w-[250px]">
-							<div className="grid grid-cols-2 gap-2">
-								<Input
-									type="date"
-									value={filter.start ?? ""}
-									onChange={(event) => setFilter({ start: event.target.value || null })}
-								/>
-								<Input
-									type="date"
-									value={filter.end ?? ""}
-									onChange={(event) => setFilter({ end: event.target.value || null })}
-								/>
-							</div>
-						</div>
+						<DateRangeFilter
+							start={filter.start}
+							end={filter.end}
+							onSelect={setFilter}
+						/>
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Currency} label="Amount">
