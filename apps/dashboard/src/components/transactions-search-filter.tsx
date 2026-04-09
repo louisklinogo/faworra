@@ -280,7 +280,7 @@ export function TransactionsSearchFilter() {
 										isOpen && "opacity-100",
 									)}
 								>
-									<Icons.FilterList className="size-4" />
+									<Icons.Filter className="size-4" />
 								</button>
 							</DropdownMenuTrigger>
 						</form>
@@ -318,7 +318,7 @@ export function TransactionsSearchFilter() {
 				</div>
 
 				<DropdownMenuContent align="start" className="w-[320px] p-1" sideOffset={10}>
-					<FilterMenuItem icon={Icons.Calendar} label="Date">
+					<FilterMenuItem icon={Icons.CalendarMonth} label="Date">
 						<div className="p-3 space-y-3 min-w-[250px]">
 							<div className="grid grid-cols-2 gap-2">
 								<Input
@@ -335,7 +335,7 @@ export function TransactionsSearchFilter() {
 						</div>
 					</FilterMenuItem>
 
-					<FilterMenuItem icon={Icons.AttachMoney} label="Amount">
+					<FilterMenuItem icon={Icons.Currency} label="Amount">
 						<div className="p-3 space-y-3 min-w-[250px]">
 							<div className="grid grid-cols-2 gap-2">
 								<Input
@@ -448,7 +448,7 @@ export function TransactionsSearchFilter() {
 						</div>
 					</FilterMenuItem>
 
-					<FilterMenuItem icon={Icons.FilterList} label="Status">
+					<FilterMenuItem icon={Icons.Filter} label="Status">
 						<div className="py-1 min-w-[220px]">
 							{statusFilters.map((currentFilter) => (
 								<FilterCheckboxItem

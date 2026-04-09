@@ -6,6 +6,11 @@ type FormatAmountParams = {
   minimumFractionDigits?: number;
 };
 
+type FormatAccountNameParams = {
+  name: string;
+  currency?: string;
+};
+
 export function formatAmount({
   currency,
   amount,
@@ -26,6 +31,13 @@ export function formatAmount({
     minimumFractionDigits: minimumFractionDigits ?? 2,
     maximumFractionDigits: maximumFractionDigits ?? 2,
   }).format(safeAmount / 100); // Convert from minor units
+}
+
+export function formatAccountName({ name, currency }: FormatAccountNameParams): string {
+  if (currency) {
+    return `${name} (${currency.toUpperCase()})`;
+  }
+  return name;
 }
 
 export function formatDate(date: string | Date, formatStr?: string | null): string {
