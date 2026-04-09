@@ -7,11 +7,13 @@ import {
 	gte,
 	ilike,
 	inArray,
+	isNotNull,
+	isNull,
 	lt,
 	lte,
 	or,
+	type SQL,
 	sql,
-	SQL,
 } from "drizzle-orm";
 import type { Database } from "../client";
 import {
@@ -34,14 +36,35 @@ export interface CreateTransactionInput {
 	currency: string;
 	description?: string | null;
 	enrichmentCompleted?: boolean;
-	frequency?: "weekly" | "biweekly" | "monthly" | "semi_monthly" | "annually" | "irregular" | "unknown" | null;
+	frequency?:
+		| "weekly"
+		| "biweekly"
+		| "monthly"
+		| "semi_monthly"
+		| "annually"
+		| "irregular"
+		| "unknown"
+		| null;
 	internal?: boolean;
 	internalId: string; // Required for idempotency
 	// Note: income/expense determined by amount sign (Midday pattern)
 	// amount > 0 = income, amount < 0 = expense
 	manual?: boolean;
 	merchantName?: string | null;
-	method?: "payment" | "card_purchase" | "card_atm" | "transfer" | "other" | "unknown" | "ach" | "interest" | "deposit" | "wire" | "fee" | "momo" | "cash";
+	method?:
+		| "payment"
+		| "card_purchase"
+		| "card_atm"
+		| "transfer"
+		| "other"
+		| "unknown"
+		| "ach"
+		| "interest"
+		| "deposit"
+		| "wire"
+		| "fee"
+		| "momo"
+		| "cash";
 	name: string; // Required
 	note?: string | null;
 	notified?: boolean;
@@ -55,6 +78,7 @@ export interface CreateTransactionInput {
 
 export interface UpdateTransactionInput {
 	amount?: number;
+	assignedId?: string | null;
 	bankAccountId?: string | null;
 	baseAmount?: number | null;
 	baseCurrency?: string | null;
@@ -63,16 +87,43 @@ export interface UpdateTransactionInput {
 	currency?: string;
 	description?: string | null;
 	enrichmentCompleted?: boolean;
-	frequency?: "weekly" | "biweekly" | "monthly" | "semi_monthly" | "annually" | "irregular" | "unknown" | null;
+	frequency?:
+		| "weekly"
+		| "biweekly"
+		| "monthly"
+		| "semi_monthly"
+		| "annually"
+		| "irregular"
+		| "unknown"
+		| null;
 	id: string;
 	internal?: boolean;
 	// Note: income/expense determined by amount sign (Midday pattern)
 	merchantName?: string | null;
-	method?: "payment" | "card_purchase" | "card_atm" | "transfer" | "other" | "unknown" | "ach" | "interest" | "deposit" | "wire" | "fee" | "momo" | "cash";
+	method?:
+		| "payment"
+		| "card_purchase"
+		| "card_atm"
+		| "transfer"
+		| "other"
+		| "unknown"
+		| "ach"
+		| "interest"
+		| "deposit"
+		| "wire"
+		| "fee"
+		| "momo"
+		| "cash";
 	name?: string;
 	note?: string | null;
 	recurring?: boolean | null;
-	status?: "posted" | "pending" | "excluded" | "completed" | "archived" | "exported";
+	status?:
+		| "posted"
+		| "pending"
+		| "excluded"
+		| "completed"
+		| "archived"
+		| "exported";
 	taxAmount?: number | null;
 	taxRate?: number | null;
 	taxType?: string | null;
@@ -99,8 +150,6 @@ export interface ListTransactionsInput {
 	/** Filter by fulfillment: true = ready for review (has attachments OR status=completed), false = not ready */
 	fulfilled?: boolean | null;
 	internal?: boolean | null;
-	/** Filter by type using amount sign: "expense" = amount < 0, "income" = amount > 0 (Midday pattern) */
-	type?: "income" | "expense" | null;
 	manual?: "include" | "exclude" | null;
 	pageSize?: number;
 	q?: string | null;
@@ -118,6 +167,8 @@ export interface ListTransactionsInput {
 		| "archived"
 	> | null;
 	teamId: string;
+	/** Filter by type using amount sign: "expense" = amount < 0, "income" = amount > 0 (Midday pattern) */
+	type?: "income" | "expense" | null;
 }
 
 interface TransactionsListCursor {
@@ -151,11 +202,11 @@ const encodeTransactionsCursor = (cursor: TransactionsListCursor) => {
 };
 
 const decodeTransactionsCursor = (
-	cursor: string,
+	cursor: string
 ): TransactionsListCursor | null => {
 	try {
 		const parsed = JSON.parse(
-			Buffer.from(cursor, "base64url").toString("utf8"),
+			Buffer.from(cursor, "base64url").toString("utf8")
 		) as Partial<TransactionsListCursor>;
 
 		if (
@@ -180,7 +231,7 @@ export const isTransactionsCursor = (cursor: string) => {
 
 const buildSearchCondition = (
 	table: TransactionQueryColumns,
-	searchTerm: string | undefined,
+	searchTerm: string | undefined
 ) => {
 	if (!searchTerm) {
 		return null;
@@ -190,13 +241,13 @@ const buildSearchCondition = (
 		ilike(table.description, `%${searchTerm}%`),
 		ilike(table.note, `%${searchTerm}%`),
 		ilike(table.currency, `%${searchTerm}%`),
-		ilike(table.categorySlug, `%${searchTerm}%`),
+		ilike(table.categorySlug, `%${searchTerm}%`)
 	);
 };
 
 const buildCursorCondition = (
 	table: TransactionQueryColumns,
-	decodedCursor: TransactionsListCursor | null,
+	decodedCursor: TransactionsListCursor | null
 ) => {
 	if (!decodedCursor) {
 		return null;
@@ -206,7 +257,7 @@ const buildCursorCondition = (
 
 	return or(
 		lt(table.transactionDate, cursorDate),
-		and(eq(table.transactionDate, cursorDate), lt(table.id, decodedCursor.id)),
+		and(eq(table.transactionDate, cursorDate), lt(table.id, decodedCursor.id))
 	);
 };
 
@@ -268,27 +319,27 @@ const buildListTransactionsWhere = ({
 
 	// ─── Computed Conditions (Midday Pattern) ────────────────────────────────
 	// These are EXISTS-based conditions for UI status filters.
-	// Use Drizzle table references inside SQL fragments so correlated subqueries
-	// stay bound to the correct child tables and outer transactions row.
+	// NOTE: Using explicit raw SQL column names instead of Drizzle eq() helpers
+	// because nested sql`` templates don't preserve column references properly.
 
 	// A transaction is "fulfilled" if it has attachments OR status=completed
 	const isFulfilledCondition = sql`(
 		EXISTS (
 			SELECT 1
 			FROM ${transactionAttachments}
-			WHERE ${eq(transactionAttachments.transactionId, transactions.id)}
-			AND ${eq(transactionAttachments.teamId, teamId)}
-		) OR ${transactions.status} = 'completed'
+			WHERE "transaction_attachments"."transaction_id" = "transactions"."id"
+			AND "transaction_attachments"."team_id" = ${teamId}
+		) OR "transactions"."status" = 'completed'
 	)`;
 
 	// A transaction is "exported" if status=exported OR synced to accounting
 	const isExportedCondition = sql`(
-		${transactions.status} = 'exported' OR EXISTS (
+		"transactions"."status" = 'exported' OR EXISTS (
 			SELECT 1
 			FROM ${accountingSyncRecords}
-			WHERE ${eq(accountingSyncRecords.transactionId, transactions.id)}
-			AND ${eq(accountingSyncRecords.teamId, teamId)}
-			AND ${accountingSyncRecords.status} = 'synced'
+			WHERE "accounting_sync_records"."transaction_id" = "transactions"."id"
+			AND "accounting_sync_records"."team_id" = ${teamId}
+			AND "accounting_sync_records"."status" = 'synced'
 		)
 	)`;
 
@@ -296,22 +347,22 @@ const buildListTransactionsWhere = ({
 	const hasExportErrorCondition = sql`EXISTS (
 		SELECT 1
 		FROM ${accountingSyncRecords}
-		WHERE ${eq(accountingSyncRecords.transactionId, transactions.id)}
-		AND ${eq(accountingSyncRecords.teamId, teamId)}
-		AND ${accountingSyncRecords.status} IN ('failed', 'partial')
+		WHERE "accounting_sync_records"."transaction_id" = "transactions"."id"
+		AND "accounting_sync_records"."team_id" = ${teamId}
+		AND "accounting_sync_records"."status" IN ('failed', 'partial')
 	)`;
 
 	// Has pending match suggestion (for receipt_match status)
 	const hasPendingSuggestionCondition = sql`EXISTS (
 		SELECT 1
 		FROM ${transactionMatchSuggestions}
-		WHERE ${eq(transactionMatchSuggestions.transactionId, transactions.id)}
-		AND ${eq(transactionMatchSuggestions.teamId, teamId)}
-		AND ${transactionMatchSuggestions.status} = 'pending'
+		WHERE "transaction_match_suggestions"."transaction_id" = "transactions"."id"
+		AND "transaction_match_suggestions"."team_id" = ${teamId}
+		AND "transaction_match_suggestions"."status" = 'pending'
 	)`;
 
 	// Active workflow (not excluded/archived)
-	const isActiveWorkflowCondition = sql`${transactions.status} NOT IN ('excluded', 'archived')`;
+	const isActiveWorkflowCondition = sql`"transactions"."status" NOT IN ('excluded', 'archived')`;
 
 	// ─── Attachments Filter ──────────────────────────────────────────────────
 	if (attachments === "exclude") {
@@ -472,8 +523,8 @@ const buildListTransactionsWhere = ({
 					| "annually"
 					| "irregular"
 					| "unknown"
-				)[],
-			),
+				)[]
+			)
 		);
 	}
 
@@ -486,11 +537,80 @@ const buildListTransactionsWhere = ({
 
 // ─── Query: Categories ────────────────────────────────────────────────────────
 
-export const getTransactionCategories = (db: Database, { teamId }: { teamId: string }) => {
-	return db.query.transactionCategories.findMany({
-		orderBy: (table, { asc }) => [asc(table.name)],
-		where: (table, { eq }) => eq(table.teamId, teamId),
-	});
+export const getTransactionCategories = async (
+	db: Database,
+	{ teamId }: { teamId: string },
+) => {
+	// First get all parent categories (categories with no parentId)
+	const parentCategories = await db
+		.select({
+			id: transactionCategories.id,
+			name: transactionCategories.name,
+			color: transactionCategories.color,
+			slug: transactionCategories.slug,
+			description: transactionCategories.description,
+			system: transactionCategories.system,
+			taxRate: transactionCategories.taxRate,
+			taxType: transactionCategories.taxType,
+			taxReportingCode: transactionCategories.taxReportingCode,
+			excluded: transactionCategories.excluded,
+			parentId: transactionCategories.parentId,
+		})
+		.from(transactionCategories)
+		.where(
+			and(
+				eq(transactionCategories.teamId, teamId),
+				isNull(transactionCategories.parentId),
+			),
+		)
+		.orderBy(
+			desc(transactionCategories.system),
+			asc(transactionCategories.name),
+		);
+
+	// Then get all child categories for these parents
+	const childCategories = await db
+		.select({
+			id: transactionCategories.id,
+			name: transactionCategories.name,
+			color: transactionCategories.color,
+			slug: transactionCategories.slug,
+			description: transactionCategories.description,
+			system: transactionCategories.system,
+			taxRate: transactionCategories.taxRate,
+			taxType: transactionCategories.taxType,
+			taxReportingCode: transactionCategories.taxReportingCode,
+			excluded: transactionCategories.excluded,
+			parentId: transactionCategories.parentId,
+		})
+		.from(transactionCategories)
+		.where(
+			and(
+				eq(transactionCategories.teamId, teamId),
+				isNotNull(transactionCategories.parentId),
+			),
+		)
+		.orderBy(asc(transactionCategories.name));
+
+	// Group children by parentId for efficient lookup
+	const childrenByParentId = new Map<
+		string,
+		typeof childCategories
+	>();
+	for (const child of childCategories) {
+		if (child.parentId) {
+			if (!childrenByParentId.has(child.parentId)) {
+				childrenByParentId.set(child.parentId, []);
+			}
+			childrenByParentId.get(child.parentId)!.push(child);
+		}
+	}
+
+	// Attach children to their parents
+	return parentCategories.map((parent) => ({
+		...parent,
+		children: childrenByParentId.get(parent.id) || [],
+	}));
 };
 
 export const getTransactionCategoryBySlug = (
@@ -501,7 +621,7 @@ export const getTransactionCategoryBySlug = (
 	}: {
 		slug: string;
 		teamId: string;
-	},
+	}
 ) => {
 	return db.query.transactionCategories.findFirst({
 		where: (table, { and, eq }) =>
@@ -509,7 +629,7 @@ export const getTransactionCategoryBySlug = (
 	});
 };
 
-export const getTransactionCategoryById = (
+export const getTransactionCategoryById = async (
 	db: Database,
 	{
 		id,
@@ -517,12 +637,65 @@ export const getTransactionCategoryById = (
 	}: {
 		id: string;
 		teamId: string;
-	},
+	}
 ) => {
-	return db.query.transactionCategories.findFirst({
-		where: (table, { and, eq }) =>
-			and(eq(table.id, id), eq(table.teamId, teamId)),
-	});
+	// First get the category
+	const [result] = await db
+		.select({
+			id: transactionCategories.id,
+			name: transactionCategories.name,
+			color: transactionCategories.color,
+			slug: transactionCategories.slug,
+			description: transactionCategories.description,
+			system: transactionCategories.system,
+			taxRate: transactionCategories.taxRate,
+			taxType: transactionCategories.taxType,
+			taxReportingCode: transactionCategories.taxReportingCode,
+			excluded: transactionCategories.excluded,
+			parentId: transactionCategories.parentId,
+			createdAt: transactionCategories.createdAt,
+		})
+		.from(transactionCategories)
+		.where(
+			and(
+				eq(transactionCategories.id, id),
+				eq(transactionCategories.teamId, teamId),
+			),
+		)
+		.limit(1);
+
+	if (!result) {
+		return undefined;
+	}
+
+	// Get children for this category
+	const children = await db
+		.select({
+			id: transactionCategories.id,
+			name: transactionCategories.name,
+			color: transactionCategories.color,
+			slug: transactionCategories.slug,
+			description: transactionCategories.description,
+			system: transactionCategories.system,
+			taxRate: transactionCategories.taxRate,
+			taxType: transactionCategories.taxType,
+			taxReportingCode: transactionCategories.taxReportingCode,
+			excluded: transactionCategories.excluded,
+			parentId: transactionCategories.parentId,
+		})
+		.from(transactionCategories)
+		.where(
+			and(
+				eq(transactionCategories.parentId, id),
+				eq(transactionCategories.teamId, teamId),
+			),
+		)
+		.orderBy(asc(transactionCategories.name));
+
+	return {
+		...result,
+		children,
+	};
 };
 
 export const getTransactionCategoryByIdOnly = (
@@ -533,7 +706,7 @@ export const getTransactionCategoryByIdOnly = (
 	}: {
 		id: string;
 		teamId: string;
-	},
+	}
 ) => {
 	return db.query.transactionCategories.findFirst({
 		where: (table, { and, eq }) =>
@@ -549,7 +722,7 @@ export const getBankAccountById = (
 	}: {
 		id: string;
 		teamId: string;
-	},
+	}
 ) => {
 	return db.query.bankAccounts.findFirst({
 		where: (table, { and, eq }) =>
@@ -559,7 +732,10 @@ export const getBankAccountById = (
 
 // ─── Query: Transactions ──────────────────────────────────────────────────────
 
-export const getTransactions = (db: Database, { teamId }: { teamId: string }) => {
+export const getTransactions = (
+	db: Database,
+	{ teamId }: { teamId: string }
+) => {
 	return db.query.transactions.findMany({
 		orderBy: (table, { desc }) => [
 			desc(table.transactionDate),
@@ -595,9 +771,12 @@ export const listTransactions = async (
 		start,
 		statuses,
 		teamId,
-	}: ListTransactionsInput,
+	}: ListTransactionsInput
 ) => {
-	const normalizedLimit = Math.min(Math.max(pageSize, 1), MAX_TRANSACTIONS_LIMIT);
+	const normalizedLimit = Math.min(
+		Math.max(pageSize, 1),
+		MAX_TRANSACTIONS_LIMIT
+	);
 	const decodedCursor = cursor ? decodeTransactionsCursor(cursor) : null;
 
 	// Build sort order - default to date desc
@@ -617,7 +796,10 @@ export const listTransactions = async (
 						return orderFn(table.transactionDate);
 				}
 			}
-		: (table: TransactionQueryColumns) => [desc(table.transactionDate), desc(table.id)];
+		: (table: TransactionQueryColumns) => [
+				desc(table.transactionDate),
+				desc(table.id),
+			];
 
 	const items = await db.query.transactions.findMany({
 		limit: normalizedLimit + 1,
@@ -678,7 +860,7 @@ export const getTransactionById = (
 	}: {
 		id: string;
 		teamId: string;
-	},
+	}
 ) => {
 	return db.query.transactions.findFirst({
 		where: (table, { and, eq }) =>
@@ -706,27 +888,27 @@ export const getReviewCount = async (db: Database, teamId: string) => {
 			and(
 				eq(transactions.teamId, teamId),
 				// Active workflow
-				sql`${transactions.status} NOT IN ('excluded', 'archived')`,
+				sql`"transactions"."status" NOT IN ('excluded', 'archived')`,
 				// Is fulfilled (has attachments OR status=completed)
 				sql`(
 					EXISTS (
 						SELECT 1
 						FROM ${transactionAttachments}
-						WHERE ${eq(transactionAttachments.transactionId, transactions.id)}
-						AND ${eq(transactionAttachments.teamId, teamId)}
-					) OR ${transactions.status} = 'completed'
+						WHERE "transaction_attachments"."transaction_id" = "transactions"."id"
+						AND "transaction_attachments"."team_id" = ${teamId}
+					) OR "transactions"."status" = 'completed'
 				)`,
 				// NOT exported
 				sql`NOT (
-					${transactions.status} = 'exported' OR EXISTS (
+					"transactions"."status" = 'exported' OR EXISTS (
 						SELECT 1
 						FROM ${accountingSyncRecords}
-						WHERE ${eq(accountingSyncRecords.transactionId, transactions.id)}
-						AND ${eq(accountingSyncRecords.teamId, teamId)}
-						AND ${accountingSyncRecords.status} = 'synced'
+						WHERE "accounting_sync_records"."transaction_id" = "transactions"."id"
+						AND "accounting_sync_records"."team_id" = ${teamId}
+						AND "accounting_sync_records"."status" = 'synced'
 					)
-				)`,
-			),
+				)`
+			)
 		);
 
 	return { count: result[0]?.count ?? 0 };
@@ -734,43 +916,97 @@ export const getReviewCount = async (db: Database, teamId: string) => {
 
 // ─── Mutation: Create ─────────────────────────────────────────────────────────
 
-export const createTransaction = async (db: Database, input: CreateTransactionInput) => {
+export const createTransaction = async (
+	db: Database,
+	input: CreateTransactionInput
+) => {
 	const [transaction] = await db.insert(transactions).values(input).returning();
 	return transaction;
 };
 
 // ─── Mutation: Update ─────────────────────────────────────────────────────────
 
-export const updateTransaction = async (db: Database, input: UpdateTransactionInput) => {
+export const updateTransaction = async (
+	db: Database,
+	input: UpdateTransactionInput
+) => {
+	const updateData: Partial<typeof transactions.$inferInsert> = {
+		updatedAt: new Date(),
+	};
+
+	// Only include fields that are explicitly provided (partial update pattern)
+	if (input.amount !== undefined) {
+		updateData.amount = input.amount;
+	}
+	if (input.assignedId !== undefined) {
+		updateData.assignedId = input.assignedId;
+	}
+	if (input.bankAccountId !== undefined) {
+		updateData.bankAccountId = input.bankAccountId;
+	}
+	if (input.baseAmount !== undefined) {
+		updateData.baseAmount = input.baseAmount;
+	}
+	if (input.baseCurrency !== undefined) {
+		updateData.baseCurrency = input.baseCurrency;
+	}
+	if (input.categorySlug !== undefined) {
+		updateData.categorySlug = input.categorySlug;
+	}
+	if (input.counterpartyName !== undefined) {
+		updateData.counterpartyName = input.counterpartyName;
+	}
+	if (input.currency !== undefined) {
+		updateData.currency = input.currency;
+	}
+	if (input.description !== undefined) {
+		updateData.description = input.description;
+	}
+	if (input.enrichmentCompleted !== undefined) {
+		updateData.enrichmentCompleted = input.enrichmentCompleted;
+	}
+	if (input.frequency !== undefined) {
+		updateData.frequency = input.frequency;
+	}
+	if (input.internal !== undefined) {
+		updateData.internal = input.internal;
+	}
+	if (input.merchantName !== undefined) {
+		updateData.merchantName = input.merchantName;
+	}
+	if (input.method !== undefined) {
+		updateData.method = input.method;
+	}
+	if (input.name !== undefined) {
+		updateData.name = input.name;
+	}
+	if (input.note !== undefined) {
+		updateData.note = input.note;
+	}
+	if (input.recurring !== undefined) {
+		updateData.recurring = input.recurring;
+	}
+	if (input.status !== undefined) {
+		updateData.status = input.status;
+	}
+	if (input.taxAmount !== undefined) {
+		updateData.taxAmount = input.taxAmount;
+	}
+	if (input.taxRate !== undefined) {
+		updateData.taxRate = input.taxRate;
+	}
+	if (input.taxType !== undefined) {
+		updateData.taxType = input.taxType;
+	}
+	if (input.transactionDate !== undefined) {
+		updateData.transactionDate = input.transactionDate;
+	}
+
 	const [transaction] = await db
 		.update(transactions)
-		.set({
-			amount: input.amount,
-			bankAccountId: input.bankAccountId,
-			baseAmount: input.baseAmount,
-			baseCurrency: input.baseCurrency,
-			categorySlug: input.categorySlug,
-			counterpartyName: input.counterpartyName,
-			currency: input.currency,
-			description: input.description,
-			enrichmentCompleted: input.enrichmentCompleted,
-			frequency: input.frequency,
-			internal: input.internal,
-			// Note: kind field removed - income/expense determined by amount sign
-			merchantName: input.merchantName,
-			method: input.method,
-			name: input.name,
-			note: input.note,
-			recurring: input.recurring,
-			status: input.status,
-			taxAmount: input.taxAmount,
-			taxRate: input.taxRate,
-			taxType: input.taxType,
-			transactionDate: input.transactionDate,
-			updatedAt: new Date(),
-		})
+		.set(updateData)
 		.where(
-			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId)),
+			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId))
 		)
 		.returning();
 
@@ -779,7 +1015,7 @@ export const updateTransaction = async (db: Database, input: UpdateTransactionIn
 
 export const setTransactionReviewState = async (
 	db: Database,
-	input: SetTransactionReviewStateInput,
+	input: SetTransactionReviewStateInput
 ) => {
 	const [transaction] = await db
 		.update(transactions)
@@ -788,7 +1024,7 @@ export const setTransactionReviewState = async (
 			updatedAt: new Date(),
 		})
 		.where(
-			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId)),
+			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId))
 		)
 		.returning();
 
@@ -802,12 +1038,12 @@ export const deleteTransaction = async (
 	input: {
 		id: string;
 		teamId: string;
-	},
+	}
 ) => {
 	const [transaction] = await db
 		.delete(transactions)
 		.where(
-			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId)),
+			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId))
 		)
 		.returning();
 
@@ -819,15 +1055,15 @@ export const deleteTransactions = async (
 	input: {
 		ids: string[];
 		teamId: string;
-	},
+	}
 ) => {
 	const deletedTransactions = await db
 		.delete(transactions)
 		.where(
 			and(
 				inArray(transactions.id, input.ids),
-				eq(transactions.teamId, input.teamId),
-			),
+				eq(transactions.teamId, input.teamId)
+			)
 		)
 		.returning();
 
@@ -837,16 +1073,16 @@ export const deleteTransactions = async (
 // ─── Mutation: Bulk Update ─────────────────────────────────────────────────
 
 export interface BulkUpdateTransactionsInput {
-	ids: string[];
-	teamId: string;
-	categorySlug?: string | null;
-	status?: "excluded" | "posted";
 	assignedId?: string | null;
+	categorySlug?: string | null;
+	ids: string[];
+	status?: "excluded" | "posted";
+	teamId: string;
 }
 
 export const bulkUpdateTransactions = async (
 	db: Database,
-	input: BulkUpdateTransactionsInput,
+	input: BulkUpdateTransactionsInput
 ) => {
 	const { ids, teamId, categorySlug, status, assignedId } = input;
 	const updates: Record<string, unknown> = {
@@ -881,19 +1117,19 @@ export const bulkUpdateTransactions = async (
 
 export interface CreateTransactionCategoryInput {
 	color?: string;
+	description?: string;
 	excluded?: boolean;
 	name: string;
 	parentId?: string;
 	slug: string;
 	taxRate?: number;
 	taxType?: string;
-	description?: string;
 	teamId: string;
 }
 
 export const createTransactionCategory = async (
 	db: Database,
-	input: CreateTransactionCategoryInput,
+	input: CreateTransactionCategoryInput
 ) => {
 	const [category] = await db
 		.insert(transactionCategories)
@@ -915,20 +1151,21 @@ export const createTransactionCategory = async (
 };
 
 export interface UpdateTransactionCategoryInput {
-	color?: string;
-	excluded?: boolean;
+	color?: string | null;
+	description?: string | null;
+	excluded?: boolean | null;
 	id: string;
 	name?: string;
 	parentId?: string | null;
-	taxRate?: number;
-	taxType?: string;
-	description?: string;
+	taxRate?: number | null;
+	taxReportingCode?: string | null;
+	taxType?: string | null;
 	teamId: string;
 }
 
 export const updateTransactionCategory = async (
 	db: Database,
-	input: UpdateTransactionCategoryInput,
+	input: UpdateTransactionCategoryInput
 ) => {
 	const [category] = await db
 		.update(transactionCategories)
@@ -944,8 +1181,8 @@ export const updateTransactionCategory = async (
 		.where(
 			and(
 				eq(transactionCategories.id, input.id),
-				eq(transactionCategories.teamId, input.teamId),
-			),
+				eq(transactionCategories.teamId, input.teamId)
+			)
 		)
 		.returning();
 
@@ -957,7 +1194,7 @@ export const deleteTransactionCategory = async (
 	input: {
 		id: string;
 		teamId: string;
-	},
+	}
 ) => {
 	const [category] = await db
 		.delete(transactionCategories)
@@ -965,8 +1202,8 @@ export const deleteTransactionCategory = async (
 			and(
 				eq(transactionCategories.id, input.id),
 				eq(transactionCategories.teamId, input.teamId),
-				eq(transactionCategories.system, false), // Cannot delete system categories
-			),
+				eq(transactionCategories.system, false) // Cannot delete system categories
+			)
 		)
 		.returning();
 
@@ -979,14 +1216,15 @@ export const deleteTransactionCategory = async (
 
 interface SeedableCategory {
 	color?: string;
+	description?: string;
 	excluded?: boolean;
 	name: string;
 	parentId?: string;
+	parentSlug?: string;
 	slug: string;
 	system?: boolean;
 	taxRate?: number;
 	taxType?: string;
-	description?: string;
 }
 
 export const ensureDefaultTransactionCategories = async (
@@ -997,7 +1235,7 @@ export const ensureDefaultTransactionCategories = async (
 	}: {
 		categories: SeedableCategory[];
 		teamId: string;
-	},
+	}
 ) => {
 	const existingCategories = await db.query.transactionCategories.findMany({
 		where: (table, { and, eq }) =>
@@ -1008,21 +1246,65 @@ export const ensureDefaultTransactionCategories = async (
 		return existingCategories;
 	}
 
-	return db
+	// Separate parents and children
+	const parents = categories.filter((c) => !c.parentSlug);
+	const children = categories.filter((c) => c.parentSlug);
+
+	// Insert parents first (without parentId)
+	const insertedParents = await db
 		.insert(transactionCategories)
 		.values(
-			categories.map((category) => ({
+			parents.map((category) => ({
 				color: category.color ?? null,
 				excluded: category.excluded ?? false,
 				name: category.name,
-				parentId: category.parentId ?? null,
 				slug: category.slug,
 				system: category.system ?? true,
 				taxRate: category.taxRate ?? null,
 				taxType: category.taxType ?? null,
 				description: category.description ?? null,
 				teamId,
-			})),
+			}))
 		)
 		.returning();
+
+	// Create slug -> id mapping
+	const slugToId = new Map<string, string>();
+	for (const parent of insertedParents) {
+		if (parent.slug) {
+			slugToId.set(parent.slug, parent.id);
+		}
+	}
+
+	// Insert children with parentId
+	if (children.length > 0) {
+		await db
+			.insert(transactionCategories)
+			.values(
+				children.map((category) => {
+					const parentFromSlug = category.parentSlug
+						? slugToId.get(category.parentSlug)
+						: undefined;
+					return {
+						color: category.color ?? null,
+						excluded: category.excluded ?? false,
+						name: category.name,
+						parentId: parentFromSlug,
+						slug: category.slug,
+						system: category.system ?? true,
+						taxRate: category.taxRate ?? null,
+						taxType: category.taxType ?? null,
+						description: category.description ?? null,
+						teamId,
+					};
+				})
+			)
+			.returning();
+	}
+
+	// Return all inserted categories
+	return db.query.transactionCategories.findMany({
+		where: (table, { and, eq }) =>
+			and(eq(table.teamId, teamId), eq(table.system, true)),
+	});
 };

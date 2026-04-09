@@ -1,5 +1,10 @@
 import { FLAT_CATEGORIES } from "@faworra-new/categories";
 import {
+	createTransactionAttachment,
+	deleteTransactionAttachment,
+	getTransactionAttachments,
+} from "@faworra-new/db/queries/transaction-attachments";
+import {
 	createTransaction,
 	ensureDefaultTransactionCategories,
 	getBankAccountById,
@@ -12,11 +17,6 @@ import {
 	setTransactionReviewState,
 	updateTransaction,
 } from "@faworra-new/db/queries/transactions";
-import {
-	createTransactionAttachment,
-	deleteTransactionAttachment,
-	getTransactionAttachments,
-} from "@faworra-new/db/queries/transaction-attachments";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
@@ -35,7 +35,23 @@ const baseTransactionInputSchema = z.object({
 	internal: z.boolean(),
 	// Note: 'kind' field removed - income/expense determined by amount sign
 	// amount > 0 = income, amount < 0 = expense (Midday pattern)
-	method: z.enum(["payment", "card_purchase", "card_atm", "transfer", "other", "unknown", "ach", "interest", "deposit", "wire", "fee", "momo", "cash"]).optional(),
+	method: z
+		.enum([
+			"payment",
+			"card_purchase",
+			"card_atm",
+			"transfer",
+			"other",
+			"unknown",
+			"ach",
+			"interest",
+			"deposit",
+			"wire",
+			"fee",
+			"momo",
+			"cash",
+		])
+		.optional(),
 	name: z.string().trim().min(1).max(200),
 	note: z.string().nullable().optional(),
 	taxAmount: z.number().int().nullable().optional(),
@@ -49,10 +65,50 @@ const createTransactionInputSchema = baseTransactionInputSchema.extend({
 	internalId: z.string().trim().min(1), // Required for idempotency
 });
 
-const updateTransactionInputSchema = baseTransactionInputSchema.extend({
+// Partial update schema (Midday pattern - all fields optional)
+const updateTransactionInputSchema = z.object({
 	id: z.string().uuid(),
+	amount: z.number().int().optional(),
+	bankAccountId: z.string().uuid().nullable().optional(),
+	categorySlug: z.string().nullable().optional(),
+	counterpartyName: z.string().trim().max(100).nullable().optional(),
+	currency: z.string().trim().length(3).optional(),
+	description: z.string().trim().max(500).nullable().optional(),
 	internal: z.boolean().optional(),
+	method: z
+		.enum([
+			"payment",
+			"card_purchase",
+			"card_atm",
+			"transfer",
+			"other",
+			"unknown",
+			"ach",
+			"interest",
+			"deposit",
+			"wire",
+			"fee",
+			"momo",
+			"cash",
+		])
+		.optional(),
 	name: z.string().trim().min(1).max(200).optional(),
+	note: z.string().nullable().optional(),
+	assignedId: z.string().uuid().nullable().optional(),
+	status: z
+		.enum([
+			"posted",
+			"pending",
+			"excluded",
+			"completed",
+			"archived",
+			"exported",
+		])
+		.optional(),
+	taxAmount: z.number().int().nullable().optional(),
+	taxRate: z.number().nullable().optional(),
+	taxType: z.string().trim().max(20).nullable().optional(),
+	transactionDate: z.coerce.date().optional(),
 });
 
 const listTransactionsInputSchema = z.object({
@@ -71,7 +127,7 @@ const listTransactionsInputSchema = z.object({
 	/** Filter by type using amount sign: "expense" = amount < 0, "income" = amount > 0 */
 	type: z.enum(["income", "expense"]).nullish(),
 	manual: z.enum(["include", "exclude"]).nullish(),
-	pageSize: z.coerce.number().int().min(1).max(10000).nullish(),
+	pageSize: z.coerce.number().int().min(1).max(10_000).nullish(),
 	q: z.string().trim().nullish(),
 	recurring: z.array(z.string()).nullish(),
 	sort: z.array(z.string().min(1)).max(2).min(2).nullish(),
@@ -86,7 +142,7 @@ const listTransactionsInputSchema = z.object({
 				"exported",
 				"excluded",
 				"archived",
-			]),
+			])
 		)
 		.nullish(),
 });
@@ -107,7 +163,7 @@ const assertValidAmount = (amount: number) => {
 };
 
 const assertValidListTransactionsInput = (
-	input: z.infer<typeof listTransactionsInputSchema> | undefined,
+	input: z.infer<typeof listTransactionsInputSchema> | undefined
 ) => {
 	if (!input) {
 		return;
@@ -123,19 +179,26 @@ const assertValidListTransactionsInput = (
 	if (input.start && input.end) {
 		const startDate = new Date(input.start);
 		const endDate = new Date(input.end);
-		if (!Number.isNaN(startDate.getTime()) && !Number.isNaN(endDate.getTime())) {
-			if (startDate > endDate) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "start must be earlier than or equal to end",
-				});
-			}
+		if (
+			!(Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) &&
+			startDate > endDate
+		) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "start must be earlier than or equal to end",
+			});
 		}
 	}
 
 	if (input.amountRange && input.amountRange.length === 2) {
 		const [min, max] = input.amountRange;
-		if (min !== null && min !== undefined && max !== null && max !== undefined && min > max) {
+		if (
+			min !== null &&
+			min !== undefined &&
+			max !== null &&
+			max !== undefined &&
+			min > max
+		) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
 				message: "amountRange[0] must be less than or equal to amountRange[1]",
@@ -153,6 +216,17 @@ export const transactionsRouter = router({
 
 		return getTransactionCategories(ctx.db, { teamId: ctx.activeTeam.id });
 	}),
+	getCategoryById: protectedTeamProcedure
+		.input(z.object({ id: z.string().uuid() }))
+		.query(async ({ ctx, input }) => {
+			const { getTransactionCategoryById } = await import(
+				"@faworra-new/db/queries/transactions"
+			);
+			return getTransactionCategoryById(ctx.db, {
+				id: input.id,
+				teamId: ctx.activeTeam.id,
+			});
+		}),
 	bootstrapCategories: protectedTeamProcedure.mutation(({ ctx }) => {
 		return ensureDefaultTransactionCategories(ctx.db, {
 			categories: [...FLAT_CATEGORIES],
@@ -272,7 +346,10 @@ export const transactionsRouter = router({
 				teamId: ctx.activeTeam.id,
 			});
 
-			assertValidAmount(input.amount);
+			// Only validate amount if provided
+			if (input.amount !== undefined) {
+				assertValidAmount(input.amount);
+			}
 
 			if (input.bankAccountId) {
 				const bankAccount = await getBankAccountById(ctx.db, {
@@ -290,7 +367,9 @@ export const transactionsRouter = router({
 
 			const transaction = await updateTransaction(ctx.db, {
 				amount: input.amount,
+				assignedId: input.assignedId,
 				bankAccountId: input.bankAccountId,
+				categorySlug: input.categorySlug,
 				counterpartyName: input.counterpartyName,
 				currency: input.currency,
 				description: input.description,
@@ -299,6 +378,7 @@ export const transactionsRouter = router({
 				method: input.method,
 				name: input.name,
 				note: input.note,
+				status: input.status,
 				taxAmount: input.taxAmount,
 				taxRate: input.taxRate,
 				taxType: input.taxType,
@@ -411,13 +491,13 @@ export const transactionsRouter = router({
 				categoryId: z.string().uuid().nullable().optional(),
 				status: z.enum(["excluded", "posted"]).optional(),
 				assignedId: z.string().nullable().optional(),
-			}),
+			})
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { bulkUpdateTransactions, getTransactionCategoryByIdOnly } =
 				await import("@faworra-new/db/queries/transactions");
 
-			let categorySlug: string | null | undefined = undefined;
+			let categorySlug: string | null | undefined;
 
 			// If categoryId is provided, validate it
 			if (input.categoryId !== undefined) {
@@ -481,7 +561,7 @@ export const transactionsRouter = router({
 				path: z.string(),
 				size: z.number().int(),
 				transactionId: z.string().uuid(),
-			}),
+			})
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Verify transaction belongs to team
@@ -519,7 +599,7 @@ export const transactionsRouter = router({
 
 			return deleted;
 		}),
-	createCategory: protectedFinanceTeamProcedure
+	createCategory: protectedTeamProcedure
 		.input(
 			z.object({
 				color: z.string().trim().min(1).optional(),
@@ -530,7 +610,7 @@ export const transactionsRouter = router({
 				taxRate: z.number().optional(),
 				taxType: z.string().optional(),
 				description: z.string().optional(),
-			}),
+			})
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { createTransactionCategory } = await import(
@@ -554,18 +634,19 @@ export const transactionsRouter = router({
 				teamId: ctx.activeTeam.id,
 			});
 		}),
-	updateCategory: protectedFinanceTeamProcedure
+	updateCategory: protectedTeamProcedure
 		.input(
 			z.object({
-				color: z.string().trim().min(1).optional(),
-				excluded: z.boolean().optional(),
 				id: z.string().uuid(),
-				name: z.string().trim().min(1).max(100).optional(),
-				parentId: z.string().uuid().nullable().optional(),
-				taxRate: z.number().optional(),
-				taxType: z.string().optional(),
-				description: z.string().optional(),
-			}),
+				name: z.string().trim().min(1).max(100),
+				color: z.string().nullable(),
+				description: z.string().nullable(),
+				taxRate: z.number().nullable(),
+				taxType: z.string().nullable(),
+				taxReportingCode: z.string().nullable(),
+				excluded: z.boolean().nullable(),
+				parentId: z.string().nullable().optional(),
+			})
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { getTransactionCategoryByIdOnly, updateTransactionCategory } =
@@ -596,7 +677,7 @@ export const transactionsRouter = router({
 				teamId: ctx.activeTeam.id,
 			});
 		}),
-	deleteCategory: protectedFinanceTeamProcedure
+	deleteCategory: protectedTeamProcedure
 		.input(z.object({ id: z.string().uuid() }))
 		.mutation(async ({ ctx, input }) => {
 			const { deleteTransactionCategory, getTransactionCategoryByIdOnly } =

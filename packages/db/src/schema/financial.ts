@@ -16,9 +16,8 @@ import {
 	uniqueIndex,
 	uuid,
 } from "drizzle-orm/pg-core";
-
-import { teams } from "./team";
 import { user } from "./auth";
+import { teams } from "./team";
 
 // ─── Custom Types ────────────────────────────────────────────────────────────
 
@@ -143,7 +142,7 @@ export const bankConnections = pgTable(
 			.$onUpdate(() => /* @__PURE__ */ new Date())
 			.notNull(),
 	},
-	(table) => [index("bank_connections_team_id_idx").on(table.teamId)],
+	(table) => [index("bank_connections_team_id_idx").on(table.teamId)]
 );
 
 // ─── Bank Accounts ────────────────────────────────────────────────────────────
@@ -157,7 +156,7 @@ export const bankAccounts = pgTable(
 			.references(() => teams.id, { onDelete: "cascade" }),
 		bankConnectionId: uuid("bank_connection_id").references(
 			() => bankConnections.id,
-			{ onDelete: "set null" },
+			{ onDelete: "set null" }
 		),
 		name: text("name").notNull(),
 		currency: text("currency").notNull(),
@@ -174,7 +173,7 @@ export const bankAccounts = pgTable(
 	(table) => [
 		index("bank_accounts_team_id_idx").on(table.teamId),
 		index("bank_accounts_connection_id_idx").on(table.bankConnectionId),
-	],
+	]
 );
 
 // ─── Transaction Categories ───────────────────────────────────────────────────
@@ -191,7 +190,10 @@ export const transactionCategories = pgTable(
 		name: text("name").notNull(),
 		teamId: uuid("team_id").notNull(),
 		color: text("color"),
-		createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).defaultNow(),
+		createdAt: timestamp("created_at", {
+			withTimezone: true,
+			mode: "string",
+		}).defaultNow(),
 		system: boolean("system").default(false),
 		slug: text("slug"), // Generated in database
 		taxRate: numericCasted("tax_rate", { precision: 10, scale: 2 }),
@@ -204,11 +206,11 @@ export const transactionCategories = pgTable(
 	(table) => [
 		index("transaction_categories_team_id_idx").using(
 			"btree",
-			table.teamId.asc().nullsLast(),
+			table.teamId.asc().nullsLast()
 		),
 		index("transaction_categories_parent_id_idx").using(
 			"btree",
-			table.parentId.asc().nullsLast(),
+			table.parentId.asc().nullsLast()
 		),
 		foreignKey({
 			columns: [table.teamId],
@@ -225,7 +227,7 @@ export const transactionCategories = pgTable(
 			name: "transaction_categories_pkey",
 		}),
 		unique("unique_team_slug").on(table.teamId, table.slug),
-	],
+	]
 );
 
 // ─── Tags ─────────────────────────────────────────────────────────────────────
@@ -245,7 +247,7 @@ export const tags = pgTable(
 	(table) => [
 		index("tags_team_id_idx").on(table.teamId),
 		uniqueIndex("tags_team_id_slug_idx").on(table.teamId, table.slug),
-	],
+	]
 );
 
 // ─── Transaction Tags (Junction Table) ───────────────────────────────────────
@@ -271,9 +273,9 @@ export const transactionTags = pgTable(
 		index("transaction_tags_tag_id_idx").on(table.tagId),
 		uniqueIndex("transaction_tags_unique_idx").on(
 			table.transactionId,
-			table.tagId,
+			table.tagId
 		),
-	],
+	]
 );
 
 // ─── Transaction Attachments ─────────────────────────────────────────────────
@@ -297,7 +299,7 @@ export const transactionAttachments = pgTable(
 	(table) => [
 		index("transaction_attachments_team_id_idx").on(table.teamId),
 		index("transaction_attachments_transaction_id_idx").on(table.transactionId),
-	],
+	]
 );
 
 // ─── Accounting Sync Records ───────────────────────────────────────────────────
@@ -335,9 +337,9 @@ export const accountingSyncRecords = pgTable(
 		index("idx_accounting_sync_status").on(table.teamId, table.status),
 		uniqueIndex("accounting_sync_records_transaction_provider_key").on(
 			table.transactionId,
-			table.provider,
+			table.provider
 		),
-	],
+	]
 );
 
 // ─── Inbox ─────────────────────────────────────────────────────────────────────
@@ -368,7 +370,7 @@ export const inbox = pgTable(
 		index("inbox_team_id_idx").on(table.teamId),
 		index("inbox_transaction_id_idx").on(table.transactionId),
 		index("inbox_status_idx").on(table.status),
-	],
+	]
 );
 
 // ─── Transaction Match Suggestions ─────────────────────────────────────────────
@@ -403,15 +405,15 @@ export const transactionMatchSuggestions = pgTable(
 	(table) => [
 		index("transaction_match_suggestions_inbox_id_idx").on(table.inboxId),
 		index("transaction_match_suggestions_transaction_id_idx").on(
-			table.transactionId,
+			table.transactionId
 		),
 		index("transaction_match_suggestions_team_id_idx").on(table.teamId),
 		index("transaction_match_suggestions_status_idx").on(table.status),
 		uniqueIndex("transaction_match_suggestions_unique").on(
 			table.inboxId,
-			table.transactionId,
+			table.transactionId
 		),
-	],
+	]
 );
 
 // ─── Transactions ─────────────────────────────────────────────────────────────
@@ -483,9 +485,9 @@ export const transactions = pgTable(
 		index("transactions_counterparty_name_idx").on(table.counterpartyName),
 		uniqueIndex("transactions_team_internal_id_idx").on(
 			table.teamId,
-			table.internalId,
+			table.internalId
 		),
-	],
+	]
 );
 
 // ─── Relations ────────────────────────────────────────────────────────────────
@@ -498,7 +500,7 @@ export const bankConnectionsRelations = relations(
 			references: [teams.id],
 		}),
 		accounts: many(bankAccounts),
-	}),
+	})
 );
 
 export const bankAccountsRelations = relations(
@@ -513,7 +515,7 @@ export const bankAccountsRelations = relations(
 			references: [bankConnections.id],
 		}),
 		transactions: many(transactions),
-	}),
+	})
 );
 
 export const transactionCategoriesRelations = relations(
@@ -532,7 +534,7 @@ export const transactionCategoriesRelations = relations(
 			relationName: "parent_child",
 		}),
 		transactions: many(transactions),
-	}),
+	})
 );
 
 export const tagsRelations = relations(tags, ({ one, many }) => ({
@@ -543,20 +545,23 @@ export const tagsRelations = relations(tags, ({ one, many }) => ({
 	transactionTags: many(transactionTags),
 }));
 
-export const transactionTagsRelations = relations(transactionTags, ({ one }) => ({
-	transaction: one(transactions, {
-		fields: [transactionTags.transactionId],
-		references: [transactions.id],
-	}),
-	tag: one(tags, {
-		fields: [transactionTags.tagId],
-		references: [tags.id],
-	}),
-	team: one(teams, {
-		fields: [transactionTags.teamId],
-		references: [teams.id],
-	}),
-}));
+export const transactionTagsRelations = relations(
+	transactionTags,
+	({ one }) => ({
+		transaction: one(transactions, {
+			fields: [transactionTags.transactionId],
+			references: [transactions.id],
+		}),
+		tag: one(tags, {
+			fields: [transactionTags.tagId],
+			references: [tags.id],
+		}),
+		team: one(teams, {
+			fields: [transactionTags.teamId],
+			references: [teams.id],
+		}),
+	})
+);
 
 export const transactionsRelations = relations(
 	transactions,
@@ -582,7 +587,7 @@ export const transactionsRelations = relations(
 		tags: many(transactionTags),
 		accountingSyncRecords: many(accountingSyncRecords),
 		matchSuggestions: many(transactionMatchSuggestions),
-	}),
+	})
 );
 
 export const transactionAttachmentsRelations = relations(
@@ -596,7 +601,7 @@ export const transactionAttachmentsRelations = relations(
 			fields: [transactionAttachments.teamId],
 			references: [teams.id],
 		}),
-	}),
+	})
 );
 
 export const accountingSyncRecordsRelations = relations(
@@ -610,7 +615,7 @@ export const accountingSyncRecordsRelations = relations(
 			fields: [accountingSyncRecords.teamId],
 			references: [teams.id],
 		}),
-	}),
+	})
 );
 
 export const inboxRelations = relations(inbox, ({ one, many }) => ({
@@ -644,5 +649,5 @@ export const transactionMatchSuggestionsRelations = relations(
 			fields: [transactionMatchSuggestions.userId],
 			references: [user.id],
 		}),
-	}),
+	})
 );
