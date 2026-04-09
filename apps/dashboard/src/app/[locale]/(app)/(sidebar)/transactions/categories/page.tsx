@@ -28,18 +28,19 @@ import { useTRPC } from "@/trpc/client";
 
 interface TransactionCategory {
 	color: string | null;
-	createdAt: string;
-	excluded: boolean;
+	createdAt: string | null;
+	excluded: boolean | null;
 	id: string;
 	// Note: 'kind' removed from categories - all categories are universal
 	description: string | null;
 	parentId: string | null;
 	name: string;
-	slug: string;
-	system: boolean;
+	slug: string | null;
+	system: boolean | null;
 	taxRate: number | null;
 	taxType: string | null;
-	updatedAt: string;
+	taxReportingCode: string | null;
+	teamId: string;
 }
 
 function CategoryRow({
@@ -56,8 +57,8 @@ function CategoryRow({
 			<TableCell>
 				<div className="flex items-center gap-2">
 					<div
-						className="h-3 w-3 rounded-full"
-						style={{ backgroundColor: category.color }}
+						className="h-3 w-3 rounded-full bg-muted"
+						style={category.color ? { backgroundColor: category.color } : undefined}
 					/>
 					<span className="font-medium">{category.name}</span>
 					{category.system && (
@@ -68,7 +69,7 @@ function CategoryRow({
 				</div>
 			</TableCell>
 			<TableCell className="font-mono text-xs text-muted-foreground">
-				{category.slug}
+				{category.slug ?? "—"}
 			</TableCell>
 			<TableCell>{category.taxRate ? `${category.taxRate}%` : "—"}</TableCell>
 			<TableCell>{category.excluded ? "Excluded" : "Included"}</TableCell>
@@ -147,18 +148,6 @@ export default function CategoriesPage() {
 
 			<div className="flex items-center gap-4">
 				<Input className="max-w-[300px]" placeholder="Search categories..." />
-				<div className="flex gap-1">
-					{(["all", "expense", "income"] as const).map((f) => (
-						<Button
-							key={f}
-							onClick={() => setFilter(f)}
-							size="sm"
-							variant={filter === f ? "default" : "outline"}
-						>
-							{f === "all" ? "All" : f === "expense" ? "Expenses" : "Income"}
-						</Button>
-					))}
-				</div>
 			</div>
 
 			<div className="rounded-none border border-border bg-background">
@@ -212,15 +201,15 @@ export default function CategoriesPage() {
 					<div className="text-2xl font-semibold">{categories.length}</div>
 				</div>
 				<div className="rounded-none border border-border bg-background p-4">
-					<div className="text-muted-foreground text-xs">Expense</div>
+					<div className="text-muted-foreground text-xs">Custom</div>
 					<div className="text-2xl font-semibold">
-						{incomeCategories.length}
+						{categories.filter((c) => !c.system).length}
 					</div>
 				</div>
 				<div className="rounded-none border border-border bg-background p-4">
-					<div className="text-muted-foreground text-xs">Income</div>
+					<div className="text-muted-foreground text-xs">Tax Rate Set</div>
 					<div className="text-2xl font-semibold">
-						{expenseCategories.length}
+						{categories.filter((c) => c.taxRate !== null).length}
 					</div>
 				</div>
 				<div className="rounded-none border border-border bg-background p-4">

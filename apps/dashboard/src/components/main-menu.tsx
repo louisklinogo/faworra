@@ -92,77 +92,133 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 	const router = useRouter();
 
 	const handleClick = () => {
-		const tab: TabItem = {
-			id: item.path,
-			path: item.path,
-			label: item.name,
-			iconName: item.path.replace("/", ""),
-		};
-		addTab(tab);
-		router.push(item.path as never);
+		if (hasChildren) {
+			onToggle(item.path);
+		} else {
+			const tab: TabItem = {
+				id: item.path,
+				path: item.path,
+				label: item.name,
+				iconName: item.path.replace("/", ""),
+			};
+			addTab(tab);
+			router.push(item.path as never);
+		}
 	};
 
-	const isActive = pathname.includes(item.path);
+	const isActive = pathname === item.path || (hasChildren && pathname.startsWith(item.path));
 
 	return (
-		<div className="group w-full text-left" onClick={handleClick}>
-			<div className="relative">
-				{/* Midday-style background and border */}
-				<div
-					className={cn(
-						"mr-[15px] ml-[15px] transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
-						"h-[40px] border border-transparent",
-						isActive &&
-							"border-[#e6e6e6] bg-[#f7f7f7] dark:border-[#1d1d1d] dark:bg-[#131313]",
-						isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
-					)}
-				/>
-
-				{/* Icon container - always fixed distance from sidebar edge */}
-				<div
-					className={cn(
-						"absolute top-0 left-[15px] flex h-[40px] w-[40px] items-center justify-center transition-colors duration-200",
-						isActive
-							? "text-primary dark:text-white"
-							: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
-					)}
-				>
-					<Icon />
-				</div>
-
-				{isExpanded && (
-					<div className="pointer-events-none absolute top-0 right-[4px] left-[55px] flex h-[40px] items-center">
-						<span
-							className={cn(
-								"font-medium text-sm transition-all duration-200 ease-in-out",
-								"overflow-hidden whitespace-nowrap pr-2",
-								isActive
-									? "text-primary dark:text-white"
-									: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
-							)}
-						>
-							{item.name}
-						</span>
-						{hasChildren && (
-							<button
-								className={cn(
-									"mr-3 ml-auto flex h-8 w-8 items-center justify-center transition-all duration-200",
-									"pointer-events-auto text-[#888] hover:text-primary",
-									isActive && "text-primary/60 dark:text-white/60",
-									shouldShowChildren && "rotate-180",
-								)}
-								onClick={(e) => {
-									e.stopPropagation();
-									onToggle(item.path);
-								}}
-								type="button"
-							>
-								<Icons.ChevronDown size={14} />
-							</button>
+		<div className="w-full">
+			<div className="group w-full text-left" onClick={handleClick}>
+				<div className="relative">
+					{/* Midday-style background and border */}
+					<div
+						className={cn(
+							"mr-[15px] ml-[15px] transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
+							"h-[40px] border border-transparent",
+							isActive &&
+								"border-[#e6e6e6] bg-[#f7f7f7] dark:border-[#1d1d1d] dark:bg-[#131313]",
+							isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
 						)}
+					/>
+
+					{/* Icon container - always fixed distance from sidebar edge */}
+					<div
+						className={cn(
+							"absolute top-0 left-[15px] flex h-[40px] w-[40px] items-center justify-center transition-colors duration-200",
+							isActive
+								? "text-primary dark:text-white"
+								: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
+						)}
+					>
+						<Icon />
 					</div>
-				)}
+
+					{isExpanded && (
+						<div className="pointer-events-none absolute top-0 right-[4px] left-[55px] flex h-[40px] items-center">
+							<span
+								className={cn(
+									"font-medium text-sm transition-all duration-200 ease-in-out",
+									"overflow-hidden whitespace-nowrap pr-2",
+									isActive
+										? "text-primary dark:text-white"
+										: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
+								)}
+							>
+								{item.name}
+							</span>
+							{hasChildren && (
+								<button
+									className={cn(
+										"mr-3 ml-auto flex h-8 w-8 items-center justify-center transition-all duration-200",
+										"pointer-events-auto text-[#888] hover:text-primary",
+										isActive && "text-primary/60 dark:text-white/60",
+										shouldShowChildren && "rotate-180",
+									)}
+									onClick={(e) => {
+										e.stopPropagation();
+										onToggle(item.path);
+									}}
+									type="button"
+								>
+									<Icons.ChevronDown size={14} />
+								</button>
+							)}
+						</div>
+					)}
+				</div>
 			</div>
+
+			{/* Render children when expanded */}
+			{shouldShowChildren && hasChildren && item.children && (
+				<div className="ml-[30px] mr-[15px]">
+					{item.children.map((child) => {
+						const childIcon = icons[child.path] ?? (() => <Icons.Settings size={20} />);
+						const childIsActive = pathname === child.path;
+						return (
+							<div
+								key={child.path}
+								className="group w-full text-left"
+								onClick={() => {
+									const tab: TabItem = {
+										id: child.path,
+										path: child.path,
+										label: child.name,
+										iconName: child.path.replace("/", ""),
+									};
+									addTab(tab);
+									router.push(child.path as never);
+								}}
+							>
+								<div className="relative">
+									<div
+										className={cn(
+											"transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
+											"h-[36px] border border-transparent",
+											childIsActive &&
+												"border-[#e6e6e6] bg-[#f7f7f7] dark:border-[#1d1d1d] dark:bg-[#131313]",
+											"w-full",
+										)}
+									/>
+									<div className="absolute top-0 left-0 flex h-[36px] w-full items-center px-3">
+										<span
+											className={cn(
+												"font-medium text-xs transition-colors duration-200",
+												childIsActive
+													? "text-primary dark:text-white"
+													: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
+											)}
+										>
+											{child.name}
+										</span>
+									</div>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+			)}
 		</div>
 	);
 };

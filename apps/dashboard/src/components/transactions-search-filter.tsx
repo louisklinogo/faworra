@@ -181,7 +181,7 @@ export function TransactionsSearchFilter() {
 		enabled: shouldFetch || Boolean(filter.assignees?.length),
 	});
 
-	const tags = tagsData?.map((tag) => ({ id: tag.id, name: tag.name, slug: tag.slug }));
+	const tags = tagsData?.map((tag) => ({ id: tag.id, name: tag.name }));
 	const accounts = bankAccountsData?.map((bankAccount) => ({
 		id: bankAccount.id,
 		name: bankAccount.name ?? "",
@@ -194,7 +194,7 @@ export function TransactionsSearchFilter() {
 	}));
 	const members = membersData?.map((member) => ({
 		id: member.id,
-		name: member.name,
+		name: member.user.fullName,
 	}));
 
 	useHotkeys(
@@ -377,7 +377,7 @@ export function TransactionsSearchFilter() {
 										}
 										: undefined
 								}
-								onChange={(selected) => setFilter({ categories: [selected.slug] })}
+								onChange={(selected) => setFilter({ categories: [selected.slug ?? ""] })}
 							/>
 						</div>
 					</FilterMenuItem>

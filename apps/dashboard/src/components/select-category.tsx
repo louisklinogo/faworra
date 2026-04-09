@@ -11,7 +11,7 @@ type Selected = {
   id: string;
   name: string;
   color?: string | null;
-  slug: string;
+  slug: string | null;
   children?: Selected[];
 };
 

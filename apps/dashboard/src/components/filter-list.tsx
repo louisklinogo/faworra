@@ -120,10 +120,10 @@ export function FilterList({
 					? value
 							.map((id) => {
 								const account = accounts?.find((candidate) => candidate.id === id);
-								return formatAccountName({
-									name: account?.name,
-									currency: account?.currency,
-								});
+								return account ? formatAccountName({
+									name: account.name,
+									currency: account.currency,
+								}) : null;
 							})
 							.filter(Boolean)
 							.join(", ")

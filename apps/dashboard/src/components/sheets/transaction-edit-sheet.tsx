@@ -24,19 +24,6 @@ export function TransactionEditSheet() {
 	const { data: transaction } = useQuery({
 		...trpc.transactions.getById.queryOptions({ id: editTransaction! }),
 		enabled: isOpen && Boolean(editTransaction),
-		placeholderData: () => {
-			const pages = queryClient
-				.getQueriesData({ queryKey: trpc.transactions.list.infiniteQueryKey() })
-				.flatMap(([, data]) => {
-					const typed = data as
-						| { pages?: Array<{ items?: Array<{ id: string }> }> }
-						| undefined;
-					return typed?.pages ?? [];
-				})
-				.flatMap((page) => page.items ?? []);
-
-			return pages.find((item) => item.id === editTransaction) ?? undefined;
-		},
 	});
 
 	const handleOpenChange = (open: boolean) => {
