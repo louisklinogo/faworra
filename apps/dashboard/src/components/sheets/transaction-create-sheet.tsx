@@ -28,7 +28,7 @@ export function TransactionCreateSheet() {
 
 	return (
 		<Sheet onOpenChange={handleOpenChange} open={isOpen}>
-			<SheetContent className="w-full rounded-none sm:max-w-[480px]">
+			<SheetContent className="w-full rounded-none sm:max-w-[455px] pb-[80px]">
 				<SheetHeader className="mb-6">
 					<SheetTitle>Create Transaction</SheetTitle>
 				</SheetHeader>

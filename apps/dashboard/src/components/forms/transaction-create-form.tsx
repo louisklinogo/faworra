@@ -23,6 +23,7 @@ import { Input } from "@faworra-new/ui/components/input";
 import { Label } from "@faworra-new/ui/components/label";
 import { Switch } from "@faworra-new/ui/components/switch";
 import { Textarea } from "@faworra-new/ui/components/textarea";
+import { SubmitButton } from "@faworra-new/ui/components/submit-button";
 import { cn } from "@faworra-new/ui/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatISO } from "date-fns";
@@ -480,17 +481,14 @@ export function TransactionCreateForm({
 					</AccordionItem>
 				</Accordion>
 
-				<div className="flex items-center justify-end gap-2">
-					<Button
-						onClick={() => onOpenChange(false)}
-						type="button"
-						variant="outline"
+				<div className="fixed bottom-8 right-8 w-full sm:max-w-[455px]">
+					<SubmitButton
+						className="w-full"
+						disabled={!form.formState.isDirty}
+						isSubmitting={isPending}
 					>
-						Cancel
-					</Button>
-					<Button disabled={isPending || !form.formState.isDirty} type="submit">
-						{isPending ? "Creating..." : "Create"}
-					</Button>
+						Create
+					</SubmitButton>
 				</div>
 			</form>
 		</Form>

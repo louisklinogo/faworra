@@ -59,6 +59,7 @@ export function DataTable({ initialSettings, initialTab }: DataTableProps) {
 		setRowSelection: setRowSelectionForTab,
 		rowSelectionByTab,
 		setColumns,
+		setColumnVisibility: setColumnVisibilityStore,
 		setCanDelete,
 		setTransactionIds,
 	} = useTransactionsStore();
@@ -303,9 +304,13 @@ export function DataTable({ initialSettings, initialTab }: DataTableProps) {
 		overscan: 10, // Number of rows to render outside visible area
 	});
 
+	// Sync columns and visibility state to store for column visibility toggle
+	// Create new references to ensure Zustand detects changes
 	useEffect(() => {
 		setColumns(table.getAllLeafColumns());
-	}, [columnVisibility, setColumns, table]);
+		// Create new object reference to trigger Zustand update
+		setColumnVisibilityStore({ ...columnVisibility });
+	}, [columnVisibility, setColumns, setColumnVisibilityStore, table]);
 
 	// Determine if selected transactions can be deleted (only manual transactions can be deleted)
 	useEffect(() => {

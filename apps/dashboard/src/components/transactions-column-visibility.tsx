@@ -8,10 +8,20 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@faworra-new/ui/components/popover";
+import { useMemo } from "react";
 import { useTransactionsStore } from "@/store/transactions";
 
 export function TransactionsColumnVisibility() {
-	const { columns } = useTransactionsStore();
+	const { columns, columnVisibility } = useTransactionsStore();
+
+	// Create a stable key that changes when visibility changes
+	// This forces React to re-render the checkboxes when visibility updates
+	const visibilityKey = useMemo(() => {
+		return Object.entries(columnVisibility)
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([id, visible]) => `${id}:${visible}`)
+			.join("|");
+	}, [columnVisibility]);
 
 	return (
 		<Popover>
@@ -22,14 +32,17 @@ export function TransactionsColumnVisibility() {
 			</PopoverTrigger>
 
 			<PopoverContent align="end" className="w-[200px] p-0" sideOffset={8}>
-				<div className="flex max-h-[352px] flex-col space-y-2 overflow-auto p-4">
+				<div className="flex max-h-[352px] flex-col space-y-2 overflow-auto p-4" key={visibilityKey}>
 					{columns
 						.filter((column) => column.columnDef.enableHiding !== false)
 						.map((column) => {
+							// Column is visible if: not explicitly set to false in columnVisibility
+							// Undefined means visible (default true)
+							const isVisible = columnVisibility[column.id] !== false;
 							return (
 								<div className="flex items-center space-x-2" key={column.id}>
 									<Checkbox
-										checked={column.getIsVisible()}
+										checked={isVisible}
 										id={column.id}
 										onCheckedChange={(checked) =>
 											column.toggleVisibility(checked === true)

@@ -1,7 +1,8 @@
 "use client";
 
+import { Sheet, SheetContent } from "@faworra-new/ui/components/sheet";
 import { useTransactionParams } from "@/hooks/use-transaction-params";
-import { TransactionDetailDrawer } from "../tables/transactions/transaction-detail-drawer";
+import { TransactionDetails } from "../transaction-details";
 
 export function TransactionSheet() {
 	const { transactionId, setParams } = useTransactionParams();
@@ -14,10 +15,10 @@ export function TransactionSheet() {
 	};
 
 	return (
-		<TransactionDetailDrawer
-			onClose={() => handleOpenChange(false)}
-			open={isOpen}
-			transactionId={transactionId ?? null}
-		/>
+		<Sheet onOpenChange={handleOpenChange} open={isOpen}>
+			<SheetContent>
+				<TransactionDetails />
+			</SheetContent>
+		</Sheet>
 	);
 }
