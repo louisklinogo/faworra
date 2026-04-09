@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@faworra-new/ui/lib/utils";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -14,6 +13,7 @@ import {
 } from "@faworra-new/ui/components/dropdown-menu";
 import { Icons } from "@faworra-new/ui/components/icons";
 import { Input } from "@faworra-new/ui/components/input";
+import { cn } from "@faworra-new/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -107,9 +107,9 @@ function FilterMenuItem({ icon: Icon, label, children }: FilterMenuItemProps) {
 				</DropdownMenuSubTrigger>
 				<DropdownMenuPortal>
 					<DropdownMenuSubContent
-						sideOffset={14}
 						alignOffset={-4}
 						className="p-0"
+						sideOffset={14}
 					>
 						{children}
 					</DropdownMenuSubContent>
@@ -128,11 +128,11 @@ function FilterCheckboxItem({
 }: FilterCheckboxItemProps) {
 	return (
 		<DropdownMenuCheckboxItem
-			key={id}
 			checked={checked}
+			className={className}
+			key={id}
 			onCheckedChange={onCheckedChange}
 			onSelect={(event) => event.preventDefault()}
-			className={className}
 		>
 			{name}
 		</DropdownMenuCheckboxItem>
@@ -143,11 +143,12 @@ function updateArrayFilter(
 	value: string,
 	currentValues: string[] | null | undefined,
 	setFilter: (update: Record<string, unknown>) => void,
-	key: string,
+	key: string
 ) {
 	const normalizedValues = currentValues ?? null;
 	const newValues = normalizedValues?.includes(value)
-		? normalizedValues.filter((currentValue) => currentValue !== value).length > 0
+		? normalizedValues.filter((currentValue) => currentValue !== value).length >
+			0
 			? normalizedValues.filter((currentValue) => currentValue !== value)
 			: null
 		: [...(normalizedValues ?? []), value];
@@ -208,7 +209,7 @@ export function TransactionsSearchFilter() {
 		{
 			enableOnFormTags: true,
 			enabled: Boolean(input) && isFocused,
-		},
+		}
 	);
 
 	useHotkeys("meta+s", (event) => {
@@ -236,16 +237,18 @@ export function TransactionsSearchFilter() {
 	};
 
 	const validFilters = Object.fromEntries(
-		Object.entries(filter).filter(([key]) => key !== "q"),
+		Object.entries(filter).filter(([key]) => key !== "q")
 	);
-	const hasValidFilters = Object.values(validFilters).some((value) => value !== null);
+	const hasValidFilters = Object.values(validFilters).some(
+		(value) => value !== null
+	);
 	const amountRange =
 		filter.amount_range && filter.amount_range.length >= 2
 			? ([filter.amount_range[0], filter.amount_range[1]] as [number, number])
 			: undefined;
 
 	return (
-		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+		<DropdownMenu onOpenChange={setIsOpen} open={isOpen}>
 			<div className="flex w-full flex-col gap-3">
 				<div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 					<div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -256,30 +259,30 @@ export function TransactionsSearchFilter() {
 								handleSubmit();
 							}}
 						>
-							<Icons.Search className="pointer-events-none absolute left-3 top-[11px]" />
+							<Icons.Search className="pointer-events-none absolute top-[11px] left-3" />
 							<Input
-								ref={inputRef}
-								placeholder="Search transactions..."
+								autoCapitalize="none"
+								autoComplete="off"
+								autoCorrect="off"
 								className="w-full pr-8 pl-9"
-								value={input}
+								onBlur={() => setIsFocused(false)}
 								onChange={handleSearch}
 								onFocus={() => setIsFocused(true)}
-								onBlur={() => setIsFocused(false)}
-								autoComplete="off"
-								autoCapitalize="none"
-								autoCorrect="off"
+								placeholder="Search transactions..."
+								ref={inputRef}
 								spellCheck="false"
+								value={input}
 							/>
 
 							<DropdownMenuTrigger asChild>
 								<button
+									className={cn(
+										"absolute top-[10px] right-3 z-10 opacity-50 transition-opacity duration-300 hover:opacity-100",
+										hasValidFilters && "opacity-100",
+										isOpen && "opacity-100"
+									)}
 									onClick={() => setIsOpen((previous) => !previous)}
 									type="button"
-									className={cn(
-										"absolute right-3 top-[10px] z-10 opacity-50 transition-opacity duration-300 hover:opacity-100",
-										hasValidFilters && "opacity-100",
-										isOpen && "opacity-100",
-									)}
 								>
 									<Icons.Filter className="size-4" />
 								</button>
@@ -287,30 +290,30 @@ export function TransactionsSearchFilter() {
 						</form>
 
 						<FilterList
-							filters={validFilters}
-							onRemove={(updates) => setFilter(updates)}
-							categories={categories}
 							accounts={accounts}
-							members={members}
-							tags={tags}
-							statusFilters={statusFilters}
-							attachmentsFilters={attachmentsFilters}
-							recurringFilters={recurringFilters}
-							manualFilters={manualFilters}
 							amountRange={amountRange}
+							attachmentsFilters={attachmentsFilters}
+							categories={categories}
+							filters={validFilters}
+							manualFilters={manualFilters}
+							members={members}
+							onRemove={(updates) => setFilter(updates)}
+							recurringFilters={recurringFilters}
+							statusFilters={statusFilters}
+							tags={tags}
 						/>
 					</div>
 
 					<div className="flex items-center gap-2 self-start sm:self-auto">
 						{hasValidFilters ? (
 							<button
-								type="button"
+								className="text-[#878787] text-sm hover:text-foreground"
 								onClick={() => {
 									setInput("");
 									setFilter(defaultSearch);
 									setIsOpen(false);
 								}}
-								className="text-sm text-[#878787] hover:text-foreground"
+								type="button"
 							>
 								Clear filters
 							</button>
@@ -318,72 +321,118 @@ export function TransactionsSearchFilter() {
 					</div>
 				</div>
 
-				<DropdownMenuContent align="start" className="w-[320px] p-1" sideOffset={10}>
+				<DropdownMenuContent
+					align="start"
+					className="w-[320px] p-1"
+					sideOffset={10}
+				>
 					<FilterMenuItem icon={Icons.CalendarMonth} label="Date">
 						<DateRangeFilter
-							start={filter.start}
 							end={filter.end}
 							onSelect={setFilter}
+							start={filter.start}
 						/>
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Currency} label="Amount">
-						<div className="p-3 space-y-3 min-w-[250px]">
+						<div className="min-w-[250px] space-y-3 p-3">
 							<div className="grid grid-cols-2 gap-2">
 								<Input
-									type="number"
-									step="0.01"
-									placeholder="Min"
-									value={filter.amount_range?.[0] !== undefined ? filter.amount_range[0] / 100 : ""}
 									onChange={(event) => {
-										const min = event.target.value ? Math.round(Number(event.target.value) * 100) : null;
+										const min = event.target.value
+											? Math.round(Number(event.target.value) * 100)
+											: null;
 										const max = filter.amount_range?.[1] ?? null;
-										setFilter({ amount_range: min === null && max === null ? null : [min ?? 0, max ?? 0] });
+										setFilter({
+											amount_range:
+												min === null && max === null
+													? null
+													: [min ?? 0, max ?? 0],
+										});
 									}}
+									placeholder="Min"
+									step="0.01"
+									type="number"
+									value={
+										filter.amount_range?.[0] !== undefined
+											? filter.amount_range[0] / 100
+											: ""
+									}
 								/>
 								<Input
-									type="number"
-									step="0.01"
-									placeholder="Max"
-									value={filter.amount_range?.[1] !== undefined ? filter.amount_range[1] / 100 : ""}
 									onChange={(event) => {
 										const min = filter.amount_range?.[0] ?? null;
-										const max = event.target.value ? Math.round(Number(event.target.value) * 100) : null;
-										setFilter({ amount_range: min === null && max === null ? null : [min ?? 0, max ?? 0] });
+										const max = event.target.value
+											? Math.round(Number(event.target.value) * 100)
+											: null;
+										setFilter({
+											amount_range:
+												min === null && max === null
+													? null
+													: [min ?? 0, max ?? 0],
+										});
 									}}
+									placeholder="Max"
+									step="0.01"
+									type="number"
+									value={
+										filter.amount_range?.[1] !== undefined
+											? filter.amount_range[1] / 100
+											: ""
+									}
 								/>
 							</div>
 						</div>
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Category} label="Category">
-						<div className="p-3 min-w-[260px]">
+						<div className="min-w-[260px] p-3">
 							<SelectCategory
 								headless
+								onChange={(selected) =>
+									setFilter({ categories: [selected.slug ?? ""] })
+								}
 								selected={
-									categories?.find((category) => category.slug === filter.categories?.[0])
+									categories?.find(
+										(category) => category.slug === filter.categories?.[0]
+									)
 										? {
-											id: categories.find((category) => category.slug === filter.categories?.[0])!.id,
-											name: categories.find((category) => category.slug === filter.categories?.[0])!.name,
-											slug: categories.find((category) => category.slug === filter.categories?.[0])!.slug ?? "",
-										}
+												id: categories.find(
+													(category) => category.slug === filter.categories?.[0]
+												)!.id,
+												name: categories.find(
+													(category) => category.slug === filter.categories?.[0]
+												)!.name,
+												slug:
+													categories.find(
+														(category) =>
+															category.slug === filter.categories?.[0]
+													)!.slug ?? "",
+											}
 										: undefined
 								}
-								onChange={(selected) => setFilter({ categories: [selected.slug ?? ""] })}
 							/>
 						</div>
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Accounts} label="Account">
-						<div className="max-h-[280px] overflow-auto py-1 min-w-[260px]">
+						<div className="max-h-[280px] min-w-[260px] overflow-auto py-1">
 							{accounts?.map((account) => (
 								<FilterCheckboxItem
-									key={account.id}
-									id={account.id}
-									name={formatAccountName({ name: account.name, currency: account.currency })}
 									checked={filter.accounts?.includes(account.id)}
+									id={account.id}
+									key={account.id}
+									name={formatAccountName({
+										name: account.name,
+										currency: account.currency,
+									})}
 									onCheckedChange={() =>
-										updateArrayFilter(account.id, filter.accounts, setFilter, "accounts")
+										updateArrayFilter(
+											account.id,
+											filter.accounts,
+											setFilter,
+											"accounts"
+										)
 									}
 								/>
 							))}
@@ -391,15 +440,20 @@ export function TransactionsSearchFilter() {
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Face} label="Assignee">
-						<div className="max-h-[280px] overflow-auto py-1 min-w-[220px]">
+						<div className="max-h-[280px] min-w-[220px] overflow-auto py-1">
 							{members?.map((member) => (
 								<FilterCheckboxItem
-									key={member.id}
-									id={member.id}
-									name={member.name}
 									checked={filter.assignees?.includes(member.id)}
+									id={member.id}
+									key={member.id}
+									name={member.name}
 									onCheckedChange={() =>
-										updateArrayFilter(member.id, filter.assignees, setFilter, "assignees")
+										updateArrayFilter(
+											member.id,
+											filter.assignees,
+											setFilter,
+											"assignees"
+										)
 									}
 								/>
 							))}
@@ -407,15 +461,20 @@ export function TransactionsSearchFilter() {
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Repeat} label="Recurring">
-						<div className="py-1 min-w-[220px]">
+						<div className="min-w-[220px] py-1">
 							{recurringFilters.map((currentFilter) => (
 								<FilterCheckboxItem
-									key={currentFilter.id}
-									id={currentFilter.id}
-									name={currentFilter.name}
 									checked={filter.recurring?.includes(currentFilter.id)}
+									id={currentFilter.id}
+									key={currentFilter.id}
+									name={currentFilter.name}
 									onCheckedChange={() =>
-										updateArrayFilter(currentFilter.id, filter.recurring, setFilter, "recurring")
+										updateArrayFilter(
+											currentFilter.id,
+											filter.recurring,
+											setFilter,
+											"recurring"
+										)
 									}
 								/>
 							))}
@@ -423,16 +482,19 @@ export function TransactionsSearchFilter() {
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.ReceiptLong} label="Attachment">
-						<div className="py-1 min-w-[220px]">
+						<div className="min-w-[220px] py-1">
 							{attachmentsFilters.map((currentFilter) => (
 								<FilterCheckboxItem
-									key={currentFilter.id}
-									id={currentFilter.id}
-									name={currentFilter.name}
 									checked={filter.attachments === currentFilter.id}
+									id={currentFilter.id}
+									key={currentFilter.id}
+									name={currentFilter.name}
 									onCheckedChange={() =>
 										setFilter({
-											attachments: filter.attachments === currentFilter.id ? null : currentFilter.id,
+											attachments:
+												filter.attachments === currentFilter.id
+													? null
+													: currentFilter.id,
 										})
 									}
 								/>
@@ -441,15 +503,20 @@ export function TransactionsSearchFilter() {
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Filter} label="Status">
-						<div className="py-1 min-w-[220px]">
+						<div className="min-w-[220px] py-1">
 							{statusFilters.map((currentFilter) => (
 								<FilterCheckboxItem
-									key={currentFilter.id}
-									id={currentFilter.id}
-									name={currentFilter.name}
 									checked={filter.statuses?.includes(currentFilter.id)}
+									id={currentFilter.id}
+									key={currentFilter.id}
+									name={currentFilter.name}
 									onCheckedChange={() =>
-										updateArrayFilter(currentFilter.id, filter.statuses, setFilter, "statuses")
+										updateArrayFilter(
+											currentFilter.id,
+											filter.statuses,
+											setFilter,
+											"statuses"
+										)
 									}
 								/>
 							))}
@@ -457,13 +524,13 @@ export function TransactionsSearchFilter() {
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Tag} label="Tag">
-						<div className="max-h-[280px] overflow-auto py-1 min-w-[220px]">
+						<div className="max-h-[280px] min-w-[220px] overflow-auto py-1">
 							{tags?.map((tag) => (
 								<FilterCheckboxItem
-									key={tag.id}
-									id={tag.id}
-									name={tag.name}
 									checked={filter.tags?.includes(tag.id)}
+									id={tag.id}
+									key={tag.id}
+									name={tag.name}
 									onCheckedChange={() =>
 										updateArrayFilter(tag.id, filter.tags, setFilter, "tags")
 									}
@@ -473,36 +540,45 @@ export function TransactionsSearchFilter() {
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.SyncAlt} label="Type">
-						<div className="py-1 min-w-[220px]">
+						<div className="min-w-[220px] py-1">
 							<FilterCheckboxItem
+								checked={filter.type === "income"}
 								id="income"
 								name="In"
-								checked={filter.type === "income"}
 								onCheckedChange={() =>
-									setFilter({ type: filter.type === "income" ? null : "income" })
+									setFilter({
+										type: filter.type === "income" ? null : "income",
+									})
 								}
 							/>
 							<FilterCheckboxItem
+								checked={filter.type === "expense"}
 								id="expense"
 								name="Out"
-								checked={filter.type === "expense"}
 								onCheckedChange={() =>
-									setFilter({ type: filter.type === "expense" ? null : "expense" })
+									setFilter({
+										type: filter.type === "expense" ? null : "expense",
+									})
 								}
 							/>
 						</div>
 					</FilterMenuItem>
 
 					<FilterMenuItem icon={Icons.Block} label="Source">
-						<div className="py-1 min-w-[220px]">
+						<div className="min-w-[220px] py-1">
 							{manualFilters.map((currentFilter) => (
 								<FilterCheckboxItem
-									key={currentFilter.id}
-									id={currentFilter.id}
-									name={currentFilter.name}
 									checked={filter.manual === currentFilter.id}
+									id={currentFilter.id}
+									key={currentFilter.id}
+									name={currentFilter.name}
 									onCheckedChange={() =>
-										setFilter({ manual: filter.manual === currentFilter.id ? null : currentFilter.id })
+										setFilter({
+											manual:
+												filter.manual === currentFilter.id
+													? null
+													: currentFilter.id,
+										})
 									}
 								/>
 							))}

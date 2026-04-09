@@ -1,8 +1,8 @@
 import type {
-  ColumnDef,
-  ColumnOrderState,
-  ColumnSizingState,
-  VisibilityState,
+	ColumnDef,
+	ColumnOrderState,
+	ColumnSizingState,
+	VisibilityState,
 } from "@tanstack/react-table";
 
 /**
@@ -14,16 +14,16 @@ export type TableId = "transactions" | "customers" | "invoices" | "vault";
  * Settings for a single table
  */
 export interface TableSettings {
-  columns: VisibilityState;
-  sizing: ColumnSizingState;
-  order: ColumnOrderState;
+	columns: VisibilityState;
+	order: ColumnOrderState;
+	sizing: ColumnSizingState;
 }
 
 /**
  * Settings for all tables stored in a single cookie
  */
 export type AllTableSettings = {
-  [K in TableId]?: Partial<TableSettings>;
+	[K in TableId]?: Partial<TableSettings>;
 };
 
 /**
@@ -35,81 +35,81 @@ export const TABLE_SETTINGS_COOKIE = "table-settings";
  * Default hidden columns for each table
  */
 export const defaultHiddenColumns: Record<TableId, string[]> = {
-  transactions: [
-    "assigned",
-    "tags",
-    "method",
-    "counterparty",
-    "taxAmount",
-    "baseAmount",
-    "baseTaxAmount",
-  ],
-  customers: ["tags", "website", "financeEmail", "language"],
-  invoices: [
-    "sentAt",
-    "exclVat",
-    "exclTax",
-    "vatAmount",
-    "taxAmount",
-    "vatRate",
-    "taxRate",
-    "internalNote",
-  ],
-  vault: [], // No hidden columns by default
+	transactions: [
+		"assigned",
+		"tags",
+		"method",
+		"counterparty",
+		"taxAmount",
+		"baseAmount",
+		"baseTaxAmount",
+	],
+	customers: ["tags", "website", "financeEmail", "language"],
+	invoices: [
+		"sentAt",
+		"exclVat",
+		"exclTax",
+		"vatAmount",
+		"taxAmount",
+		"vatRate",
+		"taxRate",
+		"internalNote",
+	],
+	vault: [], // No hidden columns by default
 };
 
 /**
  * Get default column visibility for a table
  */
 export function getDefaultColumnVisibility(tableId: TableId): VisibilityState {
-  const columnsToHide = defaultHiddenColumns[tableId];
-  return columnsToHide.reduce(
-    (acc, col) => {
-      acc[col] = false;
-      return acc;
-    },
-    {} as Record<string, boolean>,
-  );
+	const columnsToHide = defaultHiddenColumns[tableId];
+	return columnsToHide.reduce(
+		(acc, col) => {
+			acc[col] = false;
+			return acc;
+		},
+		{} as Record<string, boolean>
+	);
 }
 
 /**
  * Get default settings for a table
  */
 export function getDefaultTableSettings(tableId: TableId): TableSettings {
-  return {
-    columns: getDefaultColumnVisibility(tableId),
-    sizing: {},
-    order: [],
-  };
+	return {
+		columns: getDefaultColumnVisibility(tableId),
+		sizing: {},
+		order: [],
+	};
 }
 
 /**
  * Merge saved settings with defaults, ensuring all required fields exist
  */
 export function mergeWithDefaults(
-  saved: Partial<TableSettings> | undefined,
-  tableId: TableId,
+	saved: Partial<TableSettings> | undefined,
+	tableId: TableId
 ): TableSettings {
-  const defaults = getDefaultTableSettings(tableId);
-  return {
-    columns: saved?.columns ?? defaults.columns,
-    sizing: saved?.sizing ?? defaults.sizing,
-    order: saved?.order ?? defaults.order,
-  };
+	const defaults = getDefaultTableSettings(tableId);
+	return {
+		columns: saved?.columns ?? defaults.columns,
+		sizing: saved?.sizing ?? defaults.sizing,
+		order: saved?.order ?? defaults.order,
+	};
 }
 
 /**
  * Extract column IDs from column definitions in definition order.
  */
 export function getColumnIds<TData>(columns: ColumnDef<TData>[]): string[] {
-  return columns
-    .map(
-      (col) =>
-        col.id ??
-        (col as ColumnDef<TData> & { accessorKey?: string }).accessorKey ??
-        "",
-    )
-    .filter(Boolean);
+	return columns
+		.map(
+			(col) =>
+				col.id ??
+				(col as ColumnDef<TData> & { accessorKey?: string }).accessorKey ??
+				""
+		)
+		.filter(Boolean);
 }
 
 /**
@@ -119,27 +119,29 @@ export function getColumnIds<TData>(columns: ColumnDef<TData>[]): string[] {
  * - Ensures "actions" is always the last column
  */
 export function normalizeColumnOrder(
-  savedOrder: ColumnOrderState,
-  allColumnIds: string[],
+	savedOrder: ColumnOrderState,
+	allColumnIds: string[]
 ): ColumnOrderState {
-  if (savedOrder.length === 0) return savedOrder;
+	if (savedOrder.length === 0) {
+		return savedOrder;
+	}
 
-  const definedIds = new Set(allColumnIds);
-  const savedIds = new Set(savedOrder);
+	const definedIds = new Set(allColumnIds);
+	const savedIds = new Set(savedOrder);
 
-  const orderWithoutActions = savedOrder.filter(
-    (id: string) => id !== "actions" && definedIds.has(id),
-  );
+	const orderWithoutActions = savedOrder.filter(
+		(id: string) => id !== "actions" && definedIds.has(id)
+	);
 
-  const newColumns = allColumnIds.filter(
-    (id: string) => id !== "actions" && !savedIds.has(id),
-  );
+	const newColumns = allColumnIds.filter(
+		(id: string) => id !== "actions" && !savedIds.has(id)
+	);
 
-  const result = [...orderWithoutActions, ...newColumns];
+	const result = [...orderWithoutActions, ...newColumns];
 
-  if (definedIds.has("actions")) {
-    result.push("actions");
-  }
+	if (definedIds.has("actions")) {
+		result.push("actions");
+	}
 
-  return result;
+	return result;
 }

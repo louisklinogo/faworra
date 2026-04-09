@@ -19,16 +19,16 @@ export interface TransactionsSearchState {
 	accountId: string;
 	categorySlug: string;
 	dateFrom: string;
-	dateTo: string;
 	datePreset: DatePreset;
+	dateTo: string;
 	internal: boolean | undefined;
-	// Changed from 'kind' to 'type' (Midday pattern)
-	type: TransactionType | undefined;
 	maxAmount: string;
 	minAmount: string;
 	q: string;
 	status: TransactionStatus | undefined;
 	tab: TransactionsTab;
+	// Changed from 'kind' to 'type' (Midday pattern)
+	type: TransactionType | undefined;
 }
 
 const getValue = (input: SearchParamInput, key: string) => {
@@ -46,7 +46,7 @@ const getValue = (input: SearchParamInput, key: string) => {
 };
 
 const coerceStatus = (
-	value: string | undefined,
+	value: string | undefined
 ): TransactionStatus | undefined => {
 	if (value === "excluded" || value === "pending" || value === "posted") {
 		return value;
@@ -94,14 +94,14 @@ const coerceDatePreset = (value: string | undefined): DatePreset => {
 };
 
 const getDatePresetRange = (
-	preset: DatePreset,
+	preset: DatePreset
 ): { from: Date; to: Date } | null => {
 	const now = new Date();
 	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
 	switch (preset) {
 		case "today":
-			return { from: today, to: new Date(today.getTime() + 86400000 - 1) };
+			return { from: today, to: new Date(today.getTime() + 86_400_000 - 1) };
 		case "this_week": {
 			const dayOfWeek = today.getDay();
 			const startOfWeek = new Date(today);
@@ -121,7 +121,7 @@ const getDatePresetRange = (
 			const startOfLastMonth = new Date(
 				today.getFullYear(),
 				today.getMonth() - 1,
-				1,
+				1
 			);
 			const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
 			endOfLastMonth.setHours(23, 59, 59, 999);
@@ -171,7 +171,7 @@ const toMinorUnits = (value: string) => {
 };
 
 export const parseTransactionsSearchState = (
-	input: SearchParamInput,
+	input: SearchParamInput
 ): TransactionsSearchState => {
 	return {
 		accountId: getValue(input, "accountId") ?? "",

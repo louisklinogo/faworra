@@ -183,7 +183,10 @@ const RAW_PARENTS = [
 		name: "Professional Services",
 		kind: "expense" as CategoryKind,
 		children: [
-			{ slug: "professional-services-fees", name: "Professional Services Fees" },
+			{
+				slug: "professional-services-fees",
+				name: "Professional Services Fees",
+			},
 			{ slug: "contractors", name: "Contractors" },
 			{ slug: "insurance", name: "Insurance" },
 		],
@@ -214,7 +217,10 @@ const RAW_PARENTS = [
 		kind: "expense" as CategoryKind,
 		children: [
 			{ slug: "software", name: "Software" },
-			{ slug: "non-software-subscriptions", name: "Non-Software Subscriptions" },
+			{
+				slug: "non-software-subscriptions",
+				name: "Non-Software Subscriptions",
+			},
 		],
 	},
 	{
@@ -223,7 +229,11 @@ const RAW_PARENTS = [
 		kind: "expense" as CategoryKind,
 		children: [
 			{ slug: "transfer", name: "Transfer" },
-			{ slug: "credit-card-payment", name: "Credit Card Payment", excluded: true },
+			{
+				slug: "credit-card-payment",
+				name: "Credit Card Payment",
+				excluded: true,
+			},
 			{ slug: "banking-fees", name: "Banking Fees" },
 			{ slug: "loan-proceeds", name: "Loan Proceeds" },
 			{ slug: "loan-principal-repayment", name: "Loan Principal Repayment" },
@@ -319,10 +329,12 @@ export const FLAT_CATEGORIES: CategoryDefinition[] = CATEGORIES.flatMap(
 			excluded: parent.excluded,
 		},
 		...parent.children,
-	],
+	]
 );
 
-export const getCategoryBySlug = (slug: string): CategoryDefinition | undefined => {
+export const getCategoryBySlug = (
+	slug: string
+): CategoryDefinition | undefined => {
 	return FLAT_CATEGORIES.find((category) => category.slug === slug);
 };
 

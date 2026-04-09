@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { Database } from "../client";
-import { teamMemberships } from "../schema/team";
 import { user } from "../schema/auth";
+import { teamMemberships } from "../schema/team";
 
 export async function getTeamMembers(db: Database, teamId: string) {
 	const members = await db
@@ -22,4 +22,3 @@ export async function getTeamMembers(db: Database, teamId: string) {
 
 	return members;
 }
-

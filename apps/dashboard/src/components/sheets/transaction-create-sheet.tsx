@@ -27,7 +27,7 @@ export function TransactionCreateSheet() {
 	};
 
 	return (
-		<Sheet open={isOpen} onOpenChange={handleOpenChange}>
+		<Sheet onOpenChange={handleOpenChange} open={isOpen}>
 			<SheetContent className="w-full rounded-none sm:max-w-[480px]">
 				<SheetHeader className="mb-6">
 					<SheetTitle>Create Transaction</SheetTitle>

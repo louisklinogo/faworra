@@ -106,7 +106,8 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 		}
 	};
 
-	const isActive = pathname === item.path || (hasChildren && pathname.startsWith(item.path));
+	const isActive =
+		pathname === item.path || (hasChildren && pathname.startsWith(item.path));
 
 	return (
 		<div className="w-full">
@@ -119,7 +120,7 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 							"h-[40px] border border-transparent",
 							isActive &&
 								"border-[#e6e6e6] bg-[#f7f7f7] dark:border-[#1d1d1d] dark:bg-[#131313]",
-							isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
+							isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]"
 						)}
 					/>
 
@@ -129,7 +130,7 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 							"absolute top-0 left-[15px] flex h-[40px] w-[40px] items-center justify-center transition-colors duration-200",
 							isActive
 								? "text-primary dark:text-white"
-								: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
+								: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white"
 						)}
 					>
 						<Icon />
@@ -143,7 +144,7 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 									"overflow-hidden whitespace-nowrap pr-2",
 									isActive
 										? "text-primary dark:text-white"
-										: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
+										: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white"
 								)}
 							>
 								{item.name}
@@ -154,7 +155,7 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 										"mr-3 ml-auto flex h-8 w-8 items-center justify-center transition-all duration-200",
 										"pointer-events-auto text-[#888] hover:text-primary",
 										isActive && "text-primary/60 dark:text-white/60",
-										shouldShowChildren && "rotate-180",
+										shouldShowChildren && "rotate-180"
 									)}
 									onClick={(e) => {
 										e.stopPropagation();
@@ -172,14 +173,15 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 
 			{/* Render children when expanded */}
 			{shouldShowChildren && hasChildren && item.children && (
-				<div className="ml-[30px] mr-[15px]">
+				<div className="mr-[15px] ml-[30px]">
 					{item.children.map((child) => {
-						const childIcon = icons[child.path] ?? (() => <Icons.Settings size={20} />);
+						const childIcon =
+							icons[child.path] ?? (() => <Icons.Settings size={20} />);
 						const childIsActive = pathname === child.path;
 						return (
 							<div
-								key={child.path}
 								className="group w-full text-left"
+								key={child.path}
 								onClick={() => {
 									const tab: TabItem = {
 										id: child.path,
@@ -198,7 +200,7 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 											"h-[36px] border border-transparent",
 											childIsActive &&
 												"border-[#e6e6e6] bg-[#f7f7f7] dark:border-[#1d1d1d] dark:bg-[#131313]",
-											"w-full",
+											"w-full"
 										)}
 									/>
 									<div className="absolute top-0 left-0 flex h-[36px] w-full items-center px-3">
@@ -207,7 +209,7 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 												"font-medium text-xs transition-colors duration-200",
 												childIsActive
 													? "text-primary dark:text-white"
-													: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
+													: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white"
 											)}
 										>
 											{child.name}

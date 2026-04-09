@@ -1,6 +1,10 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@faworra-new/ui/components/avatar";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@faworra-new/ui/components/avatar";
 import { cn } from "@faworra-new/ui/lib/utils";
 import { useState } from "react";
 
@@ -16,28 +20,28 @@ export function BankLogo({ src, alt, size = 34 }: Props) {
 
 	return (
 		<Avatar
-			style={{ width: size, height: size }}
 			className={cn(!showingFallback && "border border-border")}
+			style={{ width: size, height: size }}
 		>
 			{src && !hasError ? (
 				<AvatarImage
-					src={src}
 					alt={alt}
-					className="object-contain bg-white"
+					className="bg-white object-contain"
 					onError={() => setHasError(true)}
+					src={src}
 				/>
 			) : (
 				<AvatarImage
-					src="https://cdn-engine.midday.ai/default.jpg"
 					alt={alt}
 					className="object-contain"
+					src="https://cdn-engine.midday.ai/default.jpg"
 				/>
 			)}
 			<AvatarFallback>
 				<AvatarImage
-					src="https://cdn-engine.midday.ai/default.jpg"
 					alt={alt}
 					className="object-contain"
+					src="https://cdn-engine.midday.ai/default.jpg"
 				/>
 			</AvatarFallback>
 		</Avatar>

@@ -35,17 +35,17 @@ type FilterValue = {
 };
 
 interface Props {
-	filters: Partial<FilterValue>;
-	onRemove: (filters: Record<string, null>) => void;
-	categories?: { id: string; name: string; slug?: string | null }[];
 	accounts?: { id: string; name: string; currency: string }[];
-	members?: { id: string; name: string }[];
-	statusFilters?: { id: string; name: string }[];
-	attachmentsFilters?: { id: string; name: string }[];
-	recurringFilters?: { id: string; name: string }[];
-	manualFilters?: { id: string; name: string }[];
-	tags?: { id: string; name: string; slug?: string }[];
 	amountRange?: [number, number];
+	attachmentsFilters?: { id: string; name: string }[];
+	categories?: { id: string; name: string; slug?: string | null }[];
+	filters: Partial<FilterValue>;
+	manualFilters?: { id: string; name: string }[];
+	members?: { id: string; name: string }[];
+	onRemove: (filters: Record<string, null>) => void;
+	recurringFilters?: { id: string; name: string }[];
+	statusFilters?: { id: string; name: string }[];
+	tags?: { id: string; name: string; slug?: string }[];
 }
 
 export function FilterList({
@@ -64,9 +64,13 @@ export function FilterList({
 	const renderFilter = (key: FilterKey, value: FilterValue[FilterKey]) => {
 		switch (key) {
 			case "start": {
-				if (typeof value !== "string") return null;
+				if (typeof value !== "string") {
+					return null;
+				}
 				const start = new Date(value);
-				if (Number.isNaN(start.getTime())) return value;
+				if (Number.isNaN(start.getTime())) {
+					return value;
+				}
 				if (filters.end) {
 					const end = new Date(filters.end);
 					if (!Number.isNaN(end.getTime())) {
@@ -76,7 +80,9 @@ export function FilterList({
 				return format(start, "MMM d, yyyy");
 			}
 			case "amount_range": {
-				if (!amountRange) return null;
+				if (!amountRange) {
+					return null;
+				}
 				return `${(amountRange[0] / 100).toLocaleString(undefined, {
 					minimumFractionDigits: 2,
 					maximumFractionDigits: 2,
@@ -86,32 +92,47 @@ export function FilterList({
 				})}`;
 			}
 			case "attachments":
-				return attachmentsFilters?.find((filter) => filter.id === value)?.name ?? null;
+				return (
+					attachmentsFilters?.find((filter) => filter.id === value)?.name ??
+					null
+				);
 			case "recurring":
 				return Array.isArray(value)
 					? value
-							.map((slug) => recurringFilters?.find((filter) => filter.id === slug)?.name)
+							.map(
+								(slug) =>
+									recurringFilters?.find((filter) => filter.id === slug)?.name
+							)
 							.filter(Boolean)
 							.join(", ")
 					: null;
 			case "statuses":
 				return Array.isArray(value)
 					? value
-							.map((status) => statusFilters?.find((filter) => filter.id === status)?.name)
+							.map(
+								(status) =>
+									statusFilters?.find((filter) => filter.id === status)?.name
+							)
 							.filter(Boolean)
 							.join(", ")
 					: null;
 			case "categories":
 				return Array.isArray(value)
 					? value
-							.map((slug) => categories?.find((category) => category.slug === slug)?.name)
+							.map(
+								(slug) =>
+									categories?.find((category) => category.slug === slug)?.name
+							)
 							.filter(Boolean)
 							.join(", ")
 					: null;
 			case "tags":
 				return Array.isArray(value)
 					? value
-							.map((id) => tags?.find((tag) => tag.id === id || tag.slug === id)?.name)
+							.map(
+								(id) =>
+									tags?.find((tag) => tag.id === id || tag.slug === id)?.name
+							)
 							.filter(Boolean)
 							.join(", ")
 					: null;
@@ -119,11 +140,15 @@ export function FilterList({
 				return Array.isArray(value)
 					? value
 							.map((id) => {
-								const account = accounts?.find((candidate) => candidate.id === id);
-								return account ? formatAccountName({
-									name: account.name,
-									currency: account.currency,
-								}) : null;
+								const account = accounts?.find(
+									(candidate) => candidate.id === id
+								);
+								return account
+									? formatAccountName({
+											name: account.name,
+											currency: account.currency,
+										})
+									: null;
 							})
 							.filter(Boolean)
 							.join(", ")
@@ -136,7 +161,9 @@ export function FilterList({
 							.join(", ")
 					: null;
 			case "manual":
-				return manualFilters?.find((filter) => filter.id === value)?.name ?? null;
+				return (
+					manualFilters?.find((filter) => filter.id === value)?.name ?? null
+				);
 			case "type":
 				return value === "income" ? "In" : value === "expense" ? "Out" : null;
 			default:
@@ -154,7 +181,7 @@ export function FilterList({
 	};
 
 	const entries = Object.entries(filters).filter(
-		([key, value]) => value !== null && value !== undefined && key !== "end",
+		([key, value]) => value !== null && value !== undefined && key !== "end"
 	) as Array<[FilterKey, FilterValue[FilterKey]]>;
 
 	if (!entries.length) {
@@ -165,7 +192,9 @@ export function FilterList({
 		<ul className="flex flex-wrap gap-2">
 			{entries.map(([key, value]) => {
 				const label = renderFilter(key, value);
-				if (!label) return null;
+				if (!label) {
+					return null;
+				}
 
 				return (
 					<li key={key}>

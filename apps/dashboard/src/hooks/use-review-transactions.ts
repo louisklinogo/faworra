@@ -17,16 +17,18 @@ export function useReviewTransactions() {
 				fulfilled: true,
 				// Only show transactions not yet exported
 				exported: false,
-				pageSize: 10000, // Load all for review
+				pageSize: 10_000, // Load all for review
 			},
 			{
 				getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-			},
-		),
+			}
+		)
 	);
 
 	const transactionIds = useMemo(() => {
-		return query.data?.pages.flatMap((page) => page.items.map((tx) => tx.id)) ?? [];
+		return (
+			query.data?.pages.flatMap((page) => page.items.map((tx) => tx.id)) ?? []
+		);
 	}, [query.data]);
 
 	return {

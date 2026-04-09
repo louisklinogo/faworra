@@ -16,28 +16,28 @@ export function TransactionsColumnVisibility() {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<Button variant="outline" size="icon">
+				<Button size="icon" variant="outline">
 					<Icons.Tune size={18} />
 				</Button>
 			</PopoverTrigger>
 
-			<PopoverContent className="w-[200px] p-0" align="end" sideOffset={8}>
-				<div className="flex flex-col p-4 space-y-2 max-h-[352px] overflow-auto">
+			<PopoverContent align="end" className="w-[200px] p-0" sideOffset={8}>
+				<div className="flex max-h-[352px] flex-col space-y-2 overflow-auto p-4">
 					{columns
 						.filter((column) => column.columnDef.enableHiding !== false)
 						.map((column) => {
 							return (
-								<div key={column.id} className="flex items-center space-x-2">
+								<div className="flex items-center space-x-2" key={column.id}>
 									<Checkbox
-										id={column.id}
 										checked={column.getIsVisible()}
+										id={column.id}
 										onCheckedChange={(checked) =>
 											column.toggleVisibility(checked === true)
 										}
 									/>
 									<label
-										htmlFor={column.id}
 										className="text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+										htmlFor={column.id}
 									>
 										{column.columnDef.header?.toString() ?? column.id}
 									</label>

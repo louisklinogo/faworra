@@ -1,10 +1,8 @@
 "use client";
 
-import type { RouterOutputs } from "@/utils/trpc";
 import { Badge } from "@faworra-new/ui/components/badge";
 import { Button } from "@faworra-new/ui/components/button";
 import { Checkbox } from "@faworra-new/ui/components/checkbox";
-import { cn } from "@faworra-new/ui/lib/utils";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -13,7 +11,12 @@ import {
 	DropdownMenuTrigger,
 } from "@faworra-new/ui/components/dropdown-menu";
 import { Icons } from "@faworra-new/ui/components/icons";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@faworra-new/ui/components/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@faworra-new/ui/components/tooltip";
+import { cn } from "@faworra-new/ui/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback } from "react";
 import { FormatAmount } from "@/components/format-amount";
@@ -21,13 +24,20 @@ import { InlineAssignUser } from "@/components/inline-assign-user";
 import { InlineSelectCategory } from "@/components/inline-select-category";
 import { TransactionStatus } from "@/components/transaction-status";
 import { formatDate } from "@/utils/format";
+import type { RouterOutputs } from "@/utils/trpc";
 
 type Transaction = RouterOutputs["transactions"]["list"]["items"][number];
 
 // Table meta type for custom table functionality
 interface TableMeta {
-	setOpen?: (id: string) => void;
 	copyUrl?: (id: string) => void;
+	dateFormat?: string | null;
+	editTransaction?: (id: string) => void;
+	handleShiftClickRange?: (start: number, end: number) => void;
+	lastClickedIndex?: number | null;
+	onDeleteTransaction?: (id: string) => void;
+	setLastClickedIndex?: (index: number) => void;
+	setOpen?: (id: string) => void;
 	updateTransaction?: (data: {
 		id: string;
 		status?: string;
@@ -35,12 +45,6 @@ interface TableMeta {
 		categoryName?: string;
 		assignedId?: string | null;
 	}) => void;
-	onDeleteTransaction?: (id: string) => void;
-	editTransaction?: (id: string) => void;
-	lastClickedIndex?: number | null;
-	setLastClickedIndex?: (index: number) => void;
-	handleShiftClickRange?: (start: number, end: number) => void;
-	dateFormat?: string | null;
 }
 
 const SelectCell = memo(
@@ -64,14 +68,14 @@ const SelectCell = memo(
 		>
 			<Checkbox checked={checked} onCheckedChange={onChange} />
 		</div>
-	),
+	)
 );
 
 SelectCell.displayName = "SelectCell";
 
 const DateCell = memo(
 	({ date, format }: { date: string; format?: string | null }) =>
-		formatDate(date, format),
+		formatDate(date, format)
 );
 
 DateCell.displayName = "DateCell";
@@ -92,13 +96,13 @@ const DescriptionCell = memo(
 			<Tooltip>
 				<TooltipTrigger asChild>
 					<span className={cn(amount > 0 && "text-[#00C969]")}>
-						<div className="flex space-x-2 items-center">
-							<span className="line-clamp-1 text-ellipsis max-w-[100px] md:max-w-none">
+						<div className="flex items-center space-x-2">
+							<span className="line-clamp-1 max-w-[100px] text-ellipsis md:max-w-none">
 								{name}
 							</span>
 
 							{status === "pending" && (
-								<div className="flex space-x-1 items-center border rounded-md text-[10px] py-1 px-2 h-[22px] text-[#878787]">
+								<div className="flex h-[22px] items-center space-x-1 rounded-md border px-2 py-1 text-[#878787] text-[10px]">
 									<span>Pending</span>
 								</div>
 							)}
@@ -108,7 +112,7 @@ const DescriptionCell = memo(
 
 				{description && (
 					<TooltipContent
-						className="px-3 py-1.5 text-xs max-w-[380px]"
+						className="max-w-[380px] px-3 py-1.5 text-xs"
 						side="right"
 						sideOffset={10}
 					>
@@ -117,7 +121,7 @@ const DescriptionCell = memo(
 				)}
 			</Tooltip>
 		</div>
-	),
+	)
 );
 
 DescriptionCell.displayName = "DescriptionCell";
@@ -127,7 +131,7 @@ const AmountCell = memo(
 		<span className={cn("text-sm", amount > 0 && "text-[#00C969]")}>
 			<FormatAmount amount={amount} currency={currency} />
 		</span>
-	),
+	)
 );
 
 AmountCell.displayName = "AmountCell";
@@ -135,20 +139,20 @@ AmountCell.displayName = "AmountCell";
 const TagsCell = memo(
 	({ tags }: { tags?: { id: string; name: string | null }[] }) => (
 		<div className="relative w-full">
-			<div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide">
+			<div className="scrollbar-hide flex items-center space-x-2 overflow-x-auto">
 				{tags?.map(({ id, name }) => (
 					<Badge
+						className="flex-shrink-0 whitespace-nowrap"
 						key={id}
 						variant="tag-rounded"
-						className="whitespace-nowrap flex-shrink-0"
 					>
 						{name}
 					</Badge>
 				))}
 			</div>
-			<div className="group-hover:hidden right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
+			<div className="pointer-events-none top-0 right-0 bottom-0 z-10 w-8 bg-gradient-to-l from-background to-transparent group-hover:hidden" />
 		</div>
-	),
+	)
 );
 
 TagsCell.displayName = "TagsCell";
@@ -176,7 +180,7 @@ const ActionsCell = memo(
 	}) => {
 		const isArchived = transaction.status === "archived";
 		const isExcluded = transaction.status === "excluded";
-		const isWorkflowActive = !isArchived && !isExcluded;
+		const isWorkflowActive = !(isArchived || isExcluded);
 
 		const handleViewDetails = useCallback(() => {
 			onViewDetails?.(transaction.id);
@@ -207,10 +211,10 @@ const ActionsCell = memo(
 		}, [transaction.id, onDeleteTransaction]);
 
 		return (
-			<div className="flex justify-center w-full">
+			<div className="flex w-full justify-center">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
+						<Button className="h-8 w-8 p-0" variant="ghost">
 							<span className="sr-only">Open menu</span>
 							<Icons.MoreHorizontal className="h-4 w-4 text-muted-foreground" />
 						</Button>
@@ -267,7 +271,7 @@ const ActionsCell = memo(
 				</DropdownMenu>
 			</div>
 		);
-	},
+	}
 );
 
 ActionsCell.displayName = "ActionsCell";
@@ -355,10 +359,10 @@ export const columns: ColumnDef<Transaction>[] = [
 		},
 		cell: ({ row }) => (
 			<DescriptionCell
-				name={row.original.name}
-				description={row.original.description}
-				status={row.original.status ?? undefined}
 				amount={row.original.amount}
+				description={row.original.description}
+				name={row.original.name}
+				status={row.original.status ?? undefined}
 			/>
 		),
 	},
@@ -436,7 +440,7 @@ export const columns: ColumnDef<Transaction>[] = [
 						</span>
 					</TooltipTrigger>
 					<TooltipContent
-						className="px-3 py-1.5 text-xs max-w-[280px]"
+						className="max-w-[280px] px-3 py-1.5 text-xs"
 						side="top"
 						sideOffset={5}
 					>
@@ -463,6 +467,13 @@ export const columns: ColumnDef<Transaction>[] = [
 
 			return (
 				<InlineSelectCategory
+					onChange={(category) => {
+						meta?.updateTransaction?.({
+							id: row.original.id,
+							categorySlug: category.slug,
+							categoryName: category.name,
+						});
+					}}
 					selected={
 						row.original.category
 							? {
@@ -473,13 +484,6 @@ export const columns: ColumnDef<Transaction>[] = [
 								}
 							: undefined
 					}
-					onChange={(category) => {
-						meta?.updateTransaction?.({
-							id: row.original.id,
-							categorySlug: category.slug,
-							categoryName: category.name,
-						});
-					}}
 				/>
 			);
 		},
@@ -548,7 +552,9 @@ export const columns: ColumnDef<Transaction>[] = [
 		},
 		cell: ({ row }) => (
 			<span className="text-muted-foreground">
-				{row.original.method ? row.original.method.replace(/_/g, " ").toLowerCase() : "-"}
+				{row.original.method
+					? row.original.method.replace(/_/g, " ").toLowerCase()
+					: "-"}
 			</span>
 		),
 	},
@@ -569,13 +575,13 @@ export const columns: ColumnDef<Transaction>[] = [
 
 			return (
 				<InlineAssignUser
-					selectedId={row.original.assignedId ?? undefined}
 					onSelect={(user) => {
 						meta?.updateTransaction?.({
 							id: row.original.id,
 							assignedId: user.id,
 						});
 					}}
+					selectedId={row.original.assignedId ?? undefined}
 				/>
 			);
 		},
@@ -592,11 +598,7 @@ export const columns: ColumnDef<Transaction>[] = [
 			headerLabel: "Status",
 			className: "w-[160px] min-w-[120px]",
 		},
-		cell: ({ row }) => (
-			<TransactionStatus
-				rawStatus={row.original.status}
-			/>
-		),
+		cell: ({ row }) => <TransactionStatus rawStatus={row.original.status} />,
 	},
 	{
 		id: "actions",
@@ -618,12 +620,12 @@ export const columns: ColumnDef<Transaction>[] = [
 
 			return (
 				<ActionsCell
-					transaction={row.original}
-					onViewDetails={meta?.setOpen}
 					onCopyUrl={meta?.copyUrl}
-					onUpdateTransaction={meta?.updateTransaction}
 					onDeleteTransaction={meta?.onDeleteTransaction}
 					onEditTransaction={meta?.editTransaction}
+					onUpdateTransaction={meta?.updateTransaction}
+					onViewDetails={meta?.setOpen}
+					transaction={row.original}
 				/>
 			);
 		},

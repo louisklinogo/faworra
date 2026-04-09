@@ -1,3 +1,3 @@
 export * from "./cn";
-export * from "./truncate";
 export * from "./email";
+export * from "./truncate";

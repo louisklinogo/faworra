@@ -4,32 +4,32 @@ import Suggestion from "@tiptap/suggestion";
 import type { SlashCommandItem } from "./types";
 
 export type SlashCommandOptions = {
-  suggestion: Omit<SuggestionOptions<SlashCommandItem>, "editor">;
+	suggestion: Omit<SuggestionOptions<SlashCommandItem>, "editor">;
 };
 
 export const SlashCommand = Extension.create<SlashCommandOptions>({
-  name: "slashCommand",
+	name: "slashCommand",
 
-  addOptions() {
-    return {
-      suggestion: {
-        char: "/",
-        startOfLine: false,
-        command: ({ editor, range, props }) => {
-          props.command({ editor, range });
-        },
-      },
-    };
-  },
+	addOptions() {
+		return {
+			suggestion: {
+				char: "/",
+				startOfLine: false,
+				command: ({ editor, range, props }) => {
+					props.command({ editor, range });
+				},
+			},
+		};
+	},
 
-  addProseMirrorPlugins() {
-    return [
-      Suggestion({
-        editor: this.editor,
-        ...this.options.suggestion,
-      }),
-    ];
-  },
+	addProseMirrorPlugins() {
+		return [
+			Suggestion({
+				editor: this.editor,
+				...this.options.suggestion,
+			}),
+		];
+	},
 });
 
 export type { SlashMenuRef } from "./slash-menu";

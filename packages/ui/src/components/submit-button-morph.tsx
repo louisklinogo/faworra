@@ -6,44 +6,44 @@ import { Spinner } from "./spinner";
 import { TextMorph } from "./text-morph";
 
 type SubmitButtonMorphProps = {
-  children: string;
-  isSubmitting: boolean;
-  completed?: boolean;
-  disabled?: boolean;
+	children: string;
+	isSubmitting: boolean;
+	completed?: boolean;
+	disabled?: boolean;
 } & ButtonProps;
 
 export function SubmitButtonMorph({
-  children,
-  isSubmitting,
-  completed = false,
-  disabled,
-  ...props
+	children,
+	isSubmitting,
+	completed = false,
+	disabled,
+	...props
 }: SubmitButtonMorphProps) {
-  const isBlocked = Boolean(isSubmitting || disabled);
+	const isBlocked = Boolean(isSubmitting || disabled);
 
-  return (
-    <Button
-      disabled={disabled}
-      aria-disabled={isBlocked}
-      {...props}
-      className={cn(
-        "relative",
-        isSubmitting && "pointer-events-none",
-        props.className,
-      )}
-    >
-      <AnimatedSizeContainer width className="inline-flex">
-        <span className="inline-flex items-center gap-2 w-max">
-          {isSubmitting ? (
-            completed ? (
-              <Icons.Check className="size-4 shrink-0" />
-            ) : (
-              <Spinner />
-            )
-          ) : null}
-          <TextMorph as="span">{children}</TextMorph>
-        </span>
-      </AnimatedSizeContainer>
-    </Button>
-  );
+	return (
+		<Button
+			aria-disabled={isBlocked}
+			disabled={disabled}
+			{...props}
+			className={cn(
+				"relative",
+				isSubmitting && "pointer-events-none",
+				props.className
+			)}
+		>
+			<AnimatedSizeContainer className="inline-flex" width>
+				<span className="inline-flex w-max items-center gap-2">
+					{isSubmitting ? (
+						completed ? (
+							<Icons.Check className="size-4 shrink-0" />
+						) : (
+							<Spinner />
+						)
+					) : null}
+					<TextMorph as="span">{children}</TextMorph>
+				</span>
+			</AnimatedSizeContainer>
+		</Button>
+	);
 }

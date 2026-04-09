@@ -30,10 +30,10 @@ import {
 	transactionFrequency,
 	transactionMethod,
 	transactionStatus,
-	transactionTags,
-	transactionTagsRelations,
 	transactions,
 	transactionsRelations,
+	transactionTags,
+	transactionTagsRelations,
 } from "./schema/financial";
 import {
 	teamInviteStatus,

@@ -4,10 +4,7 @@ import type { AppRouter } from "@faworra-new/api/routers/index";
 import { env } from "@faworra-new/env/web";
 import type { QueryClient } from "@tanstack/react-query";
 import { isServer, QueryClientProvider } from "@tanstack/react-query";
-import {
-	createTRPCClient,
-	httpBatchLink,
-} from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import { useState } from "react";
 
@@ -21,7 +18,9 @@ export function getQueryClient() {
 	if (isServer) {
 		return makeQueryClient();
 	}
-	if (!browserQueryClient) browserQueryClient = makeQueryClient();
+	if (!browserQueryClient) {
+		browserQueryClient = makeQueryClient();
+	}
 	return browserQueryClient;
 }
 
@@ -43,12 +42,12 @@ export function TRPCReactProvider({
 					},
 				}),
 			],
-		}),
+		})
 	);
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+			<TRPCProvider queryClient={queryClient} trpcClient={trpcClient}>
 				{children}
 			</TRPCProvider>
 		</QueryClientProvider>

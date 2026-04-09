@@ -9,13 +9,13 @@ import {
 	SelectValue,
 } from "@faworra-new/ui/components/select";
 import { formatISO, parseISO } from "date-fns";
-import { getDatePresets, type DatePresetOption } from "@/utils/date-presets";
+import { type DatePresetOption, getDatePresets } from "@/utils/date-presets";
 
 interface DateRangeFilterProps {
-	start: string | null | undefined;
 	end: string | null | undefined;
 	onSelect: (range: { start: string | null; end: string | null }) => void;
 	presets?: DatePresetOption[];
+	start: string | null | undefined;
 }
 
 /**
@@ -41,7 +41,7 @@ export function DateRangeFilter({
 
 	return (
 		<div className="flex flex-col">
-			<div className="p-2 border-b border-border">
+			<div className="border-border border-b p-2">
 				<Select
 					onValueChange={(value) => {
 						const preset = presets.find((p) => p.value === value);
@@ -57,15 +57,15 @@ export function DateRangeFilter({
 						}
 					}}
 				>
-					<SelectTrigger className="w-full h-8 text-xs">
+					<SelectTrigger className="h-8 w-full text-xs">
 						<SelectValue placeholder="Select preset" />
 					</SelectTrigger>
 					<SelectContent>
 						{presets.map((preset) => (
 							<SelectItem
+								className="text-xs"
 								key={preset.value}
 								value={preset.value}
-								className="text-xs"
 							>
 								{preset.label}
 							</SelectItem>
@@ -74,19 +74,14 @@ export function DateRangeFilter({
 				</Select>
 			</div>
 			<Calendar
-				mode="range"
-				initialFocus
-				numberOfMonths={2}
-				toDate={new Date()}
 				defaultMonth={new Date()}
-				today={new Date()}
-				weekStartsOn={weekStartsOn}
-				selected={{
-					from: start ? parseISO(start) : undefined,
-					to: end ? parseISO(end) : undefined,
-				}}
+				initialFocus
+				mode="range"
+				numberOfMonths={2}
 				onSelect={(range) => {
-					if (!range) return;
+					if (!range) {
+						return;
+					}
 
 					onSelect({
 						start: range.from
@@ -97,6 +92,13 @@ export function DateRangeFilter({
 							: null,
 					});
 				}}
+				selected={{
+					from: start ? parseISO(start) : undefined,
+					to: end ? parseISO(end) : undefined,
+				}}
+				toDate={new Date()}
+				today={new Date()}
+				weekStartsOn={weekStartsOn}
 			/>
 		</div>
 	);

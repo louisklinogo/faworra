@@ -124,4 +124,3 @@ export const getTagById = async (db: Database, params: GetTagByIdParams) => {
 
 	return result;
 };
-

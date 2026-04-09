@@ -1,6 +1,3 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { protectedTeamProcedure, router } from "../index";
 import {
 	createTag,
 	deleteTag,
@@ -8,6 +5,9 @@ import {
 	getTags,
 	updateTag,
 } from "@faworra-new/db/queries/tags";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { protectedTeamProcedure, router } from "../index";
 
 export const tagsRouter = router({
 	get: protectedTeamProcedure.query(async ({ ctx }) => {

@@ -9,7 +9,10 @@ export interface OverviewSummary {
 	transactionCount: number;
 }
 
-export const getOverviewSummary = async (db: Database, { teamId }: { teamId: string }) => {
+export const getOverviewSummary = async (
+	db: Database,
+	{ teamId }: { teamId: string }
+) => {
 	const [summary] = await db
 		.select({
 			expenseTotal: sql<number>`COALESCE(ABS(SUM(CASE WHEN ${transactions.amount} < 0 THEN ${transactions.amount} ELSE 0 END)), 0)`,

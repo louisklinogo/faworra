@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
 	createContext,
 	type ReactNode,
@@ -9,14 +10,13 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { usePathname } from "next/navigation";
 
 export interface TabItem {
 	iconName: string;
 	id: string;
+	isPinned?: boolean;
 	label: string;
 	path: string;
-	isPinned?: boolean;
 }
 
 export const OVERVIEW_TAB: TabItem = {
@@ -95,7 +95,9 @@ export function TabProvider({ children }: { children: ReactNode }) {
 	// CRITICAL: we use tabsRef.current (not `tabs`) so this effect only re-runs
 	// when the pathname changes, not when tabs change — preventing the re-add loop.
 	useEffect(() => {
-		if (!pathname) return;
+		if (!pathname) {
+			return;
+		}
 
 		const currentTabs = tabsRef.current;
 		const existing = currentTabs.find((t: TabItem) => t.path === pathname);
@@ -120,7 +122,9 @@ export function TabProvider({ children }: { children: ReactNode }) {
 
 	const removeTab = useCallback((id: string) => {
 		// Never remove the pinned overview
-		if (id === "overview") return;
+		if (id === "overview") {
+			return;
+		}
 		setTabs((current: TabItem[]) => {
 			const newTabs = current.filter((t: TabItem) => t.id !== id);
 			// If removing the currently active tab, fall back to the last available tab
@@ -142,7 +146,7 @@ export function TabProvider({ children }: { children: ReactNode }) {
 		(path: string) => {
 			return tabs.find((t: TabItem) => t.path === path);
 		},
-		[tabs],
+		[tabs]
 	);
 
 	return (

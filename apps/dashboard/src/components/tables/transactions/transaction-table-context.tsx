@@ -5,24 +5,24 @@ import { createContext, type ReactNode, useContext, useMemo } from "react";
 import { useTRPC } from "@/trpc/client";
 
 type TeamMember = {
-  user: {
-    id: string;
-    avatarUrl?: string | null;
-    fullName: string | null;
-  } | null;
+	user: {
+		id: string;
+		avatarUrl?: string | null;
+		fullName: string | null;
+	} | null;
 };
 
 interface TransactionTableContextValue {
-  teamMembers: TeamMember[] | undefined;
-  isLoadingMembers: boolean;
+	isLoadingMembers: boolean;
+	teamMembers: TeamMember[] | undefined;
 }
 
 const TransactionTableContext = createContext<
-  TransactionTableContextValue | undefined
+	TransactionTableContextValue | undefined
 >(undefined);
 
 interface TransactionTableProviderProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 /**
@@ -30,27 +30,27 @@ interface TransactionTableProviderProps {
  * transaction table, avoiding duplicate subscriptions in each cell component.
  */
 export function TransactionTableProvider({
-  children,
+	children,
 }: TransactionTableProviderProps) {
-  const trpc = useTRPC();
+	const trpc = useTRPC();
 
-  const { data: teamMembers, isLoading: isLoadingMembers } = useQuery(
-    trpc.team.members.queryOptions(),
-  );
+	const { data: teamMembers, isLoading: isLoadingMembers } = useQuery(
+		trpc.team.members.queryOptions()
+	);
 
-  const value = useMemo(
-    () => ({
-      teamMembers,
-      isLoadingMembers,
-    }),
-    [teamMembers, isLoadingMembers],
-  );
+	const value = useMemo(
+		() => ({
+			teamMembers,
+			isLoadingMembers,
+		}),
+		[teamMembers, isLoadingMembers]
+	);
 
-  return (
-    <TransactionTableContext.Provider value={value}>
-      {children}
-    </TransactionTableContext.Provider>
-  );
+	return (
+		<TransactionTableContext.Provider value={value}>
+			{children}
+		</TransactionTableContext.Provider>
+	);
 }
 
 /**
@@ -58,13 +58,13 @@ export function TransactionTableProvider({
  * Must be used within a TransactionTableProvider.
  */
 export function useTransactionTableContext() {
-  const context = useContext(TransactionTableContext);
-  if (context === undefined) {
-    throw new Error(
-      "useTransactionTableContext must be used within a TransactionTableProvider",
-    );
-  }
-  return context;
+	const context = useContext(TransactionTableContext);
+	if (context === undefined) {
+		throw new Error(
+			"useTransactionTableContext must be used within a TransactionTableProvider"
+		);
+	}
+	return context;
 }
 
 /**
@@ -72,5 +72,5 @@ export function useTransactionTableContext() {
  * Useful for components that work both inside and outside the table.
  */
 export function useTransactionTableContextOptional() {
-  return useContext(TransactionTableContext);
+	return useContext(TransactionTableContext);
 }

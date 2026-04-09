@@ -4,207 +4,207 @@ import { Command as CommandPrimitive } from "cmdk";
 import { useCallback, useRef, useState } from "react";
 import { cn } from "../utils";
 import {
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
 } from "./command";
 import { Icons } from "./icons";
 import { Spinner } from "./spinner";
 
 export type Option = {
-  id: string;
-  name: string;
-  component?: () => React.ReactNode;
-  data?: unknown;
+	id: string;
+	name: string;
+	component?: () => React.ReactNode;
+	data?: unknown;
 };
 
 type ComboboxProps = {
-  options: Option[];
-  value?: Option;
-  onSelect?: (value?: Option) => void;
-  onCreate?: (value?: string) => void;
-  onRemove?: () => void;
-  onValueChange?: (value: string) => void;
-  isLoading?: boolean;
-  disabled?: boolean;
-  placeholder?: string;
-  className?: string;
-  classNameList?: string;
-  autoFocus?: boolean;
-  showIcon?: boolean;
-  CreateComponent?: React.ComponentType<{ value: string }>;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+	options: Option[];
+	value?: Option;
+	onSelect?: (value?: Option) => void;
+	onCreate?: (value?: string) => void;
+	onRemove?: () => void;
+	onValueChange?: (value: string) => void;
+	isLoading?: boolean;
+	disabled?: boolean;
+	placeholder?: string;
+	className?: string;
+	classNameList?: string;
+	autoFocus?: boolean;
+	showIcon?: boolean;
+	CreateComponent?: React.ComponentType<{ value: string }>;
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
+	onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
 };
 
 export const Combobox = ({
-  options,
-  placeholder,
-  value,
-  onSelect,
-  onRemove,
-  onCreate,
-  disabled,
-  className,
-  classNameList,
-  isLoading = false,
-  showIcon = true,
-  autoFocus,
-  onValueChange,
-  CreateComponent,
-  open: controlledOpen,
-  onOpenChange,
-  onFocus,
+	options,
+	placeholder,
+	value,
+	onSelect,
+	onRemove,
+	onCreate,
+	disabled,
+	className,
+	classNameList,
+	isLoading = false,
+	showIcon = true,
+	autoFocus,
+	onValueChange,
+	CreateComponent,
+	open: controlledOpen,
+	onOpenChange,
+	onFocus,
 }: ComboboxProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [internalIsOpen, setInternalOpen] = useState(false);
-  const [selected, setSelected] = useState<Option | undefined>(value as Option);
-  const [inputValue, setInputValue] = useState<string>(value?.name || "");
+	const inputRef = useRef<HTMLInputElement>(null);
+	const [internalIsOpen, setInternalOpen] = useState(false);
+	const [selected, setSelected] = useState<Option | undefined>(value as Option);
+	const [inputValue, setInputValue] = useState<string>(value?.name || "");
 
-  const isControlled = controlledOpen !== undefined;
-  const isOpen = isControlled ? controlledOpen : internalIsOpen;
+	const isControlled = controlledOpen !== undefined;
+	const isOpen = isControlled ? controlledOpen : internalIsOpen;
 
-  const handleOpenChange = (open: boolean) => {
-    if (onOpenChange) {
-      onOpenChange(open);
-    } else {
-      setInternalOpen(open);
-    }
-  };
+	const handleOpenChange = (open: boolean) => {
+		if (onOpenChange) {
+			onOpenChange(open);
+		} else {
+			setInternalOpen(open);
+		}
+	};
 
-  const handleOnValueChange = (value: string) => {
-    setInputValue(value);
-    onValueChange?.(value);
+	const handleOnValueChange = (value: string) => {
+		setInputValue(value);
+		onValueChange?.(value);
 
-    if (value) {
-      handleOpenChange(true);
-    } else {
-      handleOpenChange(false);
-    }
-  };
+		if (value) {
+			handleOpenChange(true);
+		} else {
+			handleOpenChange(false);
+		}
+	};
 
-  const handleOnRemove = () => {
-    setSelected(undefined);
-    setInputValue("");
-    onRemove?.();
-  };
+	const handleOnRemove = () => {
+		setSelected(undefined);
+		setInputValue("");
+		onRemove?.();
+	};
 
-  const handleBlur = useCallback(() => {
-    setTimeout(() => {
-      if (!inputRef.current?.contains(document.activeElement)) {
-        handleOpenChange(false);
-        setInputValue(selected?.name ?? "");
-      }
-    }, 150);
-  }, [selected, handleOpenChange]);
+	const handleBlur = useCallback(() => {
+		setTimeout(() => {
+			if (!inputRef.current?.contains(document.activeElement)) {
+				handleOpenChange(false);
+				setInputValue(selected?.name ?? "");
+			}
+		}, 150);
+	}, [selected, handleOpenChange]);
 
-  const handleOnFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    onFocus?.(event);
-  };
+	const handleOnFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+		onFocus?.(event);
+	};
 
-  const handleSelectOption = useCallback(
-    (selectedOption: Option) => {
-      setInputValue(selectedOption.name);
+	const handleSelectOption = useCallback(
+		(selectedOption: Option) => {
+			setInputValue(selectedOption.name);
 
-      setSelected(selectedOption);
-      onSelect?.(selectedOption);
+			setSelected(selectedOption);
+			onSelect?.(selectedOption);
 
-      setTimeout(() => {
-        inputRef?.current?.blur();
-      }, 0);
-    },
-    [onSelect],
-  );
+			setTimeout(() => {
+				inputRef?.current?.blur();
+			}, 0);
+		},
+		[onSelect]
+	);
 
-  return (
-    <CommandPrimitive className="w-full">
-      <div className="flex items-center w-full relative">
-        {showIcon && (
-          <Icons.Search className="w-[18px] h-[18px] absolute left-4 pointer-events-none" />
-        )}
+	return (
+		<CommandPrimitive className="w-full">
+			<div className="relative flex w-full items-center">
+				{showIcon && (
+					<Icons.Search className="pointer-events-none absolute left-4 h-[18px] w-[18px]" />
+				)}
 
-        <CommandInput
-          ref={inputRef}
-          value={inputValue}
-          onValueChange={handleOnValueChange}
-          onBlur={handleBlur}
-          onFocus={handleOnFocus}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={className}
-          autoFocus={autoFocus}
-        />
+				<CommandInput
+					autoFocus={autoFocus}
+					className={className}
+					disabled={disabled}
+					onBlur={handleBlur}
+					onFocus={handleOnFocus}
+					onValueChange={handleOnValueChange}
+					placeholder={placeholder}
+					ref={inputRef}
+					value={inputValue}
+				/>
 
-        {isLoading && (
-          <Spinner className="w-[16px] h-[16px] absolute right-2 text-dark-gray" />
-        )}
+				{isLoading && (
+					<Spinner className="absolute right-2 h-[16px] w-[16px] text-dark-gray" />
+				)}
 
-        {!isLoading && selected && onRemove && (
-          <Icons.Close
-            className="w-[18px] h-[18px] absolute right-2"
-            onClick={handleOnRemove}
-          />
-        )}
-      </div>
+				{!isLoading && selected && onRemove && (
+					<Icons.Close
+						className="absolute right-2 h-[18px] w-[18px]"
+						onClick={handleOnRemove}
+					/>
+				)}
+			</div>
 
-      <div className="relative w-full">
-        <CommandList
-          className="w-full outline-none animate-in fade-in-0 zoom-in-95"
-          hidden={!isOpen}
-        >
-          {isOpen && (
-            <CommandGroup
-              className={cn(
-                "bg-background absolute z-10 w-full max-h-[250px] overflow-auto py-2 border px-2",
-                classNameList,
-              )}
-            >
-              {options?.map(({ component: Component, ...option }) => {
-                return (
-                  <CommandItem
-                    key={option.id}
-                    value={`${option.name}_${option.id}`}
-                    onMouseDown={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                    }}
-                    onSelect={() => handleSelectOption(option)}
-                    className="flex items-center gap-2 w-full px-2"
-                  >
-                    {Component ? <Component /> : option.name}
-                  </CommandItem>
-                );
-              })}
+			<div className="relative w-full">
+				<CommandList
+					className="fade-in-0 zoom-in-95 w-full animate-in outline-none"
+					hidden={!isOpen}
+				>
+					{isOpen && (
+						<CommandGroup
+							className={cn(
+								"absolute z-10 max-h-[250px] w-full overflow-auto border bg-background px-2 py-2",
+								classNameList
+							)}
+						>
+							{options?.map(({ component: Component, ...option }) => {
+								return (
+									<CommandItem
+										className="flex w-full items-center gap-2 px-2"
+										key={option.id}
+										onMouseDown={(event) => {
+											event.preventDefault();
+											event.stopPropagation();
+										}}
+										onSelect={() => handleSelectOption(option)}
+										value={`${option.name}_${option.id}`}
+									>
+										{Component ? <Component /> : option.name}
+									</CommandItem>
+								);
+							})}
 
-              {onCreate &&
-                (inputValue.trim() || options?.length === 0) &&
-                !options?.find(
-                  (o) => o.name.toLowerCase() === inputValue.toLowerCase(),
-                ) && (
-                  <CommandItem
-                    key={inputValue || "create-new"}
-                    value={inputValue || "create-new"}
-                    onSelect={() => inputValue.trim() && onCreate(inputValue)}
-                    onMouseDown={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                    }}
-                  >
-                    {CreateComponent ? (
-                      <CreateComponent value={inputValue} />
-                    ) : inputValue.trim() ? (
-                      `Create "${inputValue}"`
-                    ) : (
-                      "Start typing to create new"
-                    )}
-                  </CommandItem>
-                )}
-            </CommandGroup>
-          )}
-        </CommandList>
-      </div>
-    </CommandPrimitive>
-  );
+							{onCreate &&
+								(inputValue.trim() || options?.length === 0) &&
+								!options?.find(
+									(o) => o.name.toLowerCase() === inputValue.toLowerCase()
+								) && (
+									<CommandItem
+										key={inputValue || "create-new"}
+										onMouseDown={(event) => {
+											event.preventDefault();
+											event.stopPropagation();
+										}}
+										onSelect={() => inputValue.trim() && onCreate(inputValue)}
+										value={inputValue || "create-new"}
+									>
+										{CreateComponent ? (
+											<CreateComponent value={inputValue} />
+										) : inputValue.trim() ? (
+											`Create "${inputValue}"`
+										) : (
+											"Start typing to create new"
+										)}
+									</CommandItem>
+								)}
+						</CommandGroup>
+					)}
+				</CommandList>
+			</div>
+		</CommandPrimitive>
+	);
 };

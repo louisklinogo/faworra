@@ -4,62 +4,62 @@ import { create } from "zustand";
 export type TransactionTab = "all" | "review";
 
 interface RowSelectionByTab {
-  all: Record<string, boolean>;
-  review: Record<string, boolean>;
+	all: Record<string, boolean>;
+	review: Record<string, boolean>;
 }
 
 interface TransactionsState {
-  canDelete?: boolean;
-  columns: Column<any, unknown>[];
-  setColumns: (columns?: Column<any, unknown>[]) => void;
-  setCanDelete: (canDelete?: boolean) => void;
-  transactionIds: string[];
-  setTransactionIds: (ids: string[]) => void;
-  // Per-tab row selection
-  rowSelectionByTab: RowSelectionByTab;
-  setRowSelection: (
-    tab: TransactionTab,
-    updater: Updater<RowSelectionState>,
-  ) => void;
-  // Helper to get row selection for a specific tab
-  getRowSelection: (tab: TransactionTab) => Record<string, boolean>;
-  // Clear selection for a specific tab
-  clearRowSelection: (tab: TransactionTab) => void;
-  lastClickedIndex: number | null;
-  setLastClickedIndex: (index: number | null) => void;
+	canDelete?: boolean;
+	// Clear selection for a specific tab
+	clearRowSelection: (tab: TransactionTab) => void;
+	columns: Column<any, unknown>[];
+	// Helper to get row selection for a specific tab
+	getRowSelection: (tab: TransactionTab) => Record<string, boolean>;
+	lastClickedIndex: number | null;
+	// Per-tab row selection
+	rowSelectionByTab: RowSelectionByTab;
+	setCanDelete: (canDelete?: boolean) => void;
+	setColumns: (columns?: Column<any, unknown>[]) => void;
+	setLastClickedIndex: (index: number | null) => void;
+	setRowSelection: (
+		tab: TransactionTab,
+		updater: Updater<RowSelectionState>
+	) => void;
+	setTransactionIds: (ids: string[]) => void;
+	transactionIds: string[];
 }
 
 export const useTransactionsStore = create<TransactionsState>()((set, get) => ({
-  columns: [],
-  canDelete: false,
-  transactionIds: [],
-  rowSelectionByTab: {
-    all: {},
-    review: {},
-  },
-  lastClickedIndex: null,
-  setCanDelete: (canDelete) => set({ canDelete }),
-  setColumns: (columns) => set({ columns: columns || [] }),
-  setTransactionIds: (ids) => set({ transactionIds: ids }),
-  setRowSelection: (tab: TransactionTab, updater: Updater<RowSelectionState>) =>
-    set((state) => {
-      const currentSelection = state.rowSelectionByTab[tab];
-      const newSelection =
-        typeof updater === "function" ? updater(currentSelection) : updater;
-      return {
-        rowSelectionByTab: {
-          ...state.rowSelectionByTab,
-          [tab]: newSelection,
-        },
-      };
-    }),
-  getRowSelection: (tab: TransactionTab) => get().rowSelectionByTab[tab],
-  clearRowSelection: (tab: TransactionTab) =>
-    set((state) => ({
-      rowSelectionByTab: {
-        ...state.rowSelectionByTab,
-        [tab]: {},
-      },
-    })),
-  setLastClickedIndex: (index) => set({ lastClickedIndex: index }),
+	columns: [],
+	canDelete: false,
+	transactionIds: [],
+	rowSelectionByTab: {
+		all: {},
+		review: {},
+	},
+	lastClickedIndex: null,
+	setCanDelete: (canDelete) => set({ canDelete }),
+	setColumns: (columns) => set({ columns: columns || [] }),
+	setTransactionIds: (ids) => set({ transactionIds: ids }),
+	setRowSelection: (tab: TransactionTab, updater: Updater<RowSelectionState>) =>
+		set((state) => {
+			const currentSelection = state.rowSelectionByTab[tab];
+			const newSelection =
+				typeof updater === "function" ? updater(currentSelection) : updater;
+			return {
+				rowSelectionByTab: {
+					...state.rowSelectionByTab,
+					[tab]: newSelection,
+				},
+			};
+		}),
+	getRowSelection: (tab: TransactionTab) => get().rowSelectionByTab[tab],
+	clearRowSelection: (tab: TransactionTab) =>
+		set((state) => ({
+			rowSelectionByTab: {
+				...state.rowSelectionByTab,
+				[tab]: {},
+			},
+		})),
+	setLastClickedIndex: (index) => set({ lastClickedIndex: index }),
 }));

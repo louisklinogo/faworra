@@ -8,7 +8,7 @@ export const transactionTabSchema = {
 export function useTransactionTab() {
 	const [tab, setTab] = useQueryState(
 		"tab",
-		parseAsStringLiteral(["all", "review"] as const).withDefault("all"),
+		parseAsStringLiteral(["all", "review"] as const).withDefault("all")
 	);
 
 	return { tab, setTab };

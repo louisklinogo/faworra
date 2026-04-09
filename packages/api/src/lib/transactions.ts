@@ -1,4 +1,10 @@
-export type ReviewableTransactionStatus = "excluded" | "pending" | "posted" | "completed" | "archived" | "exported";
+export type ReviewableTransactionStatus =
+	| "excluded"
+	| "pending"
+	| "posted"
+	| "completed"
+	| "archived"
+	| "exported";
 
 export const isValidTransactionReviewTransition = ({
 	from,

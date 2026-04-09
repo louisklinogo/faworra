@@ -1,24 +1,24 @@
 {
-	"name": "@faworra-new/plans",
-	"version": "1.0.0",
-	"main": "./src/index.ts",
-	"types": "./src/index.ts",
-	"private": true,
-	"sideEffects": false,
-	"scripts": {
-		"clean": "rm -rf .turbo node_modules",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"typecheck": "tsc --noEmit"
-	},
-	"devDependencies": {
-		"@types/node": "^25.5.0",
-		"typescript": "catalog:"
-	},
-	"exports": {
-		".": {
-			"types": "./src/index.ts",
-			"import": "./src/index.ts"
-		}
-	}
+  "name": "@faworra-new/plans",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  }
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@faworra-new/ui/utils";
 import { Skeleton } from "@faworra-new/ui/components/skeleton";
 import {
 	Table,
@@ -10,6 +9,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@faworra-new/ui/components/table";
+import { cn } from "@faworra-new/ui/utils";
 import type {
 	ColumnDef,
 	ColumnSizingState,
@@ -21,24 +21,24 @@ import { SkeletonCell } from "./skeleton-cell";
 import { getColumnId, getHeaderLabel, type TableColumnMeta } from "./types";
 
 interface TableSkeletonProps<TData> {
-	/** Column definitions with skeleton config in meta */
-	columns: ColumnDef<TData>[];
-	/** Number of skeleton rows to render */
-	rowCount?: number;
-	/** Column visibility state */
-	columnVisibility?: VisibilityState;
-	/** Column sizing state */
-	columnSizing?: ColumnSizingState;
-	/** Column order array */
-	columnOrder?: string[];
-	/** IDs of sticky columns (left-aligned) */
-	stickyColumnIds?: string[];
 	/** ID of the actions column (right-aligned sticky) */
 	actionsColumnId?: string;
-	/** Render in empty state (blurred) */
-	isEmpty?: boolean;
 	/** Additional className for the container */
 	className?: string;
+	/** Column order array */
+	columnOrder?: string[];
+	/** Column sizing state */
+	columnSizing?: ColumnSizingState;
+	/** Column definitions with skeleton config in meta */
+	columns: ColumnDef<TData>[];
+	/** Column visibility state */
+	columnVisibility?: VisibilityState;
+	/** Render in empty state (blurred) */
+	isEmpty?: boolean;
+	/** Number of skeleton rows to render */
+	rowCount?: number;
+	/** IDs of sticky columns (left-aligned) */
+	stickyColumnIds?: string[];
 }
 
 /**
@@ -59,7 +59,7 @@ export function TableSkeleton<TData>({
 	// Generate row data for skeleton
 	const rows = useMemo(
 		() => [...Array(rowCount)].map((_, i) => ({ id: i.toString() })),
-		[rowCount],
+		[rowCount]
 	);
 
 	// Get ordered columns based on saved order, falling back to default order
@@ -82,7 +82,9 @@ export function TableSkeleton<TData>({
 		return orderedColumns.filter((col) => {
 			const id = getColumnId(col);
 			// Always show select and actions columns
-			if (id === "select" || id === actionsColumnId) return true;
+			if (id === "select" || id === actionsColumnId) {
+				return true;
+			}
 			return columnVisibility[id] !== false;
 		});
 	}, [orderedColumns, columnVisibility, actionsColumnId]);
@@ -100,15 +102,15 @@ export function TableSkeleton<TData>({
 		<div className={cn("w-full", className)}>
 			<div
 				className={cn(
-					"overflow-auto overscroll-x-none scrollbar-hide",
-					!isEmpty && "md:border-l md:border-r md:border-b md:border-border",
+					"scrollbar-hide overflow-auto overscroll-x-none",
+					!isEmpty && "md:border-border md:border-r md:border-b md:border-l"
 				)}
 			>
 				<Table
-					className={cn(isEmpty && "opacity-20 pointer-events-none blur-[7px]")}
+					className={cn(isEmpty && "pointer-events-none opacity-20 blur-[7px]")}
 				>
-					<TableHeader className="border-0 block sticky top-0 z-20 bg-background">
-						<TableRow className="h-[45px] hover:bg-transparent flex items-center !border-b-0">
+					<TableHeader className="sticky top-0 z-20 block border-0 bg-background">
+						<TableRow className="!border-b-0 flex h-[45px] items-center hover:bg-transparent">
 							{visibleColumns.map((col) => {
 								const columnId = getColumnId(col);
 								const meta = col.meta as TableColumnMeta | undefined;
@@ -123,7 +125,7 @@ export function TableSkeleton<TData>({
 
 								const stickyClass = getStickyClassName(
 									columnId,
-									"group/header relative h-full px-4 border-t border-border flex items-center",
+									"group/header relative h-full px-4 border-t border-border flex items-center"
 								);
 								const headerClassName = isActions
 									? "group/header relative h-full px-4 border-t border-border flex items-center justify-center md:sticky md:right-0 bg-background z-10"
@@ -133,17 +135,16 @@ export function TableSkeleton<TData>({
 
 								return (
 									<TableHead
-										key={columnId}
 										className={headerClassName}
+										key={columnId}
 										style={{
 											width,
 											minWidth,
 											maxWidth,
 											...getStickyStyle(columnId),
-											...(!isActions &&
-												!isStatus && {
-													borderRight: "1px solid hsl(var(--border))",
-												}),
+											...(!(isActions || isStatus) && {
+												borderRight: "1px solid hsl(var(--border))",
+											}),
 											...(isActions && {
 												borderLeft: "1px solid hsl(var(--border))",
 												borderTop: "1px solid hsl(var(--border))",
@@ -155,7 +156,7 @@ export function TableSkeleton<TData>({
 										) : meta?.skeleton?.type === "text" &&
 											columnId === "description" ? (
 											// Special case for description column to match actual header structure
-											<div className="flex items-center justify-between w-full overflow-hidden">
+											<div className="flex w-full items-center justify-between overflow-hidden">
 												<div className="min-w-0 overflow-hidden">
 													<span className="text-muted-foreground">
 														{getHeaderLabel(col)}
@@ -173,11 +174,11 @@ export function TableSkeleton<TData>({
 						</TableRow>
 					</TableHeader>
 
-					<TableBody className="border-l-0 border-r-0">
+					<TableBody className="border-r-0 border-l-0">
 						{rows.map((row) => (
 							<TableRow
+								className="group flex h-[45px] items-center border-border border-b"
 								key={row.id}
-								className="group h-[45px] flex items-center border-b border-border"
 							>
 								{visibleColumns.map((col) => {
 									const columnId = getColumnId(col);
@@ -191,16 +192,16 @@ export function TableSkeleton<TData>({
 									const maxWidth = sticky ? width : (col.maxSize ?? width);
 
 									const cellClassName = cn(
-										"h-full flex items-center",
+										"flex h-full items-center",
 										getStickyClassName(columnId, meta?.className),
 										isActions &&
-											"md:sticky md:right-0 bg-background z-10 justify-center",
+											"z-10 justify-center bg-background md:sticky md:right-0"
 									);
 
 									return (
 										<TableCell
-											key={columnId}
 											className={cellClassName}
+											key={columnId}
 											style={{
 												width,
 												minWidth,

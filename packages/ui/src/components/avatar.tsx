@@ -6,70 +6,70 @@ import * as React from "react";
 import { cn } from "../utils";
 
 const Avatar = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+	React.ElementRef<typeof AvatarPrimitive.Root>,
+	React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
 >(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Root
-    ref={ref}
-    className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
-      className,
-    )}
-    {...props}
-  />
+	<AvatarPrimitive.Root
+		className={cn(
+			"relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+			className
+		)}
+		ref={ref}
+		{...props}
+	/>
 ));
 Avatar.displayName = AvatarPrimitive.Root.displayName;
 
 export const AvatarImageNext = React.forwardRef<
-  React.ElementRef<typeof Image>,
-  React.ComponentPropsWithoutRef<typeof Image>
+	React.ElementRef<typeof Image>,
+	React.ComponentPropsWithoutRef<typeof Image>
 >(({ className, onError, onLoad, ...props }, ref) => {
-  const [hasError, setHasError] = React.useState(false);
+	const [hasError, setHasError] = React.useState(false);
 
-  if (hasError || !props.src) {
-    return null;
-  }
+	if (hasError || !props.src) {
+		return null;
+	}
 
-  return (
-    <Image
-      ref={ref}
-      className={cn("aspect-square h-full w-full absolute z-10", className)}
-      onError={(e) => {
-        setHasError(true);
-        onError?.(e);
-      }}
-      onLoad={onLoad}
-      {...props}
-    />
-  );
+	return (
+		<Image
+			className={cn("absolute z-10 aspect-square h-full w-full", className)}
+			onError={(e) => {
+				setHasError(true);
+				onError?.(e);
+			}}
+			onLoad={onLoad}
+			ref={ref}
+			{...props}
+		/>
+	);
 });
 
 AvatarImageNext.displayName = "AvatarImageNext";
 
 const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+	React.ElementRef<typeof AvatarPrimitive.Image>,
+	React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
 >(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
+	<AvatarPrimitive.Image
+		className={cn("aspect-square h-full w-full", className)}
+		ref={ref}
+		{...props}
+	/>
 ));
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
 const AvatarFallback = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+	React.ElementRef<typeof AvatarPrimitive.Fallback>,
+	React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
 >(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Fallback
-    ref={ref}
-    className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-accent",
-      className,
-    )}
-    {...props}
-  />
+	<AvatarPrimitive.Fallback
+		className={cn(
+			"flex h-full w-full items-center justify-center rounded-full bg-accent",
+			className
+		)}
+		ref={ref}
+		{...props}
+	/>
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 

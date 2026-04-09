@@ -10,7 +10,7 @@ type CreateTransactionTagParams = {
 
 export async function createTransactionTag(
 	db: Database,
-	params: CreateTransactionTagParams,
+	params: CreateTransactionTagParams
 ) {
 	return db
 		.insert(transactionTags)
@@ -30,7 +30,7 @@ type DeleteTransactionTagParams = {
 
 export async function deleteTransactionTag(
 	db: Database,
-	params: DeleteTransactionTagParams,
+	params: DeleteTransactionTagParams
 ) {
 	const { transactionId, tagId, teamId } = params;
 
@@ -40,8 +40,7 @@ export async function deleteTransactionTag(
 			and(
 				eq(transactionTags.transactionId, transactionId),
 				eq(transactionTags.tagId, tagId),
-				eq(transactionTags.teamId, teamId),
-			),
+				eq(transactionTags.teamId, teamId)
+			)
 		);
 }
-

@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@faworra-new/ui/components/badge";
-import { cn } from "@faworra-new/ui/lib/utils";
 import {
 	Command,
 	CommandEmpty,
@@ -15,6 +14,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@faworra-new/ui/components/popover";
+import { cn } from "@faworra-new/ui/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { useState } from "react";
@@ -35,9 +35,7 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 	const trpc = useTRPC();
 	const queryClient = useQueryClient();
 
-	const { data: allTags } = useQuery(
-		trpc.tags.get.queryOptions(),
-	);
+	const { data: allTags } = useQuery(trpc.tags.get.queryOptions());
 
 	const createTransactionTagMutation = useMutation(
 		trpc.transactionTags.create.mutationOptions({
@@ -49,7 +47,7 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 					queryKey: trpc.transactions.getById.queryKey(),
 				});
 			},
-		}),
+		})
 	);
 
 	const deleteTransactionTagMutation = useMutation(
@@ -62,7 +60,7 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 					queryKey: trpc.transactions.getById.queryKey(),
 				});
 			},
-		}),
+		})
 	);
 
 	const createTagMutation = useMutation(
@@ -76,7 +74,7 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 					});
 				}
 			},
-		}),
+		})
 	);
 
 	const [inputValue, setInputValue] = useState("");
@@ -92,13 +90,13 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 			})) ?? [];
 
 	const filteredTags = allTagsList.filter((tag) =>
-		tag.name.toLowerCase().includes(inputValue.toLowerCase()),
+		tag.name.toLowerCase().includes(inputValue.toLowerCase())
 	);
 
 	const showCreate =
 		Boolean(inputValue) &&
 		!filteredTags.some(
-			(tag) => tag.name.toLowerCase() === inputValue.toLowerCase(),
+			(tag) => tag.name.toLowerCase() === inputValue.toLowerCase()
 		);
 
 	const handleTagToggle = (tagId: string) => {
@@ -123,24 +121,24 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 	};
 
 	return (
-		<Popover open={open} onOpenChange={setOpen}>
+		<Popover onOpenChange={setOpen} open={open}>
 			<PopoverTrigger asChild>
 				<button
-					type="button"
-					className="w-full text-left hover:opacity-70 transition-opacity"
+					className="w-full text-left transition-opacity hover:opacity-70"
 					onClick={(e) => {
 						e.stopPropagation();
 					}}
+					type="button"
 				>
 					{tags.length > 0 ? (
-						<div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide">
+						<div className="scrollbar-hide flex items-center space-x-2 overflow-x-auto">
 							{tags
 								.filter((tag) => tag.name != null)
 								.map((tag) => (
 									<Badge
+										className="flex-shrink-0 whitespace-nowrap"
 										key={tag.id}
 										variant="secondary"
-										className="whitespace-nowrap flex-shrink-0"
 									>
 										{tag.name}
 									</Badge>
@@ -152,20 +150,20 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 				</button>
 			</PopoverTrigger>
 			<PopoverContent
-				className="p-0"
 				align="start"
-				side="bottom"
+				className="p-0"
 				onClick={(e) => {
 					e.stopPropagation();
 				}}
+				side="bottom"
 			>
-				<div className="w-[286px] h-[270px]">
+				<div className="h-[270px] w-[286px]">
 					<Command loop shouldFilter={false}>
 						<CommandInput
-							value={inputValue}
+							className="px-3"
 							onValueChange={setInputValue}
 							placeholder="Search tags..."
-							className="px-3"
+							value={inputValue}
 						/>
 						<CommandGroup>
 							<CommandList className="max-h-[225px] overflow-auto">
@@ -173,19 +171,19 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 									const isSelected = selectedTagIds.has(tag.id);
 									return (
 										<CommandItem
+											className="cursor-pointer"
 											key={tag.id}
-											value={tag.id}
 											onSelect={(value) => {
 												if (typeof value === "string") {
 													handleTagToggle(value);
 												}
 											}}
-											className="cursor-pointer"
+											value={tag.id}
 										>
 											<Check
 												className={cn(
 													"mr-2 h-4 w-4",
-													isSelected ? "opacity-100" : "opacity-0",
+													isSelected ? "opacity-100" : "opacity-0"
 												)}
 											/>
 											{tag.name}
@@ -195,14 +193,14 @@ export function InlineSelectTags({ transactionId, tags = [] }: Props) {
 								<CommandEmpty>No tags found.</CommandEmpty>
 								{showCreate && (
 									<CommandItem
+										className="cursor-pointer"
 										key={inputValue}
-										value={inputValue}
-										onSelect={handleCreateTag}
 										onMouseDown={(event) => {
 											event.preventDefault();
 											event.stopPropagation();
 										}}
-										className="cursor-pointer"
+										onSelect={handleCreateTag}
+										value={inputValue}
 									>
 										<span>{`Create "${inputValue}"`}</span>
 									</CommandItem>

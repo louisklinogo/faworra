@@ -7,7 +7,7 @@ export function ErrorFallback() {
 	const router = useRouter();
 
 	return (
-		<div className="flex flex-col items-center justify-center h-full space-y-4">
+		<div className="flex h-full flex-col items-center justify-center space-y-4">
 			<div>
 				<h2 className="text-md">Something went wrong</h2>
 			</div>

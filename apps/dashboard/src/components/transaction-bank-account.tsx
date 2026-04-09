@@ -15,16 +15,16 @@ export function TransactionBankAccount({
 	className,
 }: Props) {
 	return (
-		<div className="flex space-x-2 mt-1 items-center">
+		<div className="mt-1 flex items-center space-x-2">
 			{logoUrl && (
 				<div
-					className="rounded-full overflow-hidden flex-shrink-0"
+					className="flex-shrink-0 overflow-hidden rounded-full"
 					style={{ width: size, height: size }}
 				>
-					<BankLogo size={size} src={logoUrl} alt={name ?? ""} />
+					<BankLogo alt={name ?? ""} size={size} src={logoUrl} />
 				</div>
 			)}
-			<span className={cn("text-sm line-clamp-1", className)}>
+			<span className={cn("line-clamp-1 text-sm", className)}>
 				{name ?? <span className="text-muted-foreground">-</span>}
 			</span>
 		</div>

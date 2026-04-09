@@ -48,7 +48,7 @@ export default async function Transactions(props: Props) {
 		manual: filter.manual ?? null,
 		sort,
 		// Keep server prefetch query key aligned with client query key.
-		pageSize: hasFilters ? 10000 : undefined,
+		pageSize: hasFilters ? 10_000 : undefined,
 	};
 
 	const reviewTabFilter = {
@@ -57,7 +57,7 @@ export default async function Transactions(props: Props) {
 		fulfilled: true,
 		exported: false,
 		sort,
-		pageSize: 10000,
+		pageSize: 10_000,
 	};
 
 	// Prefetch all data needed for instant experience
@@ -79,10 +79,10 @@ export default async function Transactions(props: Props) {
 	return (
 		<HydrateClient>
 			<ScrollableContent>
-				<div className="flex justify-between items-center py-6">
+				<div className="flex items-center justify-between py-6">
 					<TransactionsSearchFilter />
 					<div className="flex items-center gap-4">
-						<div className="hidden md:flex items-center gap-2">
+						<div className="hidden items-center gap-2 md:flex">
 							<TransactionsColumnVisibility />
 							<AddTransactions />
 						</div>
@@ -94,9 +94,9 @@ export default async function Transactions(props: Props) {
 					<Suspense
 						fallback={
 							<Loading
-								columnVisibility={initialSettings.columns}
-								columnSizing={initialSettings.sizing}
 								columnOrder={initialSettings.order}
+								columnSizing={initialSettings.sizing}
+								columnVisibility={initialSettings.columns}
 							/>
 						}
 					>

@@ -32,7 +32,9 @@ export function makeQueryClient() {
 				retry: isServer
 					? false
 					: (failureCount, error) => {
-							if (isUnauthorizedError(error)) return false;
+							if (isUnauthorizedError(error)) {
+								return false;
+							}
 							return failureCount < 2;
 						},
 			},

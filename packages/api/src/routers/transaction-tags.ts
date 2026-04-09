@@ -1,12 +1,12 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { protectedTeamProcedure, router } from "../index";
+import { getTagById } from "@faworra-new/db/queries/tags";
 import {
 	createTransactionTag,
 	deleteTransactionTag,
 } from "@faworra-new/db/queries/transaction-tags";
 import { getTransactionById } from "@faworra-new/db/queries/transactions";
-import { getTagById } from "@faworra-new/db/queries/tags";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { protectedTeamProcedure, router } from "../index";
 
 export const transactionTagsRouter = router({
 	create: protectedTeamProcedure
@@ -14,7 +14,7 @@ export const transactionTagsRouter = router({
 			z.object({
 				transactionId: z.string().uuid(),
 				tagId: z.string().uuid(),
-			}),
+			})
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Verify transaction belongs to team
@@ -55,7 +55,7 @@ export const transactionTagsRouter = router({
 			z.object({
 				transactionId: z.string().uuid(),
 				tagId: z.string().uuid(),
-			}),
+			})
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Verify transaction belongs to team

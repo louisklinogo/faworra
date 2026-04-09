@@ -19,7 +19,7 @@ export const transactionFilterParamsSchema = {
 	amount_range: parseAsArrayOf(parseAsInteger),
 	amount: parseAsArrayOf(parseAsString),
 	recurring: parseAsArrayOf(
-		parseAsStringLiteral(["all", "weekly", "monthly", "annually"] as const),
+		parseAsStringLiteral(["all", "weekly", "monthly", "annually"] as const)
 	),
 	statuses: parseAsArrayOf(
 		parseAsStringLiteral([
@@ -30,7 +30,7 @@ export const transactionFilterParamsSchema = {
 			"archived",
 			"excluded",
 			"exported",
-		] as const),
+		] as const)
 	),
 	manual: parseAsStringLiteral(["exclude", "include"] as const),
 	type: parseAsStringLiteral(["income", "expense"] as const),
@@ -50,5 +50,5 @@ export function useTransactionFilterParams() {
 }
 
 export const loadTransactionFilterParams = createLoader(
-	transactionFilterParamsSchema,
+	transactionFilterParamsSchema
 );

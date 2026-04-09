@@ -17,41 +17,41 @@ export function AddTransactions() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon">
+				<Button size="icon" variant="outline">
 					<Icons.Add size={17} />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent sideOffset={10} align="end">
+			<DropdownMenuContent align="end" sideOffset={10}>
 				<DropdownMenuItem
+					className="space-x-2"
 					onClick={() =>
 						toast.info("Bank connection flow is not wired yet in this surface.")
 					}
-					className="space-x-2"
 				>
 					<Icons.Accounts size={18} />
 					<span>Connect account</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					className="space-x-2"
 					onClick={() =>
 						toast.info("Import/backfill flow is not wired yet in this surface.")
 					}
-					className="space-x-2"
 				>
 					<Icons.Import size={18} />
 					<span>Import/backfill</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					onClick={() => setTransactionParams({ createTransaction: true })}
 					className="space-x-2"
+					onClick={() => setTransactionParams({ createTransaction: true })}
 				>
 					<Icons.CreateTransaction size={18} />
 					<span>Create transaction</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					className="space-x-2"
 					onClick={() =>
 						document.getElementById("upload-transaction-files")?.click()
 					}
-					className="space-x-2"
 				>
 					<Icons.ReceiptLong size={18} />
 					<span>Upload receipts</span>

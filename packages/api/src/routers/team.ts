@@ -1,5 +1,5 @@
-import { protectedProcedure, router } from "../index";
 import { getTeamMembers } from "@faworra-new/db/queries/team";
+import { protectedProcedure, router } from "../index";
 import { getTeamList } from "../lib/team";
 
 export const teamRouter = router({

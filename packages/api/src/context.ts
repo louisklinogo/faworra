@@ -1,5 +1,5 @@
 import { auth } from "@faworra-new/auth";
-import { db, type Database } from "@faworra-new/db/client";
+import { type Database, db } from "@faworra-new/db/client";
 import { getLocationHeaders } from "@faworra-new/location";
 import type { Context as HonoContext } from "hono";
 
@@ -48,5 +48,6 @@ export function createContext({ context }: CreateContextOptions) {
 	return createContextFromHeaders(context.req.raw.headers);
 }
 
-export type Context = Awaited<ReturnType<typeof createContext>> & { db: Database };
-
+export type Context = Awaited<ReturnType<typeof createContext>> & {
+	db: Database;
+};

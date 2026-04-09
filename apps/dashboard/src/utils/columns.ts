@@ -12,7 +12,7 @@ import {
  * Falls back to defaults if cookie doesn't exist or is invalid
  */
 export async function getInitialTableSettings(
-	tableId: TableId,
+	tableId: TableId
 ): Promise<TableSettings> {
 	const cookieStore = await cookies();
 	const saved = cookieStore.get(TABLE_SETTINGS_COOKIE)?.value;

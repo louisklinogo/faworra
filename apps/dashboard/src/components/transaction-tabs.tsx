@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@faworra-new/ui/utils";
 import { Tabs, TabsList, TabsTrigger } from "@faworra-new/ui/components/tabs";
+import { cn } from "@faworra-new/ui/utils";
 import { useEffect, useState } from "react";
 import { useReviewTransactions } from "@/hooks/use-review-transactions";
 import { useTransactionTab } from "@/hooks/use-transaction-tab";
@@ -19,7 +19,7 @@ function ReviewCount() {
 	}
 
 	return (
-		<span className="ml-1 text-xs text-[#878787]">
+		<span className="ml-1 text-[#878787] text-xs">
 			({transactionIds.length})
 		</span>
 	);
@@ -35,26 +35,26 @@ export function TransactionTabs() {
 	};
 
 	return (
-		<Tabs value={tab} onValueChange={handleValueChange}>
-			<div className="relative flex items-stretch bg-[#f7f7f7] dark:bg-[#131313] w-fit">
-				<TabsList className="flex items-stretch h-auto p-0 bg-transparent">
+		<Tabs onValueChange={handleValueChange} value={tab}>
+			<div className="relative flex w-fit items-stretch bg-[#f7f7f7] dark:bg-[#131313]">
+				<TabsList className="flex h-auto items-stretch bg-transparent p-0">
 					<TabsTrigger
-						value="all"
 						className={cn(
-							"group relative flex items-center gap-1.5 px-3 py-1.5 text-[14px] transition-all whitespace-nowrap border border-transparent h-[34px] min-h-[34px]",
-							"text-[#707070] hover:text-black bg-[#f7f7f7] dark:text-[#666666] dark:hover:text-white dark:bg-[#131313] mb-0 relative z-[1]",
-							"data-[state=active]:text-black data-[state=active]:bg-[#e6e6e6] dark:data-[state=active]:text-white dark:data-[state=active]:bg-[#1d1d1d] data-[state=active]:mb-[-1px] data-[state=active]:z-10",
+							"group relative flex h-[34px] min-h-[34px] items-center gap-1.5 whitespace-nowrap border border-transparent px-3 py-1.5 text-[14px] transition-all",
+							"relative z-[1] mb-0 bg-[#f7f7f7] text-[#707070] hover:text-black dark:bg-[#131313] dark:text-[#666666] dark:hover:text-white",
+							"data-[state=active]:z-10 data-[state=active]:mb-[-1px] data-[state=active]:bg-[#e6e6e6] data-[state=active]:text-black dark:data-[state=active]:bg-[#1d1d1d] dark:data-[state=active]:text-white"
 						)}
+						value="all"
 					>
 						All
 					</TabsTrigger>
 					<TabsTrigger
-						value="review"
 						className={cn(
-							"group relative flex items-center gap-1.5 px-3 py-1.5 text-[14px] transition-all whitespace-nowrap border border-transparent h-[34px] min-h-[34px]",
-							"text-[#707070] hover:text-black bg-[#f7f7f7] dark:text-[#666666] dark:hover:text-white dark:bg-[#131313] mb-0 relative z-[1]",
-							"data-[state=active]:text-black data-[state=active]:bg-[#e6e6e6] dark:data-[state=active]:text-white dark:data-[state=active]:bg-[#1d1d1d] data-[state=active]:mb-[-1px] data-[state=active]:z-10",
+							"group relative flex h-[34px] min-h-[34px] items-center gap-1.5 whitespace-nowrap border border-transparent px-3 py-1.5 text-[14px] transition-all",
+							"relative z-[1] mb-0 bg-[#f7f7f7] text-[#707070] hover:text-black dark:bg-[#131313] dark:text-[#666666] dark:hover:text-white",
+							"data-[state=active]:z-10 data-[state=active]:mb-[-1px] data-[state=active]:bg-[#e6e6e6] data-[state=active]:text-black dark:data-[state=active]:bg-[#1d1d1d] dark:data-[state=active]:text-white"
 						)}
+						value="review"
 					>
 						Review
 						<ReviewCount />

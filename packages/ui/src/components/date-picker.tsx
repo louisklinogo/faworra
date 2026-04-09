@@ -1,7 +1,6 @@
 "use client";
 
 import { format } from "date-fns";
-import type React from "react";
 import type { DateRange } from "react-day-picker";
 import { cn } from "../utils/cn";
 import { Button } from "./button";
@@ -28,23 +27,23 @@ export function DatePicker({
 		<Popover>
 			<PopoverTrigger asChild disabled={disabled}>
 				<Button
-					variant="outline"
 					className={cn(
 						"w-full justify-start text-left font-normal",
 						!date && "text-muted-foreground",
-						className,
+						className
 					)}
+					variant="outline"
 				>
 					<Icons.CalendarMonth className="mr-2 h-4 w-4" />
 					{date ? format(date, "PPP") : <span>{placeholder}</span>}
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="w-auto p-0" align="start">
+			<PopoverContent align="start" className="w-auto p-0">
 				<Calendar
-					mode="single"
-					selected={date}
-					onSelect={onSelect}
 					initialFocus
+					mode="single"
+					onSelect={onSelect}
+					selected={date}
 				/>
 			</PopoverContent>
 		</Popover>
@@ -71,14 +70,15 @@ export function DateRangePicker({
 			<Popover>
 				<PopoverTrigger asChild disabled={disabled}>
 					<Button
+						className={cn("justify-start space-x-2 text-left font-normal")}
 						variant="outline"
-						className={cn("justify-start text-left font-normal space-x-2")}
 					>
 						<Icons.CalendarMonth className="h-4 w-4" />
 						{range?.from ? (
 							range.to ? (
 								<span>
-									{format(range.from, "LLL dd, y")} - {format(range.to, "LLL dd, y")}
+									{format(range.from, "LLL dd, y")} -{" "}
+									{format(range.to, "LLL dd, y")}
 								</span>
 							) : (
 								format(range.from, "LLL dd, y")
@@ -89,14 +89,14 @@ export function DateRangePicker({
 						<Icons.ChevronDown className="h-4 w-4" />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-auto p-0 mt-2" align="end">
+				<PopoverContent align="end" className="mt-2 w-auto p-0">
 					<Calendar
+						defaultMonth={range?.from}
 						initialFocus
 						mode="range"
-						defaultMonth={range?.from}
-						selected={range}
-						onSelect={onSelect}
 						numberOfMonths={2}
+						onSelect={onSelect}
+						selected={range}
 					/>
 				</PopoverContent>
 			</Popover>

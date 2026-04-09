@@ -4,38 +4,38 @@ import { cn } from "@faworra-new/ui/lib/utils";
 import type { Header } from "@tanstack/react-table";
 
 interface ResizeHandleProps<TData> {
-  header: Header<TData, unknown>;
-  className?: string;
+	className?: string;
+	header: Header<TData, unknown>;
 }
 
 export function ResizeHandle<TData>({
-  header,
-  className,
+	header,
+	className,
 }: ResizeHandleProps<TData>) {
-  if (!header.column.getCanResize()) {
-    return null;
-  }
+	if (!header.column.getCanResize()) {
+		return null;
+	}
 
-  return (
-    <div
-      onDoubleClick={() => header.column.resetSize()}
-      onMouseDown={(e) => {
-        e.stopPropagation(); // Prevent drag from triggering
-        header.getResizeHandler()(e);
-      }}
-      onTouchStart={(e) => {
-        e.stopPropagation(); // Prevent drag from triggering
-        header.getResizeHandler()(e);
-      }}
-      onPointerDown={(e) => e.stopPropagation()} // Stop dnd-kit from capturing
-      className={cn(
-        "absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none",
-        "bg-transparent",
-        className,
-      )}
-      style={{
-        transform: "translateX(50%)",
-      }}
-    />
-  );
+	return (
+		<div
+			className={cn(
+				"absolute top-0 right-0 h-full w-1 cursor-col-resize touch-none select-none",
+				"bg-transparent",
+				className
+			)}
+			onDoubleClick={() => header.column.resetSize()}
+			onMouseDown={(e) => {
+				e.stopPropagation(); // Prevent drag from triggering
+				header.getResizeHandler()(e);
+			}}
+			onPointerDown={(e) => e.stopPropagation()} // Stop dnd-kit from capturing
+			onTouchStart={(e) => {
+				e.stopPropagation(); // Prevent drag from triggering
+				header.getResizeHandler()(e);
+			}}
+			style={{
+				transform: "translateX(50%)",
+			}}
+		/>
+	);
 }

@@ -5,10 +5,10 @@ import { TableSkeleton } from "@/components/tables/core";
 import { columns } from "./columns";
 
 interface LoadingProps {
-	isEmpty?: boolean;
-	columnVisibility?: VisibilityState;
-	columnSizing?: ColumnSizingState;
 	columnOrder?: string[];
+	columnSizing?: ColumnSizingState;
+	columnVisibility?: VisibilityState;
+	isEmpty?: boolean;
 }
 
 export function Loading({
@@ -19,13 +19,13 @@ export function Loading({
 }: LoadingProps) {
 	return (
 		<TableSkeleton
+			actionsColumnId="actions"
+			columnOrder={columnOrder}
+			columnSizing={columnSizing}
 			columns={columns}
 			columnVisibility={columnVisibility}
-			columnSizing={columnSizing}
-			columnOrder={columnOrder}
-			stickyColumnIds={["select", "date", "description"]}
-			actionsColumnId="actions"
 			isEmpty={isEmpty}
+			stickyColumnIds={["select", "date", "description"]}
 		/>
 	);
 }

@@ -18,7 +18,7 @@ export interface DeleteTransactionAttachmentInput {
 
 export const createTransactionAttachment = async (
 	db: Database,
-	input: CreateTransactionAttachmentInput,
+	input: CreateTransactionAttachmentInput
 ) => {
 	const [attachment] = await db
 		.insert(transactionAttachments)
@@ -37,13 +37,13 @@ export const createTransactionAttachment = async (
 
 export const deleteTransactionAttachment = async (
 	db: Database,
-	input: DeleteTransactionAttachmentInput,
+	input: DeleteTransactionAttachmentInput
 ) => {
 	const [attachment] = await db
 		.delete(transactionAttachments)
 		.where(
 			eq(transactionAttachments.id, input.id) &&
-				eq(transactionAttachments.teamId, input.teamId),
+				eq(transactionAttachments.teamId, input.teamId)
 		)
 		.returning();
 
@@ -58,7 +58,7 @@ export const getTransactionAttachments = (
 	}: {
 		teamId: string;
 		transactionId: string;
-	},
+	}
 ) => {
 	return db.query.transactionAttachments.findMany({
 		where: (table, { and, eq }) =>

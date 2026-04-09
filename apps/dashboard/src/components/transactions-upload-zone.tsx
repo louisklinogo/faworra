@@ -6,16 +6,18 @@ interface TransactionsUploadZoneProps {
 	children: ReactNode;
 }
 
-export function TransactionsUploadZone({ children }: TransactionsUploadZoneProps) {
+export function TransactionsUploadZone({
+	children,
+}: TransactionsUploadZoneProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	return (
 		<div className="relative h-full">
 			<input
-				id="upload-transaction-files"
-				ref={inputRef}
 				className="sr-only"
+				id="upload-transaction-files"
 				multiple
+				ref={inputRef}
 				type="file"
 			/>
 			{children}

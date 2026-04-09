@@ -1,9 +1,9 @@
 "use client";
 
 import { Header } from "@/components/header";
+import { GlobalSheetsProvider } from "@/components/sheets/global-sheets-provider";
 import { Sidebar } from "@/components/sidebar";
 import { SidebarProvider, useSidebar } from "@/components/sidebar-context";
-import { GlobalSheetsProvider } from "@/components/sheets/global-sheets-provider";
 import { TabProvider } from "@/components/tab-context";
 
 function SidebarLayoutContent({ children }: { children: React.ReactNode }) {
