@@ -4,6 +4,6 @@ import { protectedTeamProcedure, router } from "../index";
 
 export const overviewRouter = router({
 	summary: protectedTeamProcedure.query(({ ctx }) => {
-		return getOverviewSummary({ teamId: ctx.activeTeam.id });
+		return getOverviewSummary(ctx.db, { teamId: ctx.activeTeam.id });
 	}),
 });

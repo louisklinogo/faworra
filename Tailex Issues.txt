@@ -1,5 +1,0 @@
-Tailex Issues:
-
-1. Order - Invoice sync
-When one creates Order and links Order in invoice, we should be able to edit and it hits the orders table.
-

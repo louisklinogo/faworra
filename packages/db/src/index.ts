@@ -16,9 +16,22 @@ import {
 	userContext as userContextSchema,
 } from "./schema/core";
 import {
+	bankAccounts,
+	bankAccountsRelations,
+	bankConnections,
+	bankConnectionsRelations,
+	numericCasted,
+	tags,
+	tagsRelations,
+	transactionAttachments,
+	transactionAttachmentsRelations,
 	transactionCategories,
 	transactionCategoriesRelations,
-	transactionKind,
+	transactionFrequency,
+	transactionMethod,
+	transactionStatus,
+	transactionTags,
+	transactionTagsRelations,
 	transactions,
 	transactionsRelations,
 } from "./schema/financial";
@@ -57,11 +70,23 @@ const schema = {
 	teamRole,
 	teamSettings,
 	teamSettingsRelations,
+	bankConnections,
+	bankConnectionsRelations,
+	tags,
+	tagsRelations,
+	transactionAttachments,
+	transactionAttachmentsRelations,
 	transactionCategories,
 	transactionCategoriesRelations,
-	transactionKind,
+	transactionFrequency,
+	transactionMethod,
+	transactionStatus,
+	transactionTags,
+	transactionTagsRelations,
 	transactions,
 	transactionsRelations,
+	bankAccounts,
+	bankAccountsRelations,
 	user,
 	userContext: userContextSchema,
 	userContextRelations,
@@ -70,3 +95,6 @@ const schema = {
 };
 
 export const db = drizzle(env.DATABASE_URL, { schema });
+
+// Export custom types for use in schema definitions
+export { numericCasted };

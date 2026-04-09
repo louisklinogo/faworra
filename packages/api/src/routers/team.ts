@@ -1,4 +1,5 @@
 import { protectedProcedure, router } from "../index";
+import { getTeamMembers } from "@faworra-new/db/queries/team";
 import { getTeamList } from "../lib/team";
 
 export const teamRouter = router({
@@ -21,5 +22,17 @@ export const teamRouter = router({
 	 */
 	list: protectedProcedure.query(({ ctx }) => {
 		return getTeamList(ctx.userId);
+	}),
+
+	/**
+	 * Returns all team members for the current team with user info.
+	 * Used for assigning users to transactions.
+	 */
+	members: protectedProcedure.query(async ({ ctx }) => {
+		if (!ctx.activeTeam?.id) {
+			return [];
+		}
+
+		return getTeamMembers(ctx.db, ctx.activeTeam.id);
 	}),
 });

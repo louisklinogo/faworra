@@ -7,7 +7,8 @@
       "Bash(bun run check-types:*)",
       "Edit(packages/db/src/queries/**)",
       "Edit(packages/api/src/**)",
-      "Edit(packages/db/**)"
+      "Edit(packages/db/**)",
+      "Edit(.letta/runtime/parity/**)"
     ]
   },
   "hooks": {

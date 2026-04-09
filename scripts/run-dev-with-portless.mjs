@@ -15,7 +15,7 @@ const configs = {
 		direct: ["bun", "x", "next", "dev", "--port", "3001"],
 		portless: ["dashboard.faworra", "bun", "x", "next", "dev"],
 		env: {
-			NEXT_PUBLIC_SERVER_URL: "http://api.faworra.localhost",
+			NEXT_PUBLIC_SERVER_URL: "http://api.faworra.localhost:1355",
 		},
 	},
 	api: {
@@ -23,10 +23,10 @@ const configs = {
 		direct: ["bun", "run", "--hot", "src/index.ts"],
 		portless: ["api.faworra", "bun", "run", "--hot", "src/index.ts"],
 		env: {
-			BETTER_AUTH_URL: "http://api.faworra.localhost",
+			BETTER_AUTH_URL: "http://api.faworra.localhost:1355",
 			POLAR_SUCCESS_URL:
-				"http://dashboard.faworra.localhost/success?checkout_id={CHECKOUT_ID}",
-			CORS_ORIGIN: "http://dashboard.faworra.localhost",
+				"http://dashboard.faworra.localhost:1355/success?checkout_id={CHECKOUT_ID}",
+			CORS_ORIGIN: "http://dashboard.faworra.localhost:1355",
 		},
 	},
 	docs: {

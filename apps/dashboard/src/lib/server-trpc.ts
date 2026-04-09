@@ -17,21 +17,23 @@ import { portlessAwareFetch } from "./portless-fetch.server";
  * This is the shared helper for server-side tRPC calls; individual page
  * helpers such as `getServerViewer` build on top of this.
  */
-export const createServerTrpcClient = async () => {
-	const requestHeaders = await headers();
-	const cookie = requestHeaders.get("cookie");
-	const location = getLocationHeaders(requestHeaders);
-
+export const createServerTrpcClient = () => {
 	return createTRPCClient<AppRouter>({
 		links: [
 			httpBatchLink({
 				url: `${env.NEXT_PUBLIC_SERVER_URL}/trpc`,
-				headers: () => ({
-					...(cookie ? { cookie } : {}),
-					"x-user-country": location.country,
-					"x-user-locale": location.locale,
-					"x-user-timezone": location.timezone,
-				}),
+				async headers() {
+					const requestHeaders = await headers();
+					const cookie = requestHeaders.get("cookie");
+					const location = getLocationHeaders(requestHeaders);
+
+					return {
+						...(cookie ? { cookie } : {}),
+						"x-user-country": location.country,
+						"x-user-locale": location.locale,
+						"x-user-timezone": location.timezone,
+					};
+				},
 				fetch(url, options) {
 					return portlessAwareFetch(url, {
 						...options,

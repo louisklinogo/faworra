@@ -3,13 +3,15 @@
 import { Icons } from "@faworra-new/ui/components/icons";
 import { cn } from "@faworra-new/ui/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import type React from "react";
+import { useRef, useState } from "react";
 import { type TabItem, useTabs } from "./tab-context";
 
 const icons: Record<string, () => React.ReactNode> = {
 	"/dashboard": () => <Icons.Overview size={20} />,
 	"/reports": () => <Icons.Monitoring size={20} />,
 	"/transactions": () => <Icons.Transactions size={20} />,
+	"/transactions/categories": () => <Icons.Tag size={20} />,
 	"/inbox": () => <Icons.Inbox2 size={20} />,
 	"/invoices": () => <Icons.Invoice size={20} />,
 	"/tracker": () => <Icons.Tracker size={20} />,
@@ -35,6 +37,10 @@ const menuItems: {
 	{
 		path: "/transactions",
 		name: "Transactions",
+		children: [
+			{ path: "/transactions", name: "All Transactions" },
+			{ path: "/transactions/categories", name: "Categories" },
+		],
 	},
 	{
 		path: "/inbox",
@@ -93,43 +99,46 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 			iconName: item.path.replace("/", ""),
 		};
 		addTab(tab);
-		router.push(item.path);
+		router.push(item.path as never);
 	};
 
 	const isActive = pathname.includes(item.path);
 
 	return (
-		<button
-			className="group w-full text-left"
-			onClick={handleClick}
-			type="button"
-		>
+		<div className="group w-full text-left" onClick={handleClick}>
 			<div className="relative">
 				{/* Midday-style background and border */}
 				<div
 					className={cn(
-						"transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ml-[15px] mr-[15px]",
+						"mr-[15px] ml-[15px] transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
 						"h-[40px] border border-transparent",
-						isActive && "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
-						isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]"
+						isActive &&
+							"border-[#e6e6e6] bg-[#f7f7f7] dark:border-[#1d1d1d] dark:bg-[#131313]",
+						isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
 					)}
 				/>
 
 				{/* Icon container - always fixed distance from sidebar edge */}
-				<div className={cn(
-					"absolute top-0 left-[15px] w-[40px] h-[40px] flex items-center justify-center transition-colors duration-200",
-					isActive ? "text-primary dark:text-white" : "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white"
-				)}>
+				<div
+					className={cn(
+						"absolute top-0 left-[15px] flex h-[40px] w-[40px] items-center justify-center transition-colors duration-200",
+						isActive
+							? "text-primary dark:text-white"
+							: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
+					)}
+				>
 					<Icon />
 				</div>
 
 				{isExpanded && (
-					<div className="absolute top-0 left-[55px] right-[4px] h-[40px] flex items-center pointer-events-none">
+					<div className="pointer-events-none absolute top-0 right-[4px] left-[55px] flex h-[40px] items-center">
 						<span
 							className={cn(
-								"text-sm font-medium transition-all duration-200 ease-in-out",
-								"whitespace-nowrap overflow-hidden pr-2",
-								isActive ? "text-primary dark:text-white" : "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white"
+								"font-medium text-sm transition-all duration-200 ease-in-out",
+								"overflow-hidden whitespace-nowrap pr-2",
+								isActive
+									? "text-primary dark:text-white"
+									: "text-[#707070] group-hover:text-primary dark:text-[#666666] dark:group-hover:text-white",
 							)}
 						>
 							{item.name}
@@ -137,10 +146,10 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 						{hasChildren && (
 							<button
 								className={cn(
-									"w-8 h-8 flex items-center justify-center transition-all duration-200 ml-auto mr-3",
-									"text-[#888] hover:text-primary pointer-events-auto",
+									"mr-3 ml-auto flex h-8 w-8 items-center justify-center transition-all duration-200",
+									"pointer-events-auto text-[#888] hover:text-primary",
 									isActive && "text-primary/60 dark:text-white/60",
-									shouldShowChildren && "rotate-180"
+									shouldShowChildren && "rotate-180",
 								)}
 								onClick={(e) => {
 									e.stopPropagation();
@@ -154,7 +163,7 @@ const Item = ({ item, isExpanded, isItemExpanded, onToggle }: ItemProps) => {
 					</div>
 				)}
 			</div>
-		</button>
+		</div>
 	);
 };
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hedvig_Letters_Sans, Hedvig_Letters_Serif } from "next/font/google";
 import { notFound } from "next/navigation";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "../../index.css";
 import "../../styles/globals.css";
@@ -49,7 +50,9 @@ export default async function LocaleLayout({
 			<body
 				className={`${hedvigSans.variable} ${hedvigSerif.variable} overscroll-none whitespace-pre-line font-sans antialiased`}
 			>
-				<Providers locale={locale}>{children}</Providers>
+				<NuqsAdapter>
+					<Providers locale={locale}>{children}</Providers>
+				</NuqsAdapter>
 			</body>
 		</html>
 	);

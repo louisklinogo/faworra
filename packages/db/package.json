@@ -2,12 +2,21 @@
   "name": "@faworra-new/db",
   "type": "module",
   "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./queries": "./src/queries/index.ts",
+    "./queries/bank-accounts": "./src/queries/bank-accounts.ts",
+    "./queries/overview": "./src/queries/overview.ts",
+    "./queries/team": "./src/queries/team.ts",
+    "./queries/transaction-attachments": "./src/queries/transaction-attachments.ts",
+    "./queries/transaction-tags": "./src/queries/transaction-tags.ts",
+    "./queries/tags": "./src/queries/tags.ts",
+    "./queries/transactions": "./src/queries/transactions.ts",
+    "./schema": "./src/schema.ts",
+    "./schema/auth": "./src/schema/auth.ts",
+    "./schema/core": "./src/schema/core.ts",
+    "./schema/financial": "./src/schema/financial.ts",
+    "./schema/team": "./src/schema/team.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

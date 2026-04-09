@@ -1,3 +1,9 @@
+## One-sentence definition
+
+**Faworra is a Midday-shaped, West Africa-focused Business OS that helps small and medium business owners run the business with less cognitive load by combining finance, operations, communications, documents, memory, and AI-assisted execution into one system.**
+
+Always read @faworra-identity-reference.md to understand the product definition and architectural stance.
+
 # Ultracite Code Standards
 
 This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.
@@ -97,9 +103,6 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 
 - Use ref as a prop instead of `React.forwardRef`
 
-**Solid/Svelte/Vue/Qwik:**
-
-- Use `class` and `for` attributes (not `className` or `htmlFor`)
 
 ### Midday Parity Rule
 
@@ -108,6 +111,13 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 - Do **not** create substitute local components, wrappers, or redesigned variants when an equivalent Midday source exists.
 - If Midday code is technically incompatible with Faworra's stack or business logic, stop and explicitly call out the required deviation before proceeding.
 - Keep Faworra-specific auth, routing, and business semantics only where Midday behavior would be functionally incorrect; keep the presentation layer Midday-aligned.
+
+### Midday Wiki (Non-Negotiable Reference)
+
+- **`midday-wiki/` is the authoritative reference for all Midday architecture decisions.**
+- Consult `midday-wiki/` before implementing any feature to understand Midday's patterns, package structure, and design decisions.
+- This is non-negotiable for every work we do since we aim to achieve full parity with the Midday repo.
+- The wiki covers: database layer (`@midday/db`), UI components (`@midday/ui`), banking integration (`@midday/banking`), invoice processing (`@midday/invoice`), document management (`@midday/documents`), job scheduling (`@midday/jobs`), accounting logic (`@midday/accounting`), and utility functions (`@midday/utils`).
 
 ---
 

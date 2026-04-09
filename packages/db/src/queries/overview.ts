@@ -1,6 +1,5 @@
 import { eq, sql } from "drizzle-orm";
-
-import { db } from "../index";
+import type { Database } from "../client";
 import { transactions } from "../schema/financial";
 
 export interface OverviewSummary {
@@ -10,12 +9,12 @@ export interface OverviewSummary {
 	transactionCount: number;
 }
 
-export const getOverviewSummary = async ({ teamId }: { teamId: string }) => {
+export const getOverviewSummary = async (db: Database, { teamId }: { teamId: string }) => {
 	const [summary] = await db
 		.select({
-			expenseTotal: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.kind} = 'expense' THEN ${transactions.amount} ELSE 0 END), 0)`,
-			incomeTotal: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.kind} = 'income' THEN ${transactions.amount} ELSE 0 END), 0)`,
-			netTotal: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.kind} = 'income' THEN ${transactions.amount} ELSE -${transactions.amount} END), 0)`,
+			expenseTotal: sql<number>`COALESCE(ABS(SUM(CASE WHEN ${transactions.amount} < 0 THEN ${transactions.amount} ELSE 0 END)), 0)`,
+			incomeTotal: sql<number>`COALESCE(SUM(CASE WHEN ${transactions.amount} > 0 THEN ${transactions.amount} ELSE 0 END), 0)`,
+			netTotal: sql<number>`COALESCE(SUM(${transactions.amount}), 0)`,
 			transactionCount: sql<number>`COUNT(*)`,
 		})
 		.from(transactions)

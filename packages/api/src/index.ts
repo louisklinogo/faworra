@@ -74,3 +74,20 @@ export const protectedAdminTeamProcedure = protectedTeamProcedure.use(
 		});
 	}
 );
+
+export const protectedFinanceTeamProcedure = protectedTeamProcedure.use(
+	({ ctx, next }) => {
+		const role = ctx.membership.role;
+		if (role !== "owner" && role !== "admin" && role !== "accountant") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message:
+					"Transaction write permissions require Owner, Admin, or Accountant",
+			});
+		}
+
+		return next({
+			ctx,
+		});
+	}
+);

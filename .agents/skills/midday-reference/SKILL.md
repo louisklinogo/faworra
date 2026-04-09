@@ -1,6 +1,14 @@
 ---
 name: midday-reference
-description: Comprehensive reference skill for navigating and understanding the Midday open-source financial OS codebase in the current Faworra workspace. Use `midday/` (WSL path: `/home/louis/developer/faworra/midday`) for source-code reference and `faworra-new/midday-wiki` for local Midday documentation lookups. Apply this whenever Midday is mentioned, when studying how a Midday feature works, when comparing architecture for Faworra, or when extracting patterns from Midday to use in Faworra. Covers package responsibilities, app structure, key files, architectural patterns, and where to find things.
+description: >-
+  Comprehensive reference skill for navigating and understanding the Midday
+  open-source financial OS codebase in the current Faworra workspace. Use
+  `midday/` (WSL path: `/home/louis/developer/faworra/midday`) for source-code
+  reference and `faworra-new/midday-wiki` for local Midday documentation
+  lookups. Apply this whenever Midday is mentioned, when studying how a Midday
+  feature works, when comparing architecture for Faworra, or when extracting
+  patterns from Midday to use in Faworra. Covers package responsibilities, app
+  structure, key files, architectural patterns, and where to find things.
 ---
 
 # Midday Reference

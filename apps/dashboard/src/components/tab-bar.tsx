@@ -3,19 +3,20 @@
 import { Icons } from "@faworra-new/ui/components/icons";
 import { cn } from "@faworra-new/ui/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
-import { useTabs } from "./tab-context";
+
+import { type TabItem, useTabs } from "./tab-context";
 
 const icons: Record<string, (props: { size: number }) => React.ReactNode> = {
+	"/apps": (props) => <Icons.Apps {...props} />,
+	"/customers": (props) => <Icons.Customers {...props} />,
 	"/dashboard": (props) => <Icons.Overview {...props} />,
-	"/reports": (props) => <Icons.Monitoring {...props} />,
-	"/transactions": (props) => <Icons.Transactions {...props} />,
 	"/inbox": (props) => <Icons.Inbox2 {...props} />,
 	"/invoices": (props) => <Icons.Invoice {...props} />,
-	"/tracker": (props) => <Icons.Tracker {...props} />,
-	"/customers": (props) => <Icons.Customers {...props} />,
-	"/vault": (props) => <Icons.Vault {...props} />,
-	"/apps": (props) => <Icons.Apps {...props} />,
+	"/reports": (props) => <Icons.Monitoring {...props} />,
 	"/settings": (props) => <Icons.Settings {...props} />,
+	"/tracker": (props) => <Icons.Tracker {...props} />,
+	"/transactions": (props) => <Icons.Transactions {...props} />,
+	"/vault": (props) => <Icons.Vault {...props} />,
 };
 
 export function TabBar() {
@@ -28,66 +29,65 @@ export function TabBar() {
 	}
 
 	const handleTabClick = (path: string) => {
-		router.push(path);
+		router.push(path as never);
 	};
 
-	const handleClose = (e: React.MouseEvent, tabId: string) => {
-		e.stopPropagation();
+	const handleClose = (event: React.MouseEvent, tabId: string) => {
+		event.stopPropagation();
 
-		// Navigate away from the closed tab's page so the sync effect
-		// doesn't see it as a missing tab and re-add it.
-		const tabToClose = tabs.find((t: any) => t.id === tabId);
-		if (tabToClose) {
-			const isCurrentPage = pathname === tabToClose.path;
-			if (isCurrentPage) {
-				const remainingTabs = tabs.filter((t: any) => t.id !== tabId);
-				const nextPath = remainingTabs.at(-1)?.path ?? "/dashboard";
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				router.push(nextPath as any);
-			}
+		const tabToClose = tabs.find((tab) => tab.id === tabId);
+		if (tabToClose && pathname === tabToClose.path) {
+			const remainingTabs = tabs.filter((tab) => tab.id !== tabId);
+			const nextPath = remainingTabs.at(-1)?.path ?? "/dashboard";
+			router.push(nextPath as never);
 		}
 
 		removeTab(tabId);
 	};
 
 	return (
-		<div className="flex h-[34px] items-stretch bg-transparent w-full border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-			{tabs.map((tab: any) => {
-				const IconComp = icons[tab.path] ?? (() => <Icons.Settings size={14} />);
+		<div className="flex h-[34px] w-full items-stretch border-[#e6e6e6] border-b bg-transparent dark:border-[#1d1d1d]">
+			{tabs.map((tab: TabItem) => {
+				const IconComp =
+					icons[tab.path] ?? (() => <Icons.Settings size={14} />);
 				const isActive = pathname.includes(tab.path);
 
 				return (
 					<div
 						className={cn(
-							"group relative flex items-center gap-2 px-4 text-[13px] font-medium transition-all cursor-pointer whitespace-nowrap border-r border-[#e6e6e6] dark:border-[#1d1d1d]",
+							"group relative flex cursor-pointer items-center gap-2 whitespace-nowrap border-[#e6e6e6] border-r px-4 font-medium text-[13px] transition-all dark:border-[#1d1d1d]",
 							isActive
-								? "bg-background text-foreground border-b-2 border-b-foreground -mb-[1px]"
-								: "text-[#888] hover:text-foreground hover:bg-[#f5f5f5] dark:text-[#555] dark:hover:text-white dark:hover:bg-[#1a1a1a] border-b-2 border-b-transparent -mb-[1px]"
+								? "-mb-[1px] border-b-2 border-b-foreground bg-background text-foreground"
+								: "-mb-[1px] border-b-2 border-b-transparent text-[#888] hover:bg-[#f5f5f5] hover:text-foreground dark:text-[#555] dark:hover:bg-[#1a1a1a] dark:hover:text-white"
 						)}
 						key={tab.id}
 						onClick={() => handleTabClick(tab.path)}
-						onKeyDown={(e: React.KeyboardEvent) => {
-							if (e.key === "Enter" || e.key === " ") {
+						onKeyDown={(event: React.KeyboardEvent) => {
+							if (event.key === "Enter" || event.key === " ") {
 								handleTabClick(tab.path);
 							}
 						}}
 						role="tab"
 						tabIndex={0}
 					>
-						<span className={cn(
-							"flex-shrink-0 transition-colors",
-							isActive ? "text-black dark:text-white" : "text-[#888]"
-						)}>
+						<span
+							className={cn(
+								"flex-shrink-0 transition-colors",
+								isActive ? "text-black dark:text-white" : "text-[#888]"
+							)}
+						>
 							<IconComp size={14} />
 						</span>
 						<span className="font-medium">{tab.label}</span>
-						{!tab.isPinned && (
+						{tab.isPinned ? null : (
 							<button
 								className={cn(
-									"ml-2 flex-shrink-0 rounded-none p-0.5 transition-all hover:bg-black/5 dark:hover:bg-white/10 opacity-0 group-hover:opacity-100",
+									"ml-2 flex-shrink-0 rounded-none p-0.5 opacity-0 transition-all hover:bg-black/5 group-hover:opacity-100 dark:hover:bg-white/10",
 									isActive && "opacity-60 hover:opacity-100"
 								)}
-								onClick={(e: React.MouseEvent) => handleClose(e, tab.id)}
+								onClick={(event: React.MouseEvent) =>
+									handleClose(event, tab.id)
+								}
 								type="button"
 							>
 								<Icons.X size={12} />

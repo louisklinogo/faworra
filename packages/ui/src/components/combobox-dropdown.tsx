@@ -1,189 +1,196 @@
 "use client";
 
-import { cn } from "@faworra-new/ui/lib/utils";
 import { CommandList } from "cmdk";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { type ComponentProps, type ReactNode, useState } from "react";
-
+import * as React from "react";
+import { cn } from "../utils";
 import { Button } from "./button";
 import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
 } from "./command";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-export interface ComboboxItem {
-	disabled?: boolean;
-	id: string;
-	label: string;
-	value?: string;
-}
+export type ComboboxItem = {
+  id: string;
+  label: string;
+  disabled?: boolean;
+};
 
-interface ComboboxDropdownProps<T extends ComboboxItem> {
-	className?: string;
-	disabled?: boolean;
-	emptyResults?: ReactNode;
-	headless?: boolean;
-	items: T[];
-	listClassName?: string;
-	modal?: boolean;
-	onCreate?: (value: string) => void;
-	onSelect: (item: T) => void;
-	placeholder?: ReactNode;
-	popoverProps?: ComponentProps<typeof PopoverContent>;
-	renderListItem?: (listItem: { isChecked: boolean; item: T }) => ReactNode;
-	renderOnCreate?: (value: string) => ReactNode;
-	renderSelectedItem?: (selectedItem: T) => ReactNode;
-	searchPlaceholder?: string;
-	selectedItem?: T;
-	triggerClassName?: string;
-}
+type Props<T> = {
+  placeholder?: React.ReactNode;
+  searchPlaceholder?: string;
+  items: T[];
+  onSelect: (item: T) => void;
+  selectedItem?: T;
+  renderSelectedItem?: (selectedItem: T) => React.ReactNode;
+  renderOnCreate?: (value: string) => React.ReactNode;
+  renderListItem?: (listItem: {
+    isChecked: boolean;
+    item: T;
+  }) => React.ReactNode;
+  emptyResults?: React.ReactNode;
+  popoverProps?: React.ComponentProps<typeof PopoverContent>;
+  disabled?: boolean;
+  onCreate?: (value: string) => void;
+  headless?: boolean;
+  className?: string;
+  triggerClassName?: string;
+  listClassName?: string;
+  modal?: boolean;
+};
 
 export function ComboboxDropdown<T extends ComboboxItem>({
-	className,
-	disabled,
-	emptyResults,
-	headless,
-	items,
-	listClassName,
-	modal = true,
-	onCreate,
-	onSelect,
-	placeholder,
-	popoverProps,
-	renderListItem,
-	renderOnCreate,
-	renderSelectedItem = (item) => item.label,
-	searchPlaceholder,
-	selectedItem: incomingSelectedItem,
-	triggerClassName,
-}: ComboboxDropdownProps<T>) {
-	const [open, setOpen] = useState(false);
-	const [internalSelectedItem, setInternalSelectedItem] = useState<
-		T | undefined
-	>();
-	const [inputValue, setInputValue] = useState("");
+  headless,
+  placeholder,
+  searchPlaceholder,
+  items,
+  onSelect,
+  selectedItem: incomingSelectedItem,
+  renderSelectedItem = (item) => item.label,
+  renderListItem,
+  renderOnCreate,
+  emptyResults,
+  popoverProps,
+  disabled,
+  onCreate,
+  className,
+  triggerClassName,
+  listClassName,
+  modal = true,
+}: Props<T>) {
+  const [open, setOpen] = React.useState(false);
+  const [internalSelectedItem, setInternalSelectedItem] = React.useState<
+    T | undefined
+  >();
+  const [inputValue, setInputValue] = React.useState("");
 
-	const selectedItem = incomingSelectedItem ?? internalSelectedItem;
-	const filteredItems = items.filter((item) =>
-		item.label.toLowerCase().includes(inputValue.toLowerCase())
-	);
-	const showCreate = onCreate && Boolean(inputValue) && !filteredItems.length;
+  const selectedItem = incomingSelectedItem ?? internalSelectedItem;
 
-	const component = (
-		<Command loop shouldFilter={false}>
-			<CommandInput
-				className="px-3"
-				onValueChange={setInputValue}
-				placeholder={searchPlaceholder ?? "Search item..."}
-				value={inputValue}
-			/>
+  const filteredItems = items.filter((item) =>
+    item.label.toLowerCase().includes(inputValue.toLowerCase()),
+  );
 
-			<CommandGroup>
-				<CommandList
-					className={cn("max-h-[225px] overflow-auto", listClassName)}
-				>
-					{filteredItems.map((item) => {
-						const isChecked = selectedItem?.id === item.id;
+  const showCreate = onCreate && Boolean(inputValue) && !filteredItems.length;
 
-						return (
-							<CommandItem
-								className={cn("cursor-pointer", className)}
-								disabled={item.disabled}
-								key={item.id}
-								onSelect={(id: string) => {
-									const foundItem = items.find(
-										(currentItem) => currentItem.id === id
-									);
+  const Component = (
+    <Command loop shouldFilter={false}>
+      <CommandInput
+        value={inputValue}
+        onValueChange={setInputValue}
+        placeholder={searchPlaceholder ?? "Search item..."}
+        className="px-3"
+      />
 
-									if (!foundItem) {
-										return;
-									}
+      <CommandGroup>
+        <CommandList
+          className={cn("max-h-[225px] overflow-auto", listClassName)}
+        >
+          {filteredItems.map((item) => {
+            const isChecked = selectedItem?.id === item.id;
 
-									onSelect(foundItem);
-									setInternalSelectedItem(foundItem);
-									setOpen(false);
-								}}
-								value={item.id}
-							>
-								{renderListItem ? (
-									renderListItem({ isChecked, item })
-								) : (
-									<>
-										<Check
-											className={cn(
-												"mr-2 h-4 w-4",
-												isChecked ? "opacity-100" : "opacity-0"
-											)}
-										/>
-										{item.label}
-									</>
-								)}
-							</CommandItem>
-						);
-					})}
+            return (
+              <CommandItem
+                disabled={item.disabled}
+                className={cn("cursor-pointer", className)}
+                key={item.id}
+                value={item.id}
+                onSelect={(id) => {
+                  const foundItem = items.find((item) => item.id === id);
 
-					<CommandEmpty>{emptyResults ?? "No item found"}</CommandEmpty>
+                  if (!foundItem) {
+                    return;
+                  }
 
-					{showCreate ? (
-						<CommandItem
-							key={inputValue}
-							onMouseDown={(event) => {
-								event.preventDefault();
-								event.stopPropagation();
-							}}
-							onSelect={() => {
-								onCreate(inputValue);
-								setOpen(false);
-								setInputValue("");
-							}}
-							value={inputValue}
-						>
-							{renderOnCreate ? renderOnCreate(inputValue) : null}
-						</CommandItem>
-					) : null}
-				</CommandList>
-			</CommandGroup>
-		</Command>
-	);
+                  onSelect(foundItem);
+                  setInternalSelectedItem(foundItem);
+                  setOpen(false);
+                }}
+              >
+                {renderListItem ? (
+                  renderListItem({ isChecked, item })
+                ) : (
+                  <>
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        isChecked ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                    {item.label}
+                  </>
+                )}
+              </CommandItem>
+            );
+          })}
 
-	if (headless) {
-		return component;
-	}
+          <CommandEmpty>{emptyResults ?? "No item found"}</CommandEmpty>
 
-	return (
-		<Popover modal={modal} onOpenChange={setOpen} open={open}>
-			<PopoverTrigger asChild className="w-full" disabled={disabled}>
-				<Button
-					aria-expanded={open}
-					className={cn(
-						"relative w-full justify-between font-normal",
-						triggerClassName
-					)}
-					variant="outline"
-				>
-					<span className="block truncate text-ellipsis pr-3">
-						{selectedItem
-							? renderSelectedItem(selectedItem)
-							: (placeholder ?? "Select item...")}
-					</span>
-					<ChevronsUpDown className="absolute right-2 size-4 opacity-50" />
-				</Button>
-			</PopoverTrigger>
+          {showCreate && (
+            <CommandItem
+              key={inputValue}
+              value={inputValue}
+              onSelect={() => {
+                onCreate(inputValue);
+                setOpen(false);
+                setInputValue("");
+              }}
+              onMouseDown={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+              }}
+            >
+              {renderOnCreate ? renderOnCreate(inputValue) : null}
+            </CommandItem>
+          )}
+        </CommandList>
+      </CommandGroup>
+    </Command>
+  );
 
-			<PopoverContent
-				{...popoverProps}
-				className={cn("p-0", popoverProps?.className)}
-				style={{
-					width: "var(--radix-popover-trigger-width)",
-					...popoverProps?.style,
-				}}
-			>
-				{component}
-			</PopoverContent>
-		</Popover>
-	);
+  if (headless) {
+    return Component;
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
+      <PopoverTrigger asChild disabled={disabled} className="w-full">
+        <Button
+          variant="outline"
+          aria-expanded={open}
+          className={cn(
+            "w-full justify-between relative font-normal",
+            triggerClassName,
+          )}
+        >
+          <span className="truncate text-ellipsis pr-3">
+            {selectedItem ? (
+              <span className="items-center overflow-hidden whitespace-nowrap text-ellipsis block">
+                {renderSelectedItem
+                  ? renderSelectedItem(selectedItem)
+                  : selectedItem.label}
+              </span>
+            ) : (
+              (placeholder ?? "Select item...")
+            )}
+          </span>
+          <ChevronsUpDown className="size-4 opacity-50 absolute right-2" />
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        {...popoverProps}
+        className={cn("p-0", popoverProps?.className)}
+        style={{
+          width: "var(--radix-popover-trigger-width)",
+          ...popoverProps?.style,
+        }}
+      >
+        {Component}
+      </PopoverContent>
+    </Popover>
+  );
 }

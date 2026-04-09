@@ -19,6 +19,7 @@ import Link from "next/link";
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
+import { ThemeSwitch } from "./theme-switch";
 
 export default function UserMenu({
 	isExpanded = false,
@@ -207,6 +208,12 @@ export default function UserMenu({
 							))}
 						</div>
 					)}
+				</div>
+
+				<DropdownMenuSeparator />
+
+				<div className="px-2 py-1">
+					<ThemeSwitch />
 				</div>
 
 				<DropdownMenuSeparator />

@@ -1,52 +1,565 @@
-import { and, eq } from "drizzle-orm";
+import {
+	and,
+	asc,
+	desc,
+	eq,
+	gt,
+	gte,
+	ilike,
+	inArray,
+	lt,
+	lte,
+	or,
+	sql,
+	SQL,
+} from "drizzle-orm";
+import type { Database } from "../client";
+import {
+	accountingSyncRecords,
+	transactionAttachments,
+	transactionCategories,
+	transactionMatchSuggestions,
+	transactions,
+} from "../schema/financial";
 
-import { db } from "../index";
-import { transactionCategories, transactions } from "../schema/financial";
+// ─── Interfaces ────────────────────────────────────────────────────────────────
 
 export interface CreateTransactionInput {
 	amount: number;
-	categoryId?: string | null;
+	bankAccountId?: string | null;
+	baseAmount?: number | null;
+	baseCurrency?: string | null;
+	categorySlug?: string | null;
+	counterpartyName?: string | null;
 	currency: string;
-	description: string;
-	kind: "income" | "expense";
+	description?: string | null;
+	enrichmentCompleted?: boolean;
+	frequency?: "weekly" | "biweekly" | "monthly" | "semi_monthly" | "annually" | "irregular" | "unknown" | null;
+	internal?: boolean;
+	internalId: string; // Required for idempotency
+	// Note: income/expense determined by amount sign (Midday pattern)
+	// amount > 0 = income, amount < 0 = expense
+	manual?: boolean;
+	merchantName?: string | null;
+	method?: "payment" | "card_purchase" | "card_atm" | "transfer" | "other" | "unknown" | "ach" | "interest" | "deposit" | "wire" | "fee" | "momo" | "cash";
+	name: string; // Required
+	note?: string | null;
+	notified?: boolean;
+	recurring?: boolean | null;
+	taxAmount?: number | null;
+	taxRate?: number | null;
+	taxType?: string | null;
 	teamId: string;
 	transactionDate: Date;
 }
 
 export interface UpdateTransactionInput {
 	amount?: number;
-	categoryId?: string | null;
+	bankAccountId?: string | null;
+	baseAmount?: number | null;
+	baseCurrency?: string | null;
+	categorySlug?: string | null;
+	counterpartyName?: string | null;
 	currency?: string;
-	description?: string;
+	description?: string | null;
+	enrichmentCompleted?: boolean;
+	frequency?: "weekly" | "biweekly" | "monthly" | "semi_monthly" | "annually" | "irregular" | "unknown" | null;
 	id: string;
-	kind?: "income" | "expense";
+	internal?: boolean;
+	// Note: income/expense determined by amount sign (Midday pattern)
+	merchantName?: string | null;
+	method?: "payment" | "card_purchase" | "card_atm" | "transfer" | "other" | "unknown" | "ach" | "interest" | "deposit" | "wire" | "fee" | "momo" | "cash";
+	name?: string;
+	note?: string | null;
+	recurring?: boolean | null;
+	status?: "posted" | "pending" | "excluded" | "completed" | "archived" | "exported";
+	taxAmount?: number | null;
+	taxRate?: number | null;
+	taxType?: string | null;
 	teamId: string;
 	transactionDate?: Date;
 }
 
-export const getTransactionCategories = ({ teamId }: { teamId: string }) => {
+export interface SetTransactionReviewStateInput {
+	id: string;
+	status: "excluded" | "posted";
+	teamId: string;
+}
+
+export interface ListTransactionsInput {
+	accounts?: string[] | null;
+	amountRange?: [number, number] | null;
+	assignees?: string[] | null;
+	attachments?: "include" | "exclude" | null;
+	categories?: string[] | null;
+	cursor?: string | null;
+	end?: string | null;
+	/** Filter by export status: true = only exported, false = only NOT exported */
+	exported?: boolean | null;
+	/** Filter by fulfillment: true = ready for review (has attachments OR status=completed), false = not ready */
+	fulfilled?: boolean | null;
+	internal?: boolean | null;
+	/** Filter by type using amount sign: "expense" = amount < 0, "income" = amount > 0 (Midday pattern) */
+	type?: "income" | "expense" | null;
+	manual?: "include" | "exclude" | null;
+	pageSize?: number;
+	q?: string | null;
+	recurring?: string[] | null;
+	sort?: [string, "asc" | "desc"] | null;
+	start?: string | null;
+	// UI list filter statuses (Midday pattern)
+	statuses?: Array<
+		| "blank"
+		| "receipt_match"
+		| "in_review"
+		| "export_error"
+		| "exported"
+		| "excluded"
+		| "archived"
+	> | null;
+	teamId: string;
+}
+
+interface TransactionsListCursor {
+	id: string;
+	transactionDate: string;
+}
+
+interface TransactionQueryColumns {
+	amount: typeof transactions.amount;
+	assignedId: typeof transactions.assignedId;
+	bankAccountId: typeof transactions.bankAccountId;
+	categorySlug: typeof transactions.categorySlug;
+	currency: typeof transactions.currency;
+	description: typeof transactions.description;
+	frequency: typeof transactions.frequency;
+	id: typeof transactions.id;
+	internal: typeof transactions.internal;
+	manual: typeof transactions.manual;
+	note: typeof transactions.note;
+	recurring: typeof transactions.recurring;
+	status: typeof transactions.status;
+	teamId: typeof transactions.teamId;
+	transactionDate: typeof transactions.transactionDate;
+}
+
+const DEFAULT_TRANSACTIONS_LIMIT = 25;
+const MAX_TRANSACTIONS_LIMIT = 100;
+
+const encodeTransactionsCursor = (cursor: TransactionsListCursor) => {
+	return Buffer.from(JSON.stringify(cursor)).toString("base64url");
+};
+
+const decodeTransactionsCursor = (
+	cursor: string,
+): TransactionsListCursor | null => {
+	try {
+		const parsed = JSON.parse(
+			Buffer.from(cursor, "base64url").toString("utf8"),
+		) as Partial<TransactionsListCursor>;
+
+		if (
+			typeof parsed.id !== "string" ||
+			typeof parsed.transactionDate !== "string"
+		) {
+			return null;
+		}
+
+		return {
+			id: parsed.id,
+			transactionDate: parsed.transactionDate,
+		};
+	} catch {
+		return null;
+	}
+};
+
+export const isTransactionsCursor = (cursor: string) => {
+	return decodeTransactionsCursor(cursor) !== null;
+};
+
+const buildSearchCondition = (
+	table: TransactionQueryColumns,
+	searchTerm: string | undefined,
+) => {
+	if (!searchTerm) {
+		return null;
+	}
+
+	return or(
+		ilike(table.description, `%${searchTerm}%`),
+		ilike(table.note, `%${searchTerm}%`),
+		ilike(table.currency, `%${searchTerm}%`),
+		ilike(table.categorySlug, `%${searchTerm}%`),
+	);
+};
+
+const buildCursorCondition = (
+	table: TransactionQueryColumns,
+	decodedCursor: TransactionsListCursor | null,
+) => {
+	if (!decodedCursor) {
+		return null;
+	}
+
+	const cursorDate = new Date(decodedCursor.transactionDate);
+
+	return or(
+		lt(table.transactionDate, cursorDate),
+		and(eq(table.transactionDate, cursorDate), lt(table.id, decodedCursor.id)),
+	);
+};
+
+const buildListTransactionsWhere = ({
+	accounts,
+	amountRange,
+	assignees,
+	attachments,
+	categories,
+	decodedCursor,
+	end,
+	exported,
+	fulfilled,
+	internal,
+	type,
+	manual,
+	q: searchTerm,
+	recurring,
+	start,
+	statuses,
+	teamId,
+	table,
+}: {
+	accounts?: string[] | null;
+	amountRange?: [number, number] | null;
+	assignees?: string[] | null;
+	attachments?: "include" | "exclude" | null;
+	categories?: string[] | null;
+	decodedCursor: TransactionsListCursor | null;
+	end?: string | null;
+	exported?: boolean | null;
+	fulfilled?: boolean | null;
+	internal?: boolean | null;
+	/** Filter by type using amount sign (Midday pattern) */
+	type?: "income" | "expense" | null;
+	manual?: "include" | "exclude" | null;
+	q?: string | null;
+	recurring?: string[] | null;
+	start?: string | null;
+	statuses?: Array<
+		| "blank"
+		| "receipt_match"
+		| "in_review"
+		| "export_error"
+		| "exported"
+		| "excluded"
+		| "archived"
+	> | null;
+	teamId: string;
+	table: TransactionQueryColumns;
+}) => {
+	const conditions: (SQL | undefined)[] = [eq(table.teamId, teamId)];
+	const searchCondition = buildSearchCondition(table, searchTerm ?? undefined);
+	const cursorCondition = buildCursorCondition(table, decodedCursor);
+
+	if (searchCondition) {
+		conditions.push(searchCondition);
+	}
+
+	// ─── Computed Conditions (Midday Pattern) ────────────────────────────────
+	// These are EXISTS-based conditions for UI status filters.
+	// Use Drizzle table references inside SQL fragments so correlated subqueries
+	// stay bound to the correct child tables and outer transactions row.
+
+	// A transaction is "fulfilled" if it has attachments OR status=completed
+	const isFulfilledCondition = sql`(
+		EXISTS (
+			SELECT 1
+			FROM ${transactionAttachments}
+			WHERE ${eq(transactionAttachments.transactionId, transactions.id)}
+			AND ${eq(transactionAttachments.teamId, teamId)}
+		) OR ${transactions.status} = 'completed'
+	)`;
+
+	// A transaction is "exported" if status=exported OR synced to accounting
+	const isExportedCondition = sql`(
+		${transactions.status} = 'exported' OR EXISTS (
+			SELECT 1
+			FROM ${accountingSyncRecords}
+			WHERE ${eq(accountingSyncRecords.transactionId, transactions.id)}
+			AND ${eq(accountingSyncRecords.teamId, teamId)}
+			AND ${accountingSyncRecords.status} = 'synced'
+		)
+	)`;
+
+	// Has export error
+	const hasExportErrorCondition = sql`EXISTS (
+		SELECT 1
+		FROM ${accountingSyncRecords}
+		WHERE ${eq(accountingSyncRecords.transactionId, transactions.id)}
+		AND ${eq(accountingSyncRecords.teamId, teamId)}
+		AND ${accountingSyncRecords.status} IN ('failed', 'partial')
+	)`;
+
+	// Has pending match suggestion (for receipt_match status)
+	const hasPendingSuggestionCondition = sql`EXISTS (
+		SELECT 1
+		FROM ${transactionMatchSuggestions}
+		WHERE ${eq(transactionMatchSuggestions.transactionId, transactions.id)}
+		AND ${eq(transactionMatchSuggestions.teamId, teamId)}
+		AND ${transactionMatchSuggestions.status} = 'pending'
+	)`;
+
+	// Active workflow (not excluded/archived)
+	const isActiveWorkflowCondition = sql`${transactions.status} NOT IN ('excluded', 'archived')`;
+
+	// ─── Attachments Filter ──────────────────────────────────────────────────
+	if (attachments === "exclude") {
+		conditions.push(sql`NOT (${isFulfilledCondition})`);
+	} else if (attachments === "include") {
+		conditions.push(isFulfilledCondition);
+	}
+
+	// ─── Direct Filters for exported/fulfilled ───────────────────────────────
+	if (exported === true) {
+		conditions.push(isExportedCondition);
+	} else if (exported === false) {
+		conditions.push(sql`NOT (${isExportedCondition})`);
+	}
+
+	if (fulfilled === true) {
+		conditions.push(isFulfilledCondition);
+	} else if (fulfilled === false) {
+		conditions.push(sql`NOT (${isFulfilledCondition})`);
+	}
+
+	// ─── UI Status Filters (Computed States) ─────────────────────────────────
+	// These map UI filter values to complex conditions
+	if (statuses && statuses.length > 0) {
+		const statusConditions: SQL[] = [];
+
+		if (statuses.includes("blank")) {
+			statusConditions.push(sql`
+				(
+					${isActiveWorkflowCondition}
+					AND NOT (${isFulfilledCondition})
+					AND NOT (${isExportedCondition})
+					AND NOT (${hasExportErrorCondition})
+				)
+			`);
+		}
+
+		if (statuses.includes("receipt_match")) {
+			statusConditions.push(sql`
+				(
+					${isActiveWorkflowCondition}
+					AND ${hasPendingSuggestionCondition}
+					AND NOT (${isFulfilledCondition})
+					AND NOT (${isExportedCondition})
+				)
+			`);
+		}
+
+		if (statuses.includes("in_review")) {
+			statusConditions.push(sql`
+				(
+					${isActiveWorkflowCondition}
+					AND ${isFulfilledCondition}
+					AND NOT (${isExportedCondition})
+					AND NOT (${hasExportErrorCondition})
+				)
+			`);
+		}
+
+		if (statuses.includes("export_error")) {
+			statusConditions.push(sql`
+				(
+					${isActiveWorkflowCondition}
+					AND ${hasExportErrorCondition}
+					AND NOT (${isExportedCondition})
+				)
+			`);
+		}
+
+		if (statuses.includes("exported")) {
+			statusConditions.push(isExportedCondition);
+		}
+
+		if (statuses.includes("excluded")) {
+			statusConditions.push(eq(table.status, "excluded"));
+		}
+
+		if (statuses.includes("archived")) {
+			statusConditions.push(eq(table.status, "archived"));
+		}
+
+		if (statusConditions.length > 0) {
+			conditions.push(or(...statusConditions));
+		}
+	} else {
+		// Default: hide excluded/archived unless explicitly filtered
+		conditions.push(isActiveWorkflowCondition);
+	}
+
+	// ─── Standard Filters ───────────────────────────────────────────────────
+	if (categories?.length) {
+		conditions.push(inArray(table.categorySlug, categories));
+	}
+
+	if (accounts?.length) {
+		conditions.push(inArray(table.bankAccountId, accounts));
+	}
+
+	// Type filter using amount sign (Midday pattern)
+	// expense: amount < 0, income: amount > 0
+	if (type === "expense") {
+		conditions.push(lt(table.amount, 0));
+	} else if (type === "income") {
+		conditions.push(gt(table.amount, 0));
+	}
+
+	if (internal !== null && internal !== undefined) {
+		conditions.push(eq(table.internal, internal));
+	}
+
+	if (manual === "include") {
+		conditions.push(eq(table.manual, true));
+	} else if (manual === "exclude") {
+		conditions.push(eq(table.manual, false));
+	}
+
+	// Date range (ISO strings)
+	if (start) {
+		const startDate = new Date(start);
+		if (!Number.isNaN(startDate.getTime())) {
+			conditions.push(gte(table.transactionDate, startDate));
+		}
+	}
+
+	if (end) {
+		const endDate = new Date(end);
+		if (!Number.isNaN(endDate.getTime())) {
+			conditions.push(lte(table.transactionDate, endDate));
+		}
+	}
+
+	// Amount range
+	if (amountRange) {
+		const [min, max] = amountRange;
+		if (min !== null && min !== undefined) {
+			conditions.push(sql`ABS(${table.amount}) >= ${min}`);
+		}
+		if (max !== null && max !== undefined) {
+			conditions.push(sql`ABS(${table.amount}) <= ${max}`);
+		}
+	}
+
+	// Assignees filter
+	if (assignees?.length) {
+		conditions.push(inArray(table.assignedId, assignees));
+	}
+
+	// Recurring frequency filter
+	if (recurring?.length) {
+		conditions.push(
+			inArray(
+				table.frequency,
+				recurring as (
+					| "weekly"
+					| "biweekly"
+					| "monthly"
+					| "semi_monthly"
+					| "annually"
+					| "irregular"
+					| "unknown"
+				)[],
+			),
+		);
+	}
+
+	if (cursorCondition) {
+		conditions.push(cursorCondition);
+	}
+
+	return and(...conditions);
+};
+
+// ─── Query: Categories ────────────────────────────────────────────────────────
+
+export const getTransactionCategories = (db: Database, { teamId }: { teamId: string }) => {
 	return db.query.transactionCategories.findMany({
-		orderBy: (table, { asc }) => [asc(table.kind), asc(table.name)],
+		orderBy: (table, { asc }) => [asc(table.name)],
 		where: (table, { eq }) => eq(table.teamId, teamId),
 	});
 };
 
-export const getTransactionCategoryById = ({
-	id,
-	kind,
-	teamId,
-}: {
-	id: string;
-	kind: "income" | "expense";
-	teamId: string;
-}) => {
+export const getTransactionCategoryBySlug = (
+	db: Database,
+	{
+		slug,
+		teamId,
+	}: {
+		slug: string;
+		teamId: string;
+	},
+) => {
 	return db.query.transactionCategories.findFirst({
 		where: (table, { and, eq }) =>
-			and(eq(table.id, id), eq(table.kind, kind), eq(table.teamId, teamId)),
+			and(eq(table.slug, slug), eq(table.teamId, teamId)),
 	});
 };
 
-export const getTransactions = ({ teamId }: { teamId: string }) => {
+export const getTransactionCategoryById = (
+	db: Database,
+	{
+		id,
+		teamId,
+	}: {
+		id: string;
+		teamId: string;
+	},
+) => {
+	return db.query.transactionCategories.findFirst({
+		where: (table, { and, eq }) =>
+			and(eq(table.id, id), eq(table.teamId, teamId)),
+	});
+};
+
+export const getTransactionCategoryByIdOnly = (
+	db: Database,
+	{
+		id,
+		teamId,
+	}: {
+		id: string;
+		teamId: string;
+	},
+) => {
+	return db.query.transactionCategories.findFirst({
+		where: (table, { and, eq }) =>
+			and(eq(table.id, id), eq(table.teamId, teamId)),
+	});
+};
+
+export const getBankAccountById = (
+	db: Database,
+	{
+		id,
+		teamId,
+	}: {
+		id: string;
+		teamId: string;
+	},
+) => {
+	return db.query.bankAccounts.findFirst({
+		where: (table, { and, eq }) =>
+			and(eq(table.id, id), eq(table.teamId, teamId)),
+	});
+};
+
+// ─── Query: Transactions ──────────────────────────────────────────────────────
+
+export const getTransactions = (db: Database, { teamId }: { teamId: string }) => {
 	return db.query.transactions.findMany({
 		orderBy: (table, { desc }) => [
 			desc(table.transactionDate),
@@ -55,65 +568,440 @@ export const getTransactions = ({ teamId }: { teamId: string }) => {
 		where: (table, { eq }) => eq(table.teamId, teamId),
 		with: {
 			category: true,
+			bankAccount: true,
 		},
 	});
 };
 
-export const getTransactionById = ({
-	id,
-	teamId,
-}: {
-	id: string;
-	teamId: string;
-}) => {
+export const listTransactions = async (
+	db: Database,
+	{
+		accounts,
+		amountRange,
+		assignees,
+		attachments,
+		categories,
+		cursor,
+		end,
+		exported,
+		fulfilled,
+		internal,
+		type,
+		manual,
+		pageSize = DEFAULT_TRANSACTIONS_LIMIT,
+		q,
+		recurring,
+		sort,
+		start,
+		statuses,
+		teamId,
+	}: ListTransactionsInput,
+) => {
+	const normalizedLimit = Math.min(Math.max(pageSize, 1), MAX_TRANSACTIONS_LIMIT);
+	const decodedCursor = cursor ? decodeTransactionsCursor(cursor) : null;
+
+	// Build sort order - default to date desc
+	const orderByClause = sort
+		? (table: TransactionQueryColumns) => {
+				const [column, direction] = sort;
+				const orderFn = direction === "asc" ? asc : desc;
+				// Map column names to table columns
+				switch (column) {
+					case "amount":
+						return orderFn(table.amount);
+					case "date":
+						return orderFn(table.transactionDate);
+					case "name":
+						return orderFn(table.description);
+					default:
+						return orderFn(table.transactionDate);
+				}
+			}
+		: (table: TransactionQueryColumns) => [desc(table.transactionDate), desc(table.id)];
+
+	const items = await db.query.transactions.findMany({
+		limit: normalizedLimit + 1,
+		orderBy: orderByClause,
+		where: (table) =>
+			buildListTransactionsWhere({
+				accounts,
+				amountRange,
+				assignees,
+				attachments,
+				categories,
+				decodedCursor,
+				end,
+				exported,
+				fulfilled,
+				internal,
+				type,
+				manual,
+				q,
+				recurring,
+				start,
+				statuses,
+				teamId,
+				table,
+			}),
+		with: {
+			bankAccount: true,
+			category: true,
+			tags: {
+				with: {
+					tag: true,
+				},
+			},
+		},
+	});
+
+	const hasMore = items.length > normalizedLimit;
+	const visibleItems = hasMore ? items.slice(0, normalizedLimit) : items;
+	const lastItem = visibleItems.at(-1);
+
+	return {
+		items: visibleItems,
+		nextCursor:
+			hasMore && lastItem
+				? encodeTransactionsCursor({
+						id: lastItem.id,
+						transactionDate: lastItem.transactionDate.toISOString(),
+					})
+				: null,
+	};
+};
+
+export const getTransactionById = (
+	db: Database,
+	{
+		id,
+		teamId,
+	}: {
+		id: string;
+		teamId: string;
+	},
+) => {
 	return db.query.transactions.findFirst({
 		where: (table, { and, eq }) =>
 			and(eq(table.id, id), eq(table.teamId, teamId)),
 		with: {
 			category: true,
+			bankAccount: true,
+			tags: {
+				with: {
+					tag: true,
+				},
+			},
 		},
 	});
 };
 
-export const createTransaction = async (input: CreateTransactionInput) => {
+// ─── Query: Review Count ─────────────────────────────────────────────────────
+// Count transactions ready for review (fulfilled but not exported)
+
+export const getReviewCount = async (db: Database, teamId: string) => {
+	const result = await db
+		.select({ count: sql<number>`count(*)` })
+		.from(transactions)
+		.where(
+			and(
+				eq(transactions.teamId, teamId),
+				// Active workflow
+				sql`${transactions.status} NOT IN ('excluded', 'archived')`,
+				// Is fulfilled (has attachments OR status=completed)
+				sql`(
+					EXISTS (
+						SELECT 1
+						FROM ${transactionAttachments}
+						WHERE ${eq(transactionAttachments.transactionId, transactions.id)}
+						AND ${eq(transactionAttachments.teamId, teamId)}
+					) OR ${transactions.status} = 'completed'
+				)`,
+				// NOT exported
+				sql`NOT (
+					${transactions.status} = 'exported' OR EXISTS (
+						SELECT 1
+						FROM ${accountingSyncRecords}
+						WHERE ${eq(accountingSyncRecords.transactionId, transactions.id)}
+						AND ${eq(accountingSyncRecords.teamId, teamId)}
+						AND ${accountingSyncRecords.status} = 'synced'
+					)
+				)`,
+			),
+		);
+
+	return { count: result[0]?.count ?? 0 };
+};
+
+// ─── Mutation: Create ─────────────────────────────────────────────────────────
+
+export const createTransaction = async (db: Database, input: CreateTransactionInput) => {
 	const [transaction] = await db.insert(transactions).values(input).returning();
 	return transaction;
 };
 
-export const updateTransaction = async (input: UpdateTransactionInput) => {
+// ─── Mutation: Update ─────────────────────────────────────────────────────────
+
+export const updateTransaction = async (db: Database, input: UpdateTransactionInput) => {
 	const [transaction] = await db
 		.update(transactions)
 		.set({
 			amount: input.amount,
-			categoryId: input.categoryId,
+			bankAccountId: input.bankAccountId,
+			baseAmount: input.baseAmount,
+			baseCurrency: input.baseCurrency,
+			categorySlug: input.categorySlug,
+			counterpartyName: input.counterpartyName,
 			currency: input.currency,
 			description: input.description,
-			kind: input.kind,
+			enrichmentCompleted: input.enrichmentCompleted,
+			frequency: input.frequency,
+			internal: input.internal,
+			// Note: kind field removed - income/expense determined by amount sign
+			merchantName: input.merchantName,
+			method: input.method,
+			name: input.name,
+			note: input.note,
+			recurring: input.recurring,
+			status: input.status,
+			taxAmount: input.taxAmount,
+			taxRate: input.taxRate,
+			taxType: input.taxType,
 			transactionDate: input.transactionDate,
 			updatedAt: new Date(),
 		})
 		.where(
-			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId))
+			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId)),
 		)
 		.returning();
 
 	return transaction;
 };
 
-export const ensureDefaultTransactionCategories = async ({
-	categories,
-	teamId,
-}: {
-	categories: Array<{
-		color: string;
-		kind: "income" | "expense";
-		name: string;
-		slug: string;
-	}>;
+export const setTransactionReviewState = async (
+	db: Database,
+	input: SetTransactionReviewStateInput,
+) => {
+	const [transaction] = await db
+		.update(transactions)
+		.set({
+			status: input.status,
+			updatedAt: new Date(),
+		})
+		.where(
+			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId)),
+		)
+		.returning();
+
+	return transaction;
+};
+
+// ─── Mutation: Delete ─────────────────────────────────────────────────────────
+
+export const deleteTransaction = async (
+	db: Database,
+	input: {
+		id: string;
+		teamId: string;
+	},
+) => {
+	const [transaction] = await db
+		.delete(transactions)
+		.where(
+			and(eq(transactions.id, input.id), eq(transactions.teamId, input.teamId)),
+		)
+		.returning();
+
+	return transaction;
+};
+
+export const deleteTransactions = async (
+	db: Database,
+	input: {
+		ids: string[];
+		teamId: string;
+	},
+) => {
+	const deletedTransactions = await db
+		.delete(transactions)
+		.where(
+			and(
+				inArray(transactions.id, input.ids),
+				eq(transactions.teamId, input.teamId),
+			),
+		)
+		.returning();
+
+	return deletedTransactions;
+};
+
+// ─── Mutation: Bulk Update ─────────────────────────────────────────────────
+
+export interface BulkUpdateTransactionsInput {
+	ids: string[];
 	teamId: string;
-}) => {
+	categorySlug?: string | null;
+	status?: "excluded" | "posted";
+	assignedId?: string | null;
+}
+
+export const bulkUpdateTransactions = async (
+	db: Database,
+	input: BulkUpdateTransactionsInput,
+) => {
+	const { ids, teamId, categorySlug, status, assignedId } = input;
+	const updates: Record<string, unknown> = {
+		updatedAt: new Date(),
+	};
+
+	if (categorySlug !== undefined) {
+		updates.categorySlug = categorySlug;
+	}
+
+	if (status !== undefined) {
+		updates.status = status;
+	}
+
+	if (assignedId !== undefined) {
+		updates.assignedId = assignedId;
+	}
+
+	const updatedTransactions = await db
+		.update(transactions)
+		.set(updates)
+		.where(and(inArray(transactions.id, ids), eq(transactions.teamId, teamId)))
+		.returning();
+
+	return updatedTransactions;
+};
+
+// ─── Category CRUD ────────────────────────────────────────────────────────────
+
+// Note: 'kind' field removed from categories - income/expense determined by transaction amount sign
+// Note: parentId (UUID) replaces parentSlug for FK integrity
+
+export interface CreateTransactionCategoryInput {
+	color?: string;
+	excluded?: boolean;
+	name: string;
+	parentId?: string;
+	slug: string;
+	taxRate?: number;
+	taxType?: string;
+	description?: string;
+	teamId: string;
+}
+
+export const createTransactionCategory = async (
+	db: Database,
+	input: CreateTransactionCategoryInput,
+) => {
+	const [category] = await db
+		.insert(transactionCategories)
+		.values({
+			color: input.color ?? null,
+			excluded: input.excluded ?? false,
+			name: input.name,
+			parentId: input.parentId ?? null,
+			slug: input.slug,
+			description: input.description ?? null,
+			taxRate: input.taxRate ?? null,
+			taxType: input.taxType ?? null,
+			system: false,
+			teamId: input.teamId,
+		})
+		.returning();
+
+	return category;
+};
+
+export interface UpdateTransactionCategoryInput {
+	color?: string;
+	excluded?: boolean;
+	id: string;
+	name?: string;
+	parentId?: string | null;
+	taxRate?: number;
+	taxType?: string;
+	description?: string;
+	teamId: string;
+}
+
+export const updateTransactionCategory = async (
+	db: Database,
+	input: UpdateTransactionCategoryInput,
+) => {
+	const [category] = await db
+		.update(transactionCategories)
+		.set({
+			color: input.color,
+			excluded: input.excluded,
+			name: input.name,
+			parentId: input.parentId,
+			taxRate: input.taxRate,
+			taxType: input.taxType,
+			description: input.description,
+		})
+		.where(
+			and(
+				eq(transactionCategories.id, input.id),
+				eq(transactionCategories.teamId, input.teamId),
+			),
+		)
+		.returning();
+
+	return category;
+};
+
+export const deleteTransactionCategory = async (
+	db: Database,
+	input: {
+		id: string;
+		teamId: string;
+	},
+) => {
+	const [category] = await db
+		.delete(transactionCategories)
+		.where(
+			and(
+				eq(transactionCategories.id, input.id),
+				eq(transactionCategories.teamId, input.teamId),
+				eq(transactionCategories.system, false), // Cannot delete system categories
+			),
+		)
+		.returning();
+
+	return category;
+};
+
+// ─── Seeding: Ensure Default Categories ──────────────────────────────────────
+
+// Note: 'kind' removed from categories schema - income/expense determined by transaction amount
+
+interface SeedableCategory {
+	color?: string;
+	excluded?: boolean;
+	name: string;
+	parentId?: string;
+	slug: string;
+	system?: boolean;
+	taxRate?: number;
+	taxType?: string;
+	description?: string;
+}
+
+export const ensureDefaultTransactionCategories = async (
+	db: Database,
+	{
+		categories,
+		teamId,
+	}: {
+		categories: SeedableCategory[];
+		teamId: string;
+	},
+) => {
 	const existingCategories = await db.query.transactionCategories.findMany({
-		where: (table, { eq }) => eq(table.teamId, teamId),
+		where: (table, { and, eq }) =>
+			and(eq(table.teamId, teamId), eq(table.system, true)),
 	});
 
 	if (existingCategories.length > 0) {
@@ -124,9 +1012,17 @@ export const ensureDefaultTransactionCategories = async ({
 		.insert(transactionCategories)
 		.values(
 			categories.map((category) => ({
-				...category,
+				color: category.color ?? null,
+				excluded: category.excluded ?? false,
+				name: category.name,
+				parentId: category.parentId ?? null,
+				slug: category.slug,
+				system: category.system ?? true,
+				taxRate: category.taxRate ?? null,
+				taxType: category.taxType ?? null,
+				description: category.description ?? null,
 				teamId,
-			}))
+			})),
 		)
 		.returning();
 };

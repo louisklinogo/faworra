@@ -1,4 +1,5 @@
 import { auth } from "@faworra-new/auth";
+import { db, type Database } from "@faworra-new/db/client";
 import { getLocationHeaders } from "@faworra-new/location";
 import type { Context as HonoContext } from "hono";
 
@@ -22,6 +23,7 @@ export async function createContextFromHeaders(requestHeaders: Headers) {
 
 	if (!session) {
 		return {
+			db,
 			requestLocation,
 			session: null,
 			userId: null,
@@ -34,6 +36,7 @@ export async function createContextFromHeaders(requestHeaders: Headers) {
 	const viewerState = await getViewerState(session.user.id);
 
 	return {
+		db,
 		requestLocation,
 		session,
 		userId: session.user.id,
@@ -45,4 +48,5 @@ export function createContext({ context }: CreateContextOptions) {
 	return createContextFromHeaders(context.req.raw.headers);
 }
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
+export type Context = Awaited<ReturnType<typeof createContext>> & { db: Database };
+
