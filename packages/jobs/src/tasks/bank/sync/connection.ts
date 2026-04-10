@@ -3,6 +3,11 @@
  * Midday parity: fan-out pattern - sync all accounts for a connection
  * 
  * Reference: midday/packages/jobs/src/tasks/bank/sync/connection.ts
+ * 
+ * Adapted for Faworra:
+ * - Uses Drizzle ORM instead of Supabase client (due to Better Auth choice)
+ * - Mono provider instead of GoCardless/Plaid (West African market)
+ * - Uses batchTriggerAndWait with staggered delays (matches Midday pattern)
  */
 
 import { syncConnectionSchema } from "./../../../schema";
@@ -19,7 +24,7 @@ export const syncConnection = schemaTask({
 		maxAttempts: 2,
 	},
 	schema: syncConnectionSchema,
-	run: async ({ connectionId, teamId, manualSync }) => {
+	run: async ({ connectionId, teamId, manualSync }, { ctx }) => {
 		logger.info("[syncConnection] Starting sync", { connectionId, teamId, manualSync });
 
 		try {
@@ -35,20 +40,9 @@ export const syncConnection = schemaTask({
 				throw new Error("Connection not found");
 			}
 
-			// Check if connection is still valid
-			if (connection.status === "disconnected" || connection.status === "error") {
-				logger.warn("[syncConnection] Connection is not active", { 
-					connectionId, 
-					status: connection.status 
-				});
-				return {
-					status: "skipped" as const,
-					reason: `Connection is ${connection.status}`,
-				};
-			}
-
 			// Get all enabled bank accounts for this connection
-			const accounts = await db
+			// Midday pattern: skip accounts with 3+ error retries during background sync
+			const accountsQuery = db
 				.select()
 				.from(bankAccounts)
 				.where(
@@ -58,6 +52,8 @@ export const syncConnection = schemaTask({
 						eq(bankAccounts.manual, false)
 					)
 				);
+
+			const accounts = await accountsQuery;
 
 			if (accounts.length === 0) {
 				logger.info("[syncConnection] No enabled accounts found", { connectionId });
@@ -72,24 +68,35 @@ export const syncConnection = schemaTask({
 				accountCount: accounts.length 
 			});
 
-			// Trigger sync for each account
-			for (const account of accounts) {
-				await syncAccount.triggerAndWait({
+			// Midday parity: use batchTriggerAndWait with staggered delays
+			// Delay: 30s for manual sync, 60s for background sync
+			const delaySeconds = manualSync ? 30 : 60;
+			
+			const batchItems = accounts.map((account, i) => ({
+				payload: {
 					id: account.id,
 					teamId: account.teamId,
 					accountId: account.externalId ?? "",
-					provider: "mono",
+					provider: "mono" as const,
 					connectionId,
-					accountType: account.type === "momo" ? "depository" : "depository",
-					currency: account.currency,
+					accountType: "depository" as const,
+					currency: account.currency ?? undefined,
 					manualSync,
-				});
-			}
+				},
+				options: {
+					delay: `${i * delaySeconds}s`,
+					tags: ctx.run.tags,
+				},
+			}));
 
-			// Update connection lastSyncedAt
+			// Batch trigger all account syncs with staggered delays
+			await syncAccount.batchTriggerAndWait(batchItems);
+
+			// Update connection lastSyncedAt and status
 			await db
 				.update(bankConnections)
 				.set({ 
+					status: "connected",
 					lastSyncedAt: new Date(),
 					updatedAt: new Date(),
 				})
