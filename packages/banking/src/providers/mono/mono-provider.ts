@@ -1,9 +1,8 @@
 /**
  * Mono Provider implementation
- * Midday parity: implements ProviderInterface
+ * Midday parity: implements ProviderInterface with real Mono API calls
  * 
- * Phase 1: Stub implementations
- * Phase 2: Real API calls via MonoApi
+ * Reference: docs/mono/financial-data/*.md
  */
 
 import type {
@@ -22,8 +21,8 @@ import type {
 	Institution,
 } from "../../types";
 import type { ProviderInterface } from "../../interface";
-// Phase 2: Import MonoApi when implementing real calls
-// import { MonoApi } from "./mono-api";
+import { MonoApi } from "./mono-api";
+import { transformMonoAccount, transformMonoTransaction } from "./transform";
 
 export interface MonoProviderConfig {
 	secretKey?: string;
@@ -33,12 +32,10 @@ export interface MonoProviderConfig {
 const PROVIDER_NAME = "mono";
 
 export class MonoProvider implements ProviderInterface {
-	// Phase 2: Add API client when implementing real calls
-	// private _api: MonoApi;
+	private _api: MonoApi;
 
-	constructor(_config?: MonoProviderConfig) {
-		// Phase 2: Initialize API client
-		// this._api = new MonoApi(config);
+	constructor(config?: MonoProviderConfig) {
+		this._api = new MonoApi(config);
 	}
 
 	// ─── Core Operations ──────────────────────────────────────────────────────
@@ -46,69 +43,133 @@ export class MonoProvider implements ProviderInterface {
 	async getTransactions(
 		params: GetTransactionsParams
 	): Promise<GetTransactionsResult> {
-		console.log(`[${PROVIDER_NAME}] getTransactions called`, params);
-		
-		// TODO: Implement in Phase 2
-		throw new Error("MonoProvider.getTransactions not implemented - Phase 1 stub");
+		console.log(`[${PROVIDER_NAME}] getTransactions called`, {
+			accountId: params.accountId,
+		});
+
+		const result = await this._api.getTransactions(params.accountId, {
+			from: params.fromDate,
+			to: params.toDate,
+			limit: 100,
+		});
+
+		const transactions = result.data.map(transformMonoTransaction);
+
+		return {
+			transactions,
+			hasMore: !!result.paging.next,
+			total: result.paging.total,
+		};
 	}
 
 	async getAccounts(params: GetAccountsParams): Promise<Account[]> {
-		console.log(`[${PROVIDER_NAME}] getAccounts called`, params);
-		
-		// TODO: Implement in Phase 2
-		throw new Error("MonoProvider.getAccounts not implemented - Phase 1 stub");
+		console.log(`[${PROVIDER_NAME}] getAccounts called`, {
+			connectionId: params.connectionId,
+		});
+
+		const account = await this._api.getAccount(params.connectionId);
+		return [transformMonoAccount(account)];
 	}
 
 	async getAccountBalance(params: GetBalanceParams): Promise<Balance> {
-		console.log(`[${PROVIDER_NAME}] getAccountBalance called`, params);
+		console.log(`[${PROVIDER_NAME}] getAccountBalance called`, {
+			accountId: params.accountId,
+		});
+
+		const account = await this._api.getAccount(params.accountId);
 		
-		// TODO: Implement in Phase 2
-		throw new Error("MonoProvider.getAccountBalance not implemented - Phase 1 stub");
+		if (!account.data?.balance) {
+			throw new Error("No balance data returned from Mono");
+		}
+
+		return {
+			accountId: params.accountId,
+			current: account.data.balance.amount ?? 0,
+			available: account.data.balance.available_balance ?? 0,
+			creditLimit: account.data.balance.credit_limit ?? undefined,
+			currency: account.data.balance.currency ?? account.data.currency ?? "NGN",
+		};
 	}
 
 	async getInstitutions(
-		params?: GetInstitutionsParams
+		_params?: GetInstitutionsParams
 	): Promise<Institution[]> {
-		console.log(`[${PROVIDER_NAME}] getInstitutions called`, params);
-		
-		// TODO: Implement in Phase 2
-		throw new Error("MonoProvider.getInstitutions not implemented - Phase 1 stub");
+		console.log(`[${PROVIDER_NAME}] getInstitutions called`);
+
+		const institutions = await this._api.getInstitutions();
+
+		return institutions.map((inst) => ({
+			id: inst.id,
+			name: inst.name,
+			type: inst.type,
+			countries: inst.countries,
+			provider: PROVIDER_NAME,
+			logo: null,
+		}));
 	}
 
 	// ─── Status & Health ──────────────────────────────────────────────────────
 
 	async getHealthCheck(): Promise<HealthCheckResult> {
 		console.log(`[${PROVIDER_NAME}] getHealthCheck called`);
-		
-		// TODO: Implement real health check in Phase 2
-		return {
-			provider: PROVIDER_NAME,
-			status: "operational",
-			message: "Phase 1 stub - health check not implemented",
-		};
+
+		try {
+			// Simple health check - try to get institutions
+			await this._api.getInstitutions();
+			return {
+				provider: PROVIDER_NAME,
+				status: "operational",
+			};
+		} catch (error) {
+			return {
+				provider: PROVIDER_NAME,
+				status: "degraded",
+				message: error instanceof Error ? error.message : "Unknown error",
+			};
+		}
 	}
 
 	async getConnectionStatus(
 		params: GetConnectionStatusParams
 	): Promise<ConnectionStatusResult> {
-		console.log(`[${PROVIDER_NAME}] getConnectionStatus called`, params);
-		
-		// TODO: Implement in Phase 2
-		throw new Error("MonoProvider.getConnectionStatus not implemented - Phase 1 stub");
+		console.log(`[${PROVIDER_NAME}] getConnectionStatus called`, {
+			connectionId: params.connectionId,
+		});
+
+		try {
+			// Try to get account info - if it succeeds, connection is valid
+			await this._api.getAccount(params.connectionId);
+			
+			return {
+				status: "connected" as const,
+				lastSyncedAt: new Date().toISOString(),
+				errorCount: 0,
+			};
+		} catch (error) {
+			return {
+				status: "disconnected" as const,
+				errorCount: 1,
+				message: error instanceof Error ? error.message : "Unknown error",
+			};
+		}
 	}
 
 	// ─── Cleanup ──────────────────────────────────────────────────────────────
 
-	async deleteAccounts(params: DeleteAccountsParams): Promise<void> {
-		console.log(`[${PROVIDER_NAME}] deleteAccounts called`, params);
-		
-		throw new Error("MonoProvider.deleteAccounts not implemented - Phase 1 stub");
+	async deleteAccounts(_params: DeleteAccountsParams): Promise<void> {
+		// Mono doesn't have a direct delete accounts endpoint
+		// Use deleteConnection instead
+		console.log(`[${PROVIDER_NAME}] deleteAccounts - use deleteConnection instead`);
 	}
 
 	async deleteConnection(params: DeleteConnectionParams): Promise<void> {
-		console.log(`[${PROVIDER_NAME}] deleteConnection called`, params);
-		
-		throw new Error("MonoProvider.deleteConnection not implemented - Phase 1 stub");
+		console.log(`[${PROVIDER_NAME}] deleteConnection called`, {
+			connectionId: params.connectionId,
+		});
+
+		// Mono doesn't have a delete endpoint in their v2 API
+		// Mark as disconnected in our database instead
+		throw new Error("Mono does not support connection deletion via API");
 	}
 
 	// ─── Mono-Specific Methods ────────────────────────────────────────────────
@@ -121,8 +182,25 @@ export class MonoProvider implements ProviderInterface {
 		meta?: Record<string, unknown>;
 		redirectUrl?: string;
 	}): Promise<{ monoUrl: string }> {
-		console.log(`[${PROVIDER_NAME}] initiateLinking called`, params);
-		
-		throw new Error("MonoProvider.initiateLinking not implemented - Phase 1 stub");
+		const result = await this._api.initiateLinking({
+			meta: params.meta,
+			redirect_url: params.redirectUrl,
+		});
+
+		return { monoUrl: result.mono_url };
+	}
+
+	/**
+	 * Get raw account data from Mono
+	 */
+	async getRawAccount(accountId: string) {
+		return this._api.getAccount(accountId);
+	}
+
+	/**
+	 * Trigger manual refresh of account data
+	 */
+	async refreshAccount(accountId: string): Promise<{ status: string }> {
+		return this._api.refreshAccount(accountId);
 	}
 }

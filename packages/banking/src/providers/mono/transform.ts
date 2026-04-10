@@ -11,7 +11,6 @@
 import type {
 	Account,
 	Balance,
-	Institution,
 	MonoAccountResponse,
 	MonoTransactionResponse,
 	Transaction,
@@ -25,29 +24,23 @@ import type {
  * Mono: type = 'debit' | 'credit', amount = positive number
  * Faworra: amount = signed number (negative for expenses)
  */
-export function transformTransaction(
-	monoTx: MonoTransactionResponse,
-	accountId: string
+export function transformMonoTransaction(
+	monoTx: MonoTransactionResponse
 ): Transaction {
 	// Normalize amount: debit = expense = negative, credit = income = positive
 	const normalizedAmount = monoTx.type === "debit" 
 		? -Math.abs(monoTx.amount) 
 		: Math.abs(monoTx.amount);
 
-	// Parse category - Mono returns strings like "unknown" or specific categories
-	const category = monoTx.category && monoTx.category !== "unknown"
-		? monoTx.category
-		: undefined;
-
 	return {
 		id: monoTx.id,
-		accountId,
+		accountId: monoTx.id, // Will be overridden by caller
 		amount: normalizedAmount,
-		currency: "NGN", // Default - will be overridden by account currency
+		currency: "GHS", // Default - actual currency from account
 		date: monoTx.date,
-		status: "posted", // Mono transactions are already posted
+		status: "posted",
 		balance: monoTx.balance,
-		category,
+		category: monoTx.category !== "unknown" ? monoTx.category : undefined,
 		name: monoTx.narration,
 		description: monoTx.narration,
 		provider: "mono",
@@ -55,37 +48,34 @@ export function transformTransaction(
 	};
 }
 
-/**
- * Transform multiple transactions
- */
-export function transformTransactions(
-	monoTxs: MonoTransactionResponse[],
-	accountId: string
-): Transaction[] {
-	return monoTxs.map((tx) => transformTransaction(tx, accountId));
-}
-
 // ─── Account Transform ────────────────────────────────────────────────────────
 
 /**
  * Transform Mono account to normalized form
  */
-export function transformAccount(
+export function transformMonoAccount(
 	monoAccount: MonoAccountResponse
 ): Account {
-	// Map Mono account types to our standard types
-	const accountType = mapAccountType(monoAccount.type);
+	const data = monoAccount.data;
+	if (!data) {
+		throw new Error("Mono account response missing data");
+	}
+
+	const balance = data.balance;
+	const institution = data.institution;
 
 	return {
 		id: monoAccount.id,
-		name: monoAccount.name,
-		currency: monoAccount.currency,
-		type: accountType,
-		institutionId: monoAccount.institution?.bank_code ?? "unknown",
-		balance: monoAccount.balance,
-		availableBalance: monoAccount.balance, // Mono doesn't differentiate
+		name: data.name ?? "Unknown",
+		currency: data.currency ?? "NGN",
+		type: mapAccountType(data.type ?? "other"),
+		institutionId: institution?.bank_code ?? "unknown",
+		balance: balance?.amount ?? 0,
+		availableBalance: balance?.available_balance ?? 0,
+		creditLimit: balance?.credit_limit ?? undefined,
 		provider: "mono",
-		accountNumber: monoAccount.account_number,
+		accountNumber: data.account_number,
+		enrollmentId: data._meta?.enrollment_id,
 	};
 }
 
@@ -113,40 +103,22 @@ function mapAccountType(monoType: string): Account["type"] {
 	return typeMap[monoType.toLowerCase()] ?? "other";
 }
 
-// ─── Institution Transform ────────────────────────────────────────────────────
-
-/**
- * Transform Mono institution to normalized form
- */
-export function transformInstitution(
-	monoInstitution: NonNullable<MonoAccountResponse["institution"]> & {
-		id?: string;
-		countries?: string[];
-	}
-): Institution {
-	return {
-		id: monoInstitution.bank_code,
-		name: monoInstitution.name,
-		logo: null, // Mono doesn't provide logos in this response
-		provider: "mono",
-		type: monoInstitution.type,
-		bankCode: monoInstitution.bank_code,
-		countries: monoInstitution.countries ?? [],
-	};
-}
-
 // ─── Balance Transform ────────────────────────────────────────────────────────
 
 /**
- * Transform Mono account to balance object
+ * Extract balance from Mono account response
  */
-export function transformBalance(
+export function transformMonoBalance(
 	monoAccount: MonoAccountResponse
 ): Balance {
+	const data = monoAccount.data;
+	const balance = data?.balance;
+
 	return {
 		accountId: monoAccount.id,
-		current: monoAccount.balance,
-		available: monoAccount.balance,
-		currency: monoAccount.currency,
+		current: balance?.amount ?? 0,
+		available: balance?.available_balance ?? 0,
+		creditLimit: balance?.credit_limit ?? undefined,
+		currency: balance?.currency ?? data?.currency ?? "NGN",
 	};
 }

@@ -1,8 +1,9 @@
 /**
  * Mono API client
- * Stub implementation for Phase 1
+ * Midday parity: implements real API calls to Mono
  * 
  * Reference: docs/mono/financial-data/*.md
+ * API docs: https://mono.co/docs
  */
 
 import type {
@@ -15,20 +16,50 @@ export interface MonoApiConfig {
 	baseUrl?: string;
 }
 
+const DEFAULT_BASE_URL = "https://api.withmono.com";
+
 /**
  * Mono API client
- * Phase 1: Stub - no real implementation
- * Phase 2: Implement real API calls with fetch
+ * Implements real API calls to Mono
  */
 export class MonoApi {
-	// Phase 2: Add private credentials here
-	// private _secretKey: string | undefined;
-	// private _baseUrl: string;
+	private _secretKey: string;
+	private _baseUrl: string;
 
-	constructor(_config?: MonoApiConfig) {
-		// Phase 2: Store credentials
-		// this._secretKey = config?.secretKey ?? env.MONO_SECRET_KEY;
-		// this._baseUrl = config?.baseUrl ?? "https://api.withmono.com";
+	constructor(config?: MonoApiConfig) {
+		this._secretKey = config?.secretKey ?? process.env.MONO_SECRET_KEY ?? "";
+		this._baseUrl = config?.baseUrl ?? DEFAULT_BASE_URL;
+	}
+
+	private async request<T>(
+		endpoint: string,
+		options: {
+			method?: "GET" | "POST" | "DELETE";
+			body?: unknown;
+			headers?: Record<string, string>;
+		} = {}
+	): Promise<T> {
+		const { method = "GET", body, headers = {} } = options;
+
+		const response = await fetch(`${this._baseUrl}${endpoint}`, {
+			method,
+			headers: {
+				"Content-Type": "application/json",
+				"mono-sec-key": this._secretKey,
+				...headers,
+			},
+			body: body ? JSON.stringify(body) : undefined,
+		});
+
+		const data = await response.json() as T;
+
+		if (!response.ok) {
+			throw new Error(
+				`Mono API error: ${response.status} ${response.statusText} - ${JSON.stringify(data)}`
+			);
+		}
+
+		return data;
 	}
 
 	// ─── Account Linking ──────────────────────────────────────────────────────
@@ -39,19 +70,25 @@ export class MonoApi {
 	 * 
 	 * Mono docs reference: docs/mono/financial-data/connect-link.md
 	 */
-	async initiateLinking(_params: {
+	async initiateLinking(params: {
 		meta?: Record<string, unknown>;
 		redirect_url?: string;
 	}): Promise<{ mono_url: string }> {
-		throw new Error("MonoApi.initiateLinking not implemented - Phase 1 stub");
+		return this.request<{ mono_url: string }>("/v2/accounts/initiate", {
+			method: "POST",
+			body: params,
+		});
 	}
 
 	/**
-	 * Auth callback - exchange token for account ID
+	 * Auth callback - exchange code for account ID
 	 * POST /v2/accounts/auth
 	 */
-	async auth(_params: { code: string }): Promise<{ id: string }> {
-		throw new Error("MonoApi.auth not implemented - Phase 1 stub");
+	async auth(params: { code: string }): Promise<{ id: string }> {
+		return this.request<{ id: string }>("/v2/accounts/auth", {
+			method: "POST",
+			body: params,
+		});
 	}
 
 	// ─── Account Information ──────────────────────────────────────────────────
@@ -60,8 +97,8 @@ export class MonoApi {
 	 * Get account details
 	 * GET /v2/accounts/{id}
 	 */
-	async getAccount(_accountId: string): Promise<MonoAccountResponse> {
-		throw new Error("MonoApi.getAccount not implemented - Phase 1 stub");
+	async getAccount(accountId: string): Promise<MonoAccountResponse> {
+		return this.request<MonoAccountResponse>(`/v2/accounts/${accountId}`);
 	}
 
 	/**
@@ -74,7 +111,12 @@ export class MonoApi {
 		type: string;
 		countries: string[];
 	}>> {
-		throw new Error("MonoApi.getInstitutions not implemented - Phase 1 stub");
+		return this.request<Array<{
+			id: string;
+			name: string;
+			type: string;
+			countries: string[];
+		}>>("/v2/institutions");
 	}
 
 	// ─── Transactions ──────────────────────────────────────────────────────────
@@ -84,8 +126,8 @@ export class MonoApi {
 	 * GET /v2/accounts/{id}/transactions
 	 */
 	async getTransactions(
-		_accountId: string,
-		_params?: {
+		accountId: string,
+		params?: {
 			from?: string;
 			to?: string;
 			limit?: number;
@@ -95,7 +137,17 @@ export class MonoApi {
 		data: MonoTransactionResponse[];
 		paging: { total: number; page: number; next?: string };
 	}> {
-		throw new Error("MonoApi.getTransactions not implemented - Phase 1 stub");
+		const searchParams = new URLSearchParams();
+		if (params?.from) searchParams.set("from", params.from);
+		if (params?.to) searchParams.set("to", params.to);
+		if (params?.limit) searchParams.set("limit", String(params.limit));
+		if (params?.offset) searchParams.set("offset", String(params.offset));
+		
+		const query = searchParams.toString();
+		return this.request<{
+			data: MonoTransactionResponse[];
+			paging: { total: number; page: number; next?: string };
+		}>(`/v2/accounts/${accountId}/transactions${query ? `?${query}` : ""}`);
 	}
 
 	// ─── Real-Time Data ───────────────────────────────────────────────────────
@@ -104,7 +156,9 @@ export class MonoApi {
 	 * Manual refresh - trigger balance/transactions update
 	 * POST /v2/accounts/{id}/refresh
 	 */
-	async refreshAccount(_accountId: string): Promise<{ status: string }> {
-		throw new Error("MonoApi.refreshAccount not implemented - Phase 1 stub");
+	async refreshAccount(accountId: string): Promise<{ status: string }> {
+		return this.request<{ status: string }>(`/v2/accounts/${accountId}/refresh`, {
+			method: "POST",
+		});
 	}
 }

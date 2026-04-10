@@ -10,18 +10,30 @@ import { z } from "zod";
 
 // ─── Banking Sync Jobs ────────────────────────────────────────────────────────
 
-/** Sync transactions from Mono for a bank account */
-export const syncBankTransactionsSchema = z.object({
-	accountId: z.string(),
-	teamId: z.string(),
-	lastSyncedAt: z.string().optional(),
-	enrollmentId: z.string(),
+/** Sync a bank connection and all its accounts - Midday parity */
+export const syncConnectionSchema = z.object({
+	connectionId: z.string().uuid(),
+	teamId: z.string().uuid(),
+	manualSync: z.boolean().optional(),
 });
 
-/** Sync account balances from Mono */
-export const syncAccountBalancesSchema = z.object({
-	connectionId: z.string(),
-	teamId: z.string(),
+/** Sync a single bank account - Midday parity */
+export const syncAccountSchema = z.object({
+	id: z.string().uuid(), // bank_accounts.id
+	teamId: z.string().uuid(),
+	accountId: z.string(), // provider account_id
+	accessToken: z.string().optional(),
+	provider: z.enum(["mono"]),
+	connectionId: z.string().uuid(),
+	accountType: z.enum(["credit", "other_asset", "other_liability", "depository", "loan"]),
+	currency: z.string().optional(),
+	manualSync: z.boolean().optional(),
+});
+
+/** Initial bank setup for a team - Midday parity */
+export const initialBankSetupSchema = z.object({
+	teamId: z.string().uuid(),
+	connectionId: z.string().uuid(),
 });
 
 /** Process Mono webhook event */
@@ -102,8 +114,9 @@ export const notificationEventSchema = z.discriminatedUnion("type", [
 
 // ─── Export Types ──────────────────────────────────────────────────────────────
 
-export type SyncBankTransactionsPayload = z.infer<typeof syncBankTransactionsSchema>;
-export type SyncAccountBalancesPayload = z.infer<typeof syncAccountBalancesSchema>;
+export type SyncConnectionPayload = z.infer<typeof syncConnectionSchema>;
+export type SyncAccountPayload = z.infer<typeof syncAccountSchema>;
+export type InitialBankSetupPayload = z.infer<typeof initialBankSetupSchema>;
 export type ProcessMonoWebhookPayload = z.infer<typeof processMonoWebhookSchema>;
 export type ProcessDocumentPayload = z.infer<typeof processDocumentSchema>;
 export type DailySyncPayload = z.infer<typeof dailySyncSchema>;
@@ -115,8 +128,9 @@ export type NotificationEventPayload = z.infer<typeof notificationEventSchema>;
 // ─── All Schemas Map ────────────────────────────────────────────────────────────
 
 export const schemas = {
-	syncBankTransactions: syncBankTransactionsSchema,
-	syncAccountBalances: syncAccountBalancesSchema,
+	syncConnection: syncConnectionSchema,
+	syncAccount: syncAccountSchema,
+	initialBankSetup: initialBankSetupSchema,
 	processMonoWebhook: processMonoWebhookSchema,
 	processDocument: processDocumentSchema,
 	dailySync: dailySyncSchema,

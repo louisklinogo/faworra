@@ -182,15 +182,28 @@ export interface GetBalanceResult {
 
 export interface MonoAccountResponse {
 	id: string;
-	name: string;
-	account_number: string;
-	currency: string;
-	type: string;
-	balance: number;
-	institution: {
+	status?: string;
+	data?: {
+		id: string;
 		name: string;
-		bank_code: string;
+		account_number: string;
+		currency: string;
 		type: string;
+		balance?: {
+			amount?: number;
+			currency?: string;
+			available_balance?: number;
+			credit_limit?: number;
+		};
+		institution?: {
+			id: string;
+			name: string;
+			bank_code: string;
+			type: string;
+		};
+		_meta?: {
+			enrollment_id: string;
+		};
 	};
 }
 

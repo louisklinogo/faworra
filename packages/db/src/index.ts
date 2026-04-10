@@ -20,6 +20,8 @@ import {
 	bankAccountsRelations,
 	bankConnections,
 	bankConnectionsRelations,
+	bankConnectionStatus,
+	bankAccountSyncStatus,
 	numericCasted,
 	tags,
 	tagsRelations,
@@ -54,6 +56,48 @@ import {
 // let Bun resolve these exports statically in test environments.
 export const and = drizzleAnd;
 export const eq = drizzleEq;
+
+// Export schema tables
+export {
+	account,
+	accountRelations,
+	session,
+	sessionRelations,
+	user,
+	userRelations,
+	verification,
+	userContextSchema as userContext,
+	userContextRelations,
+	teams,
+	teamsRelations,
+	teamInviteStatus,
+	teamInvites,
+	teamInvitesRelations,
+	teamMemberships,
+	teamMembershipsRelations,
+	teamRole,
+	teamSettings,
+	teamSettingsRelations,
+	bankConnections,
+	bankConnectionsRelations,
+	bankConnectionStatus,
+	bankAccounts,
+	bankAccountsRelations,
+	bankAccountSyncStatus,
+	tags,
+	tagsRelations,
+	transactionAttachments,
+	transactionAttachmentsRelations,
+	transactionCategories,
+	transactionCategoriesRelations,
+	transactionFrequency,
+	transactionMethod,
+	transactionStatus,
+	transactionTags,
+	transactionTagsRelations,
+	transactions,
+	transactionsRelations,
+};
 
 const schema = {
 	account,

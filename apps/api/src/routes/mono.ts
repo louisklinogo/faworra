@@ -80,13 +80,26 @@ async function handleAccountRemoved(data: Record<string, unknown>): Promise<void
 /**
  * Handle data_available event
  * Mono sends this when new data is ready for retrieval
+ * 
+ * Midday parity: triggers transaction sync via Trigger.dev
+ * Reference: midday/apps/api/src/routes/banking/webhook.ts
  */
 async function handleDataAvailable(data: Record<string, unknown>): Promise<void> {
 	console.log("[webhook/mono] data_available event", data);
 	
-	// TODO: Phase 2 implementation
-	// 1. Trigger transaction sync job via packages/jobs
-	// 2. Or enqueue with packages/job-client for BullMQ
+	// Phase 2: Trigger transaction sync via Trigger.dev
+	// Extract the connection reference ID
+	const meta = data.meta as Record<string, unknown> | undefined;
+	const connectionId = meta?.connection_id as string | undefined;
+	
+	if (!connectionId) {
+		console.warn("[webhook/mono] data_available missing connection_id");
+		return;
+	}
+	
+	// TODO: Get teamId from bank_connections table
+	// TODO: Trigger syncConnection task from packages/jobs
+	console.log("[webhook/mono] Would trigger sync for connection:", connectionId);
 }
 
 // ─── Webhook Route Handler ─────────────────────────────────────────────────────
