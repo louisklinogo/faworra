@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "exports": {
-    "./schema": "./src/schema.ts"
+    "./schema": "./src/schema.ts",
+    "./tasks/bank/sync/connection": "./src/tasks/bank/sync/connection.ts",
+    "./tasks/bank/sync/account": "./src/tasks/bank/sync/account.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"
