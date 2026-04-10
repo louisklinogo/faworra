@@ -117,6 +117,20 @@ export const bankConnectionStatus = pgEnum("bank_connection_status", [
 	"error",
 ]);
 
+// Bank connection detail status (provider-specific)
+export const bankConnectionDetailStatus = pgEnum(
+	"bank_connection_detail_status",
+	["linked", "processing", "available", "partial", "unavailable", "expired", "failed"]
+);
+
+// Sync status for bank accounts
+export const bankAccountSyncStatus = pgEnum("bank_account_sync_status", [
+	"pending",
+	"syncing",
+	"available",
+	"failed",
+]);
+
 export const bankAccountType = pgEnum("bank_account_type", [
 	"bank",
 	"momo", // Mobile Money (MoMo) — African SME specific
@@ -135,7 +149,13 @@ export const bankConnections = pgTable(
 			.references(() => teams.id, { onDelete: "cascade" }),
 		name: text("name").notNull(),
 		institutionName: text("institution_name"),
+		// Provider tracking (Midday parity)
+		provider: text("provider").notNull().default("mono"), // 'mono' for Phase 1
+		enrollmentId: text("enrollment_id"), // Provider's enrollment/linking ID
 		status: bankConnectionStatus("status").default("connected").notNull(),
+		detailStatus: bankConnectionDetailStatus("detail_status"), // Data availability status
+		errorCount: integer("error_count").default(0),
+		lastSyncedAt: timestamp("last_synced_at"),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at")
 			.defaultNow()
@@ -164,6 +184,15 @@ export const bankAccounts = pgTable(
 		accountNumber: text("account_number"),
 		enabled: boolean("enabled").default(true).notNull(),
 		manual: boolean("manual").default(true).notNull(),
+		// Provider mapping (Midday parity)
+		externalId: text("external_id"), // Mono's account ID
+		// Balance snapshot
+		balance: integer("balance"), // Current balance in minor units
+		availableBalance: integer("available_balance"), // Available balance in minor units
+		creditLimit: integer("credit_limit"), // For credit accounts
+		// Sync tracking
+		lastSyncedAt: timestamp("last_synced_at"),
+		syncStatus: bankAccountSyncStatus("sync_status").default("pending"),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at")
 			.defaultNow()

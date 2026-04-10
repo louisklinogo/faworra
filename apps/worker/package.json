@@ -1,0 +1,21 @@
+{
+  "name": "@faworra-new/worker",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "drizzle": "bun run --filter '@faworra-new/db' studio",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@faworra-new/db": "workspace:*",
+    "@faworra-new/env": "workspace:*",
+    "@faworra-new/job-client": "workspace:*",
+    "bullmq": "^5.0.0",
+    "ioredis": "^5.0.0",
+    "hono": "catalog:"
+  },
+  "devDependencies": {
+    "@faworra-new/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

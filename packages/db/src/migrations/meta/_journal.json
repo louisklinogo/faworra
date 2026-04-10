@@ -8,6 +8,13 @@
       "when": 1775698004945,
       "tag": "0000_tough_komodo",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775775657131,
+      "tag": "0001_mighty_frog_thor",
+      "breakpoints": true
     }
   ]
 }

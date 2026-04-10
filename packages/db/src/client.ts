@@ -33,3 +33,24 @@ export type TransactionClient = PgTransaction<
 
 /** Use in query functions that should work both standalone and within transactions */
 export type DatabaseOrTransaction = Database | TransactionClient;
+
+/**
+ * Create a job-specific database connection
+ * Midday parity: creates fresh connection per job run for optimal pooling
+ * Used by packages/jobs/src/init.ts middleware
+ */
+export function createJobDb() {
+	// Create a dedicated pool for this job run
+	// In production, this would use Supabase session pooler
+	const jobPool = new Pool({
+		connectionString: env.DATABASE_URL,
+		max: 2, // Minimal for job execution
+		idleTimeoutMillis: 10_000,
+		connectionTimeoutMillis: 5000,
+	});
+
+	return drizzle(jobPool, {
+		schema,
+		casing: "snake_case",
+	});
+}

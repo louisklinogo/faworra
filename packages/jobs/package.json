@@ -1,16 +1,17 @@
 {
-  "name": "@faworra-new/banking",
-  "type": "module",
+  "name": "@faworra-new/jobs",
+  "version": "0.0.1",
+  "private": true,
   "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    }
+    "./schema": "./src/schema.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@faworra-new/env": "workspace:*"
+    "@faworra-new/db": "workspace:*",
+    "trigger.dev": "4.4.3",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@faworra-new/config": "workspace:*",
