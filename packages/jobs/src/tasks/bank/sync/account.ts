@@ -6,7 +6,8 @@
  */
 
 import { syncAccountSchema } from "../../../schema";
-import { bankAccounts, transactions, db, eq } from "@faworra-new/db";
+import { bankAccounts, transactions, eq } from "@faworra-new/db";
+import { getDb } from "../../../init";
 import { logger, schemaTask } from "@trigger.dev/sdk";
 import { MonoProvider } from "@faworra-new/banking";
 
@@ -27,6 +28,7 @@ export const syncAccount = schemaTask({
 		currency,
 		manualSync,
 	}) => {
+		const db = getDb();
 		const monoProvider = new MonoProvider();
 
 		logger.info("[syncAccount] Starting sync", {

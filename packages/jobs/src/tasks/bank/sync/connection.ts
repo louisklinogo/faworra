@@ -3,15 +3,11 @@
  * Midday parity: fan-out pattern - sync all accounts for a connection
  * 
  * Reference: midday/packages/jobs/src/tasks/bank/sync/connection.ts
- * 
- * Adapted for Faworra:
- * - Uses Drizzle ORM instead of Supabase client (due to Better Auth choice)
- * - Mono provider instead of GoCardless/Plaid (West African market)
- * - Uses batchTriggerAndWait with staggered delays (matches Midday pattern)
  */
 
 import { syncConnectionSchema } from "./../../../schema";
-import { bankAccounts, bankConnections, eq, and, db } from "@faworra-new/db";
+import { bankAccounts, bankConnections, eq, and } from "@faworra-new/db";
+import { getDb } from "./../../../init";
 import { logger, schemaTask } from "@trigger.dev/sdk";
 import { sql } from "drizzle-orm";
 import { syncAccount } from "./account";
@@ -25,6 +21,8 @@ export const syncConnection = schemaTask({
 	},
 	schema: syncConnectionSchema,
 	run: async ({ connectionId, teamId, manualSync }, { ctx }) => {
+		const db = getDb();
+		
 		logger.info("[syncConnection] Starting sync", { connectionId, teamId, manualSync });
 
 		try {
@@ -72,7 +70,7 @@ export const syncConnection = schemaTask({
 			// Delay: 30s for manual sync, 60s for background sync
 			const delaySeconds = manualSync ? 30 : 60;
 			
-			const batchItems = accounts.map((account, i) => ({
+			const batchItems = accounts.map((account: typeof accounts[0], i: number) => ({
 				payload: {
 					id: account.id,
 					teamId: account.teamId,

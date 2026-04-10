@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "exports": {
+    ".": "./src/index.ts",
+    "./init": "./src/init.ts",
     "./schema": "./src/schema.ts",
     "./tasks/bank/sync/connection": "./src/tasks/bank/sync/connection.ts",
     "./tasks/bank/sync/account": "./src/tasks/bank/sync/account.ts"
