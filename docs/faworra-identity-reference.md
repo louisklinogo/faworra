@@ -99,18 +99,24 @@ The product especially matters for founders who experience:
 
 ### Business types
 
-The prompt is explicit that Faworra is not for just one niche forever.
+**Phase 1: Fashion focus.**
 
-It starts with a strong proof point in **tailoring**, but the product is intended to generalize across industries such as:
+Faworra starts with a strong proof point in **fashion** — tailoring, alterations, and apparel businesses.
 
-- tailoring,
-- food,
+This is not a permanent niche. But the product will not generalize until fashion is validated:
+- measurements workflow,
+- order lifecycle,
+- fitting appointments,
+- fabric/material tracking,
+- client relationship patterns for this industry.
+
+**Phase 2+ expansion** will add:
+- food/restaurants,
 - retail,
-- beauty,
-- services,
-- and similar SME categories.
+- beauty/salons,
+- other service businesses.
 
-It generalizes through **industry configuration**, not through a bland one-size-fits-all product.
+Industry configuration infrastructure will be built after 2-3 industries are validated deeply — not before.
 
 ---
 
@@ -423,11 +429,18 @@ That should influence:
 
 ## Industry configuration is a core product principle
 
-Faworra is not a hard-coded tailoring app.
+Faworra is not a hard-coded tailoring app forever.
 
-Tailoring is the first validated template, but the actual model is:
+But **Phase 1 is fashion-optimized**. The product ships with:
+- measurements storage and UI,
+- fabric/material tracking,
+- fitting appointments,
+- fashion-specific order fields.
 
-- business selects an industry during onboarding,
+Industry configuration as a structural capability is **deferred to Phase 2**.
+
+When the product validates across 2-3 industries (fashion, then likely beauty or food), the configuration layer will be extracted:
+- business selects industry during onboarding,
 - Faworra configures labels,
 - workflows adjust,
 - categories adjust,
@@ -436,9 +449,7 @@ Tailoring is the first validated template, but the actual model is:
 - communication scripts adjust,
 - KPIs and summaries adjust.
 
-Industry configuration is not cosmetic. It is a structural product capability.
-
-If a future feature cannot adapt through this model, it may be too rigid for Faworra.
+Industry configuration will not be cosmetic. It will be a structural product capability — but built after real validation, not before.
 
 ---
 
@@ -638,9 +649,9 @@ If you only remember a few things, remember these:
 1. **Faworra is a Business OS for SMEs, not a single-purpose tool.**
 2. **It starts from Midday's architecture and extends it.**
 3. **It is built first for Ghana and West Africa.**
-4. **Finance matters, but communications, operations, documents, and memory matter too.**
-5. **AI is meant to operate with context and policy, not just chat.**
-6. **Industry configuration is a structural requirement.**
+4. **Phase 1 focus: Fashion (tailoring, alterations). Industry config comes later.**
+5. **Finance matters, but communications, operations, documents, and memory matter too.**
+6. **AI is meant to operate with context and policy, not just chat.**
 7. **The product's job is to reduce cognitive load and move business work forward.**
 
 If a proposed feature or implementation helps the system do those things, it is probably on-strategy.
