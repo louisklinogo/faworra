@@ -26,7 +26,6 @@ export function InputColor({
 	return (
 		<div className="relative">
 			<ColorPicker
-				value={color ?? ""}
 				onSelect={(newColor) => {
 					setColor(newColor);
 
@@ -37,17 +36,15 @@ export function InputColor({
 						});
 					}
 				}}
+				value={color ?? ""}
 			/>
 
 			<Input
-				placeholder={placeholder}
-				autoComplete="off"
 				autoCapitalize="none"
-				autoFocus={autoFocus}
+				autoComplete="off"
 				autoCorrect="off"
-				spellCheck="false"
+				autoFocus={autoFocus}
 				className="pl-7"
-				value={value}
 				onChange={(evt) => {
 					const newName = evt.target.value;
 					const newColor = getColorFromName(newName);
@@ -62,6 +59,9 @@ export function InputColor({
 						});
 					}
 				}}
+				placeholder={placeholder}
+				spellCheck="false"
+				value={value}
 			/>
 		</div>
 	);

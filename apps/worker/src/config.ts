@@ -12,12 +12,12 @@ export { QUEUE_NAMES };
 // ─── Redis Connection Config ────────────────────────────────────────────────
 
 export interface RedisConfig {
-	host: string;
-	port: number;
-	password?: string;
-	tls?: { [key: string]: unknown };
-	maxRetriesPerRequest: number | null;
 	enableReadyCheck: boolean;
+	host: string;
+	maxRetriesPerRequest: number | null;
+	password?: string;
+	port: number;
+	tls?: { [key: string]: unknown };
 }
 
 /**
@@ -34,9 +34,9 @@ export function getWorkerRedisConfig(): RedisConfig {
 			enableReadyCheck: false,
 		};
 	}
-	
+
 	const url = new URL(env.REDIS_QUEUE_URL);
-	
+
 	return {
 		host: url.hostname,
 		port: Number(url.port) || 6379,
@@ -80,7 +80,11 @@ export interface QueueConfig {
 	processors: Record<string, ProcessorFunction>;
 }
 
-export type ProcessorFunction = (job: { id: string; name: string; data: unknown }) => Promise<unknown>;
+export type ProcessorFunction = (job: {
+	id: string;
+	name: string;
+	data: unknown;
+}) => Promise<unknown>;
 
 // ─── Health Check Config ─────────────────────────────────────────────────────
 

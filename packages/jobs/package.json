@@ -10,17 +10,23 @@
     "./tasks/bank/sync/account": "./src/tasks/bank/sync/account.ts"
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "dev": "trigger dev",
+    "deploy": "trigger deploy"
   },
   "dependencies": {
     "@faworra-new/banking": "workspace:*",
     "@faworra-new/db": "workspace:*",
+    "@faworra-new/supabase": "workspace:*",
+    "dotenv": "catalog:",
     "@trigger.dev/sdk": "4.4.3",
     "drizzle-orm": "catalog:",
+    "trigger.dev": "4.4.3",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@faworra-new/config": "workspace:*",
+    "@supabase/supabase-js": "^2.103.0",
     "typescript": "catalog:"
   }
 }

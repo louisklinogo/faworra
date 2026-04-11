@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@faworra-new/ui/components/button";
-import { cn } from "@faworra-new/ui/lib/utils";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -14,6 +13,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@faworra-new/ui/components/tooltip";
+import { cn } from "@faworra-new/ui/lib/utils";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -21,10 +21,10 @@ import type { Dispatch, SetStateAction } from "react";
 
 export interface CategoriesTableMeta {
 	deleteCategory: (id: string) => void;
-	onEdit: (id: string) => void;
 	expandedCategories: Set<string>;
-	setExpandedCategories: Dispatch<SetStateAction<Set<string>>>;
+	onEdit: (id: string) => void;
 	searchValue?: string;
+	setExpandedCategories: Dispatch<SetStateAction<Set<string>>>;
 	setSearchValue?: Dispatch<SetStateAction<string>>;
 }
 
@@ -61,7 +61,9 @@ function shouldShowCategoryTooltip(category: Category): boolean {
 
 // Get tax type display label
 function getTaxTypeLabel(taxType: string | null): string {
-	if (!taxType) return "-";
+	if (!taxType) {
+		return "-";
+	}
 
 	const labels: Record<string, string> = {
 		vat: "VAT",
@@ -119,7 +121,9 @@ export const columns: ColumnDef<Category>[] = [
 			const isChild = row.original.isChild;
 
 			const toggleExpanded = () => {
-				if (!setTableExpandedCategories) return;
+				if (!setTableExpandedCategories) {
+					return;
+				}
 
 				const newExpanded = new Set(tableExpandedCategories);
 				if (isExpanded) {
@@ -131,16 +135,16 @@ export const columns: ColumnDef<Category>[] = [
 			};
 
 			return (
-				<div className={cn("flex space-x-2 items-center", isChild && "ml-10")}>
+				<div className={cn("flex items-center space-x-2", isChild && "ml-10")}>
 					{hasChildren && !isChild && (
 						<Button
-							variant="ghost"
-							size="sm"
 							className="h-4 w-4 p-0 hover:bg-transparent"
 							onClick={(e) => {
 								e.stopPropagation();
 								toggleExpanded();
 							}}
+							size="sm"
+							variant="ghost"
 						>
 							{isExpanded ? (
 								<ChevronDown className="h-3 w-3" />
@@ -149,7 +153,7 @@ export const columns: ColumnDef<Category>[] = [
 							)}
 						</Button>
 					)}
-					{!hasChildren && !isChild && <div className="w-4" />}
+					{!(hasChildren || isChild) && <div className="w-4" />}
 					<div
 						className="size-3 rounded-full bg-muted"
 						style={{
@@ -164,7 +168,7 @@ export const columns: ColumnDef<Category>[] = [
 										className={cn(
 											hasChildren && !isChild
 												? "cursor-pointer"
-												: "cursor-default",
+												: "cursor-default"
 										)}
 										onClick={
 											hasChildren && !isChild
@@ -190,7 +194,7 @@ export const columns: ColumnDef<Category>[] = [
 					) : (
 						<span
 							className={cn(
-								hasChildren && !isChild ? "cursor-pointer" : "cursor-default",
+								hasChildren && !isChild ? "cursor-pointer" : "cursor-default"
 							)}
 							onClick={
 								hasChildren && !isChild
@@ -207,7 +211,7 @@ export const columns: ColumnDef<Category>[] = [
 
 					{row.original.system && (
 						<div className="pl-2">
-							<span className="rounded-full border border-border py-1 px-2 text-[10px] text-muted-foreground font-mono">
+							<span className="rounded-full border border-border px-2 py-1 font-mono text-[10px] text-muted-foreground">
 								System
 							</span>
 						</div>
@@ -243,9 +247,9 @@ export const columns: ColumnDef<Category>[] = [
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
-								variant="ghost"
 								className="h-8 w-8 p-0"
 								onClick={(e) => e.stopPropagation()}
+								variant="ghost"
 							>
 								<DotsHorizontalIcon className="h-4 w-4" />
 							</Button>

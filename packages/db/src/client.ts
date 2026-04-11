@@ -1,6 +1,9 @@
 import { env } from "@faworra-new/env/server";
 import type { ExtractTablesWithRelations } from "drizzle-orm";
-import type { NodePgDatabase, NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import type {
+	NodePgDatabase,
+	NodePgQueryResultHKT,
+} from "drizzle-orm/node-postgres";
 import { drizzle } from "drizzle-orm/node-postgres";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import { Pool } from "pg";
@@ -39,6 +42,8 @@ export type DatabaseOrTransaction = Database | TransactionClient;
  * Create a job-specific database connection
  * Midday parity: creates fresh connection per job run for optimal pooling
  * Reference: midday/packages/supabase/src/job-client.ts
+ *
+ * Use this for document processing tasks (not banking - banking uses Supabase client)
  */
 export const createJobDb = () => {
 	const jobPool = new Pool({
@@ -59,24 +64,3 @@ export const createJobDb = () => {
 		disconnect: () => jobPool.end(),
 	};
 };
-
-/**
- * Create a job-specific database connection
- * Midday parity: creates fresh connection per job run for optimal pooling
- * Used by packages/jobs/src/init.ts middleware
- */
-export function createJobDb() {
-	// Create a dedicated pool for this job run
-	// In production, this would use Supabase session pooler
-	const jobPool = new Pool({
-		connectionString: env.DATABASE_URL,
-		max: 2, // Minimal for job execution
-		idleTimeoutMillis: 10_000,
-		connectionTimeoutMillis: 5000,
-	});
-
-	return drizzle(jobPool, {
-		schema,
-		casing: "snake_case",
-	});
-}

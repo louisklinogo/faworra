@@ -1,8 +1,8 @@
-import { Pool } from "pg";
+import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import * as schema from "../src/schema";
-import { transactionCategories, teams } from "../src/schema";
-import { eq, and } from "drizzle-orm";
+import { teams, transactionCategories } from "../src/schema";
 import "dotenv/config";
 
 const pool = new Pool({
@@ -32,14 +32,14 @@ async function main() {
 		.where(
 			and(
 				eq(transactionCategories.teamId, teamId),
-				eq(transactionCategories.system, true),
-			),
+				eq(transactionCategories.system, true)
+			)
 		)
 		.returning();
 
 	console.log(`Deleted ${deleted.length} categories`);
 	console.log(
-		"\n✓ Refresh the categories page in the app to re-seed with correct parent-child relationships.",
+		"\n✓ Refresh the categories page in the app to re-seed with correct parent-child relationships."
 	);
 
 	await pool.end();

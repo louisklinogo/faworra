@@ -54,14 +54,14 @@ export function TaxRateInput({
 	return (
 		<div className="relative">
 			<Input
-				placeholder="Tax Rate"
 				autoComplete="off"
-				value={value}
-				onChange={(e) => handleChange(e.target.value)}
-				onBlur={handleBlur}
 				className="pr-6"
+				onBlur={handleBlur}
+				onChange={(e) => handleChange(e.target.value)}
+				placeholder="Tax Rate"
+				value={value}
 			/>
-			<span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+			<span className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground text-sm">
 				%
 			</span>
 		</div>

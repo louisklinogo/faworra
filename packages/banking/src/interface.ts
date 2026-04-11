@@ -20,40 +20,6 @@ import type {
 } from "./types";
 
 export interface ProviderInterface {
-	// ─── Core Operations ──────────────────────────────────────────────────────
-
-	/**
-	 * Fetch transactions for an account
-	 */
-	getTransactions(params: GetTransactionsParams): Promise<GetTransactionsResult>;
-
-	/**
-	 * Fetch accounts for a connection
-	 */
-	getAccounts(params: GetAccountsParams): Promise<Account[]>;
-
-	/**
-	 * Fetch current balance for an account
-	 */
-	getAccountBalance(params: GetBalanceParams): Promise<Balance>;
-
-	/**
-	 * Fetch institutions for this provider
-	 */
-	getInstitutions(params?: GetInstitutionsParams): Promise<Institution[]>;
-
-	// ─── Status & Health ──────────────────────────────────────────────────────
-
-	/**
-	 * Check if the provider is operational
-	 */
-	getHealthCheck(): Promise<HealthCheckResult>;
-
-	/**
-	 * Get the connection status
-	 */
-	getConnectionStatus(params: GetConnectionStatusParams): Promise<ConnectionStatusResult>;
-
 	// ─── Cleanup ──────────────────────────────────────────────────────────────
 
 	/**
@@ -65,6 +31,43 @@ export interface ProviderInterface {
 	 * Delete the entire connection
 	 */
 	deleteConnection(params: DeleteConnectionParams): Promise<void>;
+
+	/**
+	 * Fetch current balance for an account
+	 */
+	getAccountBalance(params: GetBalanceParams): Promise<Balance>;
+
+	/**
+	 * Fetch accounts for a connection
+	 */
+	getAccounts(params: GetAccountsParams): Promise<Account[]>;
+
+	/**
+	 * Get the connection status
+	 */
+	getConnectionStatus(
+		params: GetConnectionStatusParams
+	): Promise<ConnectionStatusResult>;
+
+	// ─── Status & Health ──────────────────────────────────────────────────────
+
+	/**
+	 * Check if the provider is operational
+	 */
+	getHealthCheck(): Promise<HealthCheckResult>;
+
+	/**
+	 * Fetch institutions for this provider
+	 */
+	getInstitutions(params?: GetInstitutionsParams): Promise<Institution[]>;
+	// ─── Core Operations ──────────────────────────────────────────────────────
+
+	/**
+	 * Fetch transactions for an account
+	 */
+	getTransactions(
+		params: GetTransactionsParams
+	): Promise<GetTransactionsResult>;
 }
 
 // ─── Provider Methods (for ProviderInterface) ───────────────────────────────
@@ -79,7 +82,7 @@ export type DeleteParams = DeleteAccountsParams | DeleteConnectionParams;
 // ─── Aggregated Institutions Result ──────────────────────────────────────────
 
 export interface FetchAllInstitutionsResult {
-	institutions: Institution[];
 	errors: Array<{ provider: string; error: string }>;
+	institutions: Institution[];
 	succeededProviders: string[];
 }

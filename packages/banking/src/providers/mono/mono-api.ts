@@ -1,19 +1,16 @@
 /**
  * Mono API client
  * Midday parity: implements real API calls to Mono
- * 
+ *
  * Reference: docs/mono/financial-data/*.md
  * API docs: https://mono.co/docs
  */
 
-import type {
-	MonoAccountResponse,
-	MonoTransactionResponse,
-} from "../../types";
+import type { MonoAccountResponse, MonoTransactionResponse } from "../../types";
 
 export interface MonoApiConfig {
-	secretKey?: string;
 	baseUrl?: string;
+	secretKey?: string;
 }
 
 const DEFAULT_BASE_URL = "https://api.withmono.com";
@@ -51,7 +48,7 @@ export class MonoApi {
 			body: body ? JSON.stringify(body) : undefined,
 		});
 
-		const data = await response.json() as T;
+		const data = (await response.json()) as T;
 
 		if (!response.ok) {
 			throw new Error(
@@ -67,7 +64,7 @@ export class MonoApi {
 	/**
 	 * Initiate account linking
 	 * POST /v2/accounts/initiate
-	 * 
+	 *
 	 * Mono docs reference: docs/mono/financial-data/connect-link.md
 	 */
 	async initiateLinking(params: {
@@ -105,18 +102,22 @@ export class MonoApi {
 	 * Get institutions list
 	 * GET /v2/institutions
 	 */
-	async getInstitutions(): Promise<Array<{
-		id: string;
-		name: string;
-		type: string;
-		countries: string[];
-	}>> {
-		return this.request<Array<{
+	async getInstitutions(): Promise<
+		Array<{
 			id: string;
 			name: string;
 			type: string;
 			countries: string[];
-		}>>("/v2/institutions");
+		}>
+	> {
+		return this.request<
+			Array<{
+				id: string;
+				name: string;
+				type: string;
+				countries: string[];
+			}>
+		>("/v2/institutions");
 	}
 
 	// ─── Transactions ──────────────────────────────────────────────────────────
@@ -138,11 +139,19 @@ export class MonoApi {
 		paging: { total: number; page: number; next?: string };
 	}> {
 		const searchParams = new URLSearchParams();
-		if (params?.from) searchParams.set("from", params.from);
-		if (params?.to) searchParams.set("to", params.to);
-		if (params?.limit) searchParams.set("limit", String(params.limit));
-		if (params?.offset) searchParams.set("offset", String(params.offset));
-		
+		if (params?.from) {
+			searchParams.set("from", params.from);
+		}
+		if (params?.to) {
+			searchParams.set("to", params.to);
+		}
+		if (params?.limit) {
+			searchParams.set("limit", String(params.limit));
+		}
+		if (params?.offset) {
+			searchParams.set("offset", String(params.offset));
+		}
+
 		const query = searchParams.toString();
 		return this.request<{
 			data: MonoTransactionResponse[];
@@ -157,8 +166,11 @@ export class MonoApi {
 	 * POST /v2/accounts/{id}/refresh
 	 */
 	async refreshAccount(accountId: string): Promise<{ status: string }> {
-		return this.request<{ status: string }>(`/v2/accounts/${accountId}/refresh`, {
-			method: "POST",
-		});
+		return this.request<{ status: string }>(
+			`/v2/accounts/${accountId}/refresh`,
+			{
+				method: "POST",
+			}
+		);
 	}
 }

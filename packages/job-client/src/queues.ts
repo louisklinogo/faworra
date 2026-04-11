@@ -1,12 +1,12 @@
 /**
  * BullMQ Queue Configuration
  * Midday parity: centralized queue creation with Redis connection handling
- * 
+ *
  * Reference: midday-wiki/content/Advanced Topics/Background Jobs & Queue Processing.md
  */
 
-import { Queue, type ConnectionOptions } from "bullmq";
 import { env } from "@faworra-new/env/server";
+import { type ConnectionOptions, Queue } from "bullmq";
 
 // ─── Redis Connection Options ────────────────────────────────────────────────
 
@@ -16,7 +16,7 @@ import { env } from "@faworra-new/env/server";
  */
 function parseRedisUrl(url: string): ConnectionOptions {
 	const parsed = new URL(url);
-	
+
 	return {
 		host: parsed.hostname,
 		port: Number(parsed.port) || 6379,
@@ -37,7 +37,7 @@ export function getRedisConnection(): ConnectionOptions {
 	if (env.REDIS_QUEUE_URL) {
 		return parseRedisUrl(env.REDIS_QUEUE_URL);
 	}
-	
+
 	// Development fallback
 	console.warn("[job-client] REDIS_QUEUE_URL not set, using localhost Redis");
 	return {
@@ -81,19 +81,19 @@ export function getQueue(name: string): Queue {
 	if (queueCache.has(name)) {
 		return queueCache.get(name)!;
 	}
-	
+
 	const connection = getRedisConnection();
-	
+
 	const queue = new Queue(name, {
 		connection,
 		defaultJobOptions: DEFAULT_JOB_OPTIONS,
 	});
-	
+
 	// Global error listener to prevent unhandled exceptions
 	queue.on("error", (err) => {
 		console.error(`[job-client] Queue ${name} error:`, err);
 	});
-	
+
 	queueCache.set(name, queue);
 	return queue;
 }
@@ -125,9 +125,9 @@ export function parseCompositeJobId(compositeId: string): {
 		console.error(`[job-client] Invalid composite job ID: ${compositeId}`);
 		return null;
 	}
-	
+
 	const [queueName, jobName, uniqueId] = parts;
-	
+
 	// We know these are defined due to the length check, but TypeScript doesn't
 	return {
 		queueName: queueName ?? "",
@@ -142,15 +142,15 @@ export const QUEUE_NAMES = {
 	// Banking operations
 	BANK_SYNC: "bank-sync",
 	DATA_AVAILABLE: "data-available",
-	
+
 	// Document processing
 	DOCUMENTS: "documents",
-	
+
 	// Notifications
 	NOTIFICATIONS: "notifications",
-	
+
 	// Scheduled jobs
 	SCHEDULED: "scheduled-jobs",
 } as const;
 
-export type QueueName = typeof QUEUE_NAMES[keyof typeof QUEUE_NAMES];
+export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];

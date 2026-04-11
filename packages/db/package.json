@@ -4,9 +4,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
-    "./job-client": "./src/job-client.ts",
     "./queries": "./src/queries/index.ts",
     "./queries/bank-accounts": "./src/queries/bank-accounts.ts",
+    "./queries/bank-connections": "./src/queries/bank-connections.ts",
     "./queries/overview": "./src/queries/overview.ts",
     "./queries/team": "./src/queries/team.ts",
     "./queries/transaction-attachments": "./src/queries/transaction-attachments.ts",

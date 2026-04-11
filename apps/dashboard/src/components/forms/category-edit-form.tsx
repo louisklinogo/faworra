@@ -1,6 +1,5 @@
 "use client";
 
-import type { RouterOutputs } from "@/utils/trpc";
 import {
 	Form,
 	FormControl,
@@ -24,6 +23,7 @@ import { useCategoryParams } from "@/hooks/use-category-params";
 import { useInvalidateTransactionQueries } from "@/hooks/use-invalidate-transaction-queries";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { useTRPC } from "@/trpc/client";
+import type { RouterOutputs } from "@/utils/trpc";
 
 const formSchema = z.object({
 	id: z.string().uuid(),
@@ -57,7 +57,7 @@ export function CategoryEditForm({ data }: Props) {
 		taxRate: data?.taxRate ?? undefined,
 		taxType: data?.taxType || "",
 		taxReportingCode: data?.taxReportingCode || "",
-		excluded: data?.excluded || false,
+		excluded: data?.excluded,
 		parentId: data?.parentId || undefined,
 	};
 
@@ -87,7 +87,7 @@ export function CategoryEditForm({ data }: Props) {
 
 				setParams(null);
 			},
-		}),
+		})
 	);
 
 	function onSubmit(values: UpdateCategoriesFormValues) {
@@ -137,19 +137,19 @@ export function CategoryEditForm({ data }: Props) {
 							name="name"
 							render={({ field }) => (
 								<FormItem className="space-y-1">
-									<FormLabel className="text-xs font-normal text-[#878787]">
+									<FormLabel className="font-normal text-[#878787] text-xs">
 										Name
 									</FormLabel>
 									<FormControl>
 										<InputColor
 											autoFocus
-											placeholder="Name"
+											defaultColor={form.watch("color") ?? undefined}
+											defaultValue={field.value}
 											onChange={({ name, color }) => {
 												field.onChange(name);
 												form.setValue("color", color);
 											}}
-											defaultValue={field.value}
-											defaultColor={form.watch("color") ?? undefined}
+											placeholder="Name"
 										/>
 									</FormControl>
 									<FormMessage />
@@ -165,23 +165,23 @@ export function CategoryEditForm({ data }: Props) {
 
 								return (
 									<FormItem className="space-y-1">
-										<FormLabel className="text-xs font-normal text-[#878787]">
+										<FormLabel className="font-normal text-[#878787] text-xs">
 											Parent Category (Optional)
 										</FormLabel>
 										<FormControl>
 											{hasChildren ? (
 												<div className="flex items-center space-x-2 border border-border bg-muted/50 p-3 py-2">
-													<span className="text-sm text-muted-foreground">
+													<span className="text-muted-foreground text-sm">
 														Cannot change parent - this category has children
 													</span>
 												</div>
 											) : (
 												<SelectParentCategory
-													parentId={field.value}
+													excludeIds={data?.id ? [data.id] : []}
 													onChange={(parent) => {
 														field.onChange(parent?.id ?? undefined);
 													}}
-													excludeIds={data?.id ? [data.id] : []}
+													parentId={field.value}
 												/>
 											)}
 										</FormControl>
@@ -195,7 +195,7 @@ export function CategoryEditForm({ data }: Props) {
 							name="description"
 							render={({ field }) => (
 								<FormItem className="space-y-1">
-									<FormLabel className="text-xs font-normal text-[#878787]">
+									<FormLabel className="font-normal text-[#878787] text-xs">
 										Description
 									</FormLabel>
 									<FormControl>
@@ -215,7 +215,7 @@ export function CategoryEditForm({ data }: Props) {
 							name="taxReportingCode"
 							render={({ field }) => (
 								<FormItem className="space-y-1">
-									<FormLabel className="text-xs font-normal text-[#878787]">
+									<FormLabel className="font-normal text-[#878787] text-xs">
 										Report Code
 									</FormLabel>
 									<FormControl>
@@ -226,7 +226,7 @@ export function CategoryEditForm({ data }: Props) {
 											value={field.value || ""}
 										/>
 									</FormControl>
-									<p className="pt-1 text-xs text-muted-foreground">
+									<p className="pt-1 text-muted-foreground text-xs">
 										Maps to account codes when exporting to accounting software
 									</p>
 								</FormItem>
@@ -241,15 +241,15 @@ export function CategoryEditForm({ data }: Props) {
 								name="taxType"
 								render={({ field }) => (
 									<FormItem className="w-[300px] space-y-1">
-										<FormLabel className="text-xs font-normal text-[#878787]">
+										<FormLabel className="font-normal text-[#878787] text-xs">
 											Tax Type
 										</FormLabel>
 										<FormControl>
 											<SelectTaxType
-												value={field.value ?? ""}
 												onChange={(value) => {
 													field.onChange(value);
 												}}
+												value={field.value ?? ""}
 											/>
 										</FormControl>
 									</FormItem>
@@ -261,14 +261,13 @@ export function CategoryEditForm({ data }: Props) {
 								name="taxRate"
 								render={({ field }) => (
 									<FormItem className="flex-1 space-y-1">
-										<FormLabel className="text-xs font-normal text-[#878787]">
+										<FormLabel className="font-normal text-[#878787] text-xs">
 											Tax Rate
 										</FormLabel>
 										<FormControl>
 											<TaxRateInput
-												value={field.value}
-												name={form.watch("name") ?? ""}
 												isNewProduct={false}
+												name={form.watch("name") ?? ""}
 												onChange={(value: string) => {
 													field.onChange(value ? Number(value) : undefined);
 												}}
@@ -277,6 +276,7 @@ export function CategoryEditForm({ data }: Props) {
 														field.onChange(taxRate);
 													}
 												}}
+												value={field.value}
 											/>
 										</FormControl>
 									</FormItem>
@@ -285,10 +285,10 @@ export function CategoryEditForm({ data }: Props) {
 						</div>
 
 						<div className="relative mt-2 flex gap-2">
-							<span className="flex-1 text-xs text-muted-foreground">
+							<span className="flex-1 text-muted-foreground text-xs">
 								{
 									taxTypes.find(
-										(taxType) => taxType.value === form.watch("taxType"),
+										(taxType) => taxType.value === form.watch("taxType")
 									)?.description
 								}
 							</span>
@@ -303,10 +303,10 @@ export function CategoryEditForm({ data }: Props) {
 								<div className="mt-2 border border-border p-3 pt-1.5">
 									<div className="flex items-center justify-between space-x-2">
 										<div className="space-y-0.5">
-											<FormLabel className="text-xs font-normal text-[#878787]">
+											<FormLabel className="font-normal text-[#878787] text-xs">
 												Exclude from reports
 											</FormLabel>
-											<div className="text-xs text-muted-foreground">
+											<div className="text-muted-foreground text-xs">
 												Transactions in this category won't appear in financial
 												reports
 											</div>

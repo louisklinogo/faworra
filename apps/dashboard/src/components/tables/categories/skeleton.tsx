@@ -28,8 +28,8 @@ export function CategoriesSkeleton() {
 				<TableBody>
 					{[...Array(15)].map((_, index) => (
 						<TableRow
-							key={index.toString()}
 							className="h-[49px] hover:bg-transparent"
+							key={index.toString()}
 						>
 							<TableCell className="w-[50px]">
 								<Skeleton className="size-4 rounded-md" />

@@ -8,7 +8,11 @@ type CategoryIconProps = {
 	size?: number;
 };
 
-export function CategoryColor({ color, className, size = 12 }: CategoryIconProps) {
+export function CategoryColor({
+	color,
+	className,
+	size = 12,
+}: CategoryIconProps) {
 	return (
 		<div
 			className={cn("flex-shrink-0", className)}
@@ -31,8 +35,8 @@ export function Category({ name, color, className }: Props) {
 	return (
 		<div
 			className={cn(
-				"flex items-center space-x-2 min-w-0 overflow-hidden",
-				className,
+				"flex min-w-0 items-center space-x-2 overflow-hidden",
+				className
 			)}
 		>
 			<CategoryColor color={color} />

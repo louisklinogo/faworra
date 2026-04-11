@@ -51,8 +51,8 @@ export function CategoryEditSheet() {
 
 					return pages.find((d) => d?.id === categoryId);
 				},
-			},
-		),
+			}
+		)
 	);
 
 	const deleteCategoryMutation = useMutation(
@@ -63,7 +63,7 @@ export function CategoryEditSheet() {
 				});
 				setParams(null);
 			},
-		}),
+		})
 	);
 
 	return (

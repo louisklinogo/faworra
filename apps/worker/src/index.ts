@@ -1,14 +1,14 @@
 /**
  * Worker Runtime - BullMQ Job Processor
  * Midday parity: registry-driven processor model
- * 
+ *
  * Reference: midday-wiki/content/Core Applications/Worker Application/Worker Application.md
  */
 
-import type { Job } from "bullmq";
-import { Hono } from "hono";
-import { Worker as BullMQWorker } from "bullmq";
 import { db } from "@faworra-new/db";
+import type { Job } from "bullmq";
+import { Worker as BullMQWorker } from "bullmq";
+import { Hono } from "hono";
 import {
 	getWorkerRedisConfig,
 	type ProcessorFunction,
@@ -26,7 +26,10 @@ const processorRegistry = new Map<string, ProcessorFunction>();
 /**
  * Register a processor for a job name
  */
-export function registerProcessor(jobName: string, processor: ProcessorFunction) {
+export function registerProcessor(
+	jobName: string,
+	processor: ProcessorFunction
+) {
 	processorRegistry.set(jobName, processor);
 	console.log(`[worker] Registered processor for: ${jobName}`);
 }
@@ -45,7 +48,10 @@ export function getProcessor(jobName: string): ProcessorFunction | undefined {
  * Used for Phase 1 until real processors are implemented
  */
 const stubProcessor: ProcessorFunction = async (job) => {
-	console.log(`[worker] Processing job: ${job.name}`, { id: job.id, data: job.data });
+	console.log(`[worker] Processing job: ${job.name}`, {
+		id: job.id,
+		data: job.data,
+	});
 	return {
 		status: "pending",
 		message: "Phase 1 stub - processor not implemented",
@@ -66,25 +72,25 @@ const workers: BullMQWorker[] = [];
  */
 function createWorker(queueName: string): BullMQWorker {
 	const connection = getWorkerRedisConfig();
-	
+
 	console.log(`[worker] Creating worker for queue: ${queueName}`);
-	
+
 	const worker = new BullMQWorker(
 		queueName,
 		async (job: Job) => {
 			const processor = getProcessor(job.name);
-			
+
 			if (!processor) {
 				console.error(`[worker] No processor for job: ${job.name}`);
 				throw new Error(`No processor registered for: ${job.name}`);
 			}
-			
+
 			console.log(`[worker] Executing: ${job.name}`, {
 				id: job.id,
 				attemptsMade: job.attemptsMade,
 				data: job.data,
 			});
-			
+
 			const jobId = job.id ?? `unknown-${Date.now()}`;
 			return processor({ id: jobId, name: job.name, data: job.data });
 		},
@@ -93,25 +99,25 @@ function createWorker(queueName: string): BullMQWorker {
 			autorun: true,
 		}
 	);
-	
+
 	// Event handlers
 	worker.on("completed", (job: Job, result: unknown) => {
 		console.log(`[worker] Job completed: ${job.name}`, { id: job.id, result });
 	});
-	
+
 	worker.on("failed", (job: Job | undefined, err: Error) => {
-		console.error(`[worker] Job failed:`, {
+		console.error("[worker] Job failed:", {
 			name: job?.name,
 			id: job?.id,
 			attemptsMade: job?.attemptsMade,
 			error: err.message,
 		});
 	});
-	
+
 	worker.on("error", (err: Error) => {
-		console.error(`[worker] Worker error:`, err);
+		console.error("[worker] Worker error:", err);
 	});
-	
+
 	return worker;
 }
 
@@ -146,11 +152,13 @@ healthApp.get("/info", (c) => {
 let isShuttingDown = false;
 
 async function gracefulShutdown() {
-	if (isShuttingDown) return;
+	if (isShuttingDown) {
+		return;
+	}
 	isShuttingDown = true;
-	
+
 	console.log("[worker] Initiating graceful shutdown...");
-	
+
 	// Close workers
 	await Promise.all(
 		workers.map(async (worker) => {
@@ -158,7 +166,7 @@ async function gracefulShutdown() {
 			await worker.close();
 		})
 	);
-	
+
 	console.log("[worker] All workers closed");
 	process.exit(0);
 }
@@ -170,29 +178,26 @@ process.on("SIGTERM", gracefulShutdown);
 
 async function main() {
 	console.log("[worker] Starting Faworra Worker...");
-	
+
 	// Create workers for each queue
-	const queues = [
-		QUEUE_NAMES.BANK_SYNC,
-		QUEUE_NAMES.DOCUMENTS,
-	];
-	
+	const queues = [QUEUE_NAMES.BANK_SYNC, QUEUE_NAMES.DOCUMENTS];
+
 	for (const queueName of queues) {
 		const worker = createWorker(queueName);
 		workers.push(worker);
 	}
-	
+
 	console.log(`[worker] ${workers.length} workers initialized`);
-	
+
 	// Start health check server
 	const port = Number(process.env.WORKER_PORT) || 3002;
 	console.log(`[worker] Health server listening on port ${port}`);
-	
+
 	Bun.serve({
 		port,
 		fetch: healthApp.fetch,
 	});
-	
+
 	console.log("[worker] Ready to process jobs");
 }
 

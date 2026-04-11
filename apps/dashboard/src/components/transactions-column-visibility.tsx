@@ -32,7 +32,10 @@ export function TransactionsColumnVisibility() {
 			</PopoverTrigger>
 
 			<PopoverContent align="end" className="w-[200px] p-0" sideOffset={8}>
-				<div className="flex max-h-[352px] flex-col space-y-2 overflow-auto p-4" key={visibilityKey}>
+				<div
+					className="flex max-h-[352px] flex-col space-y-2 overflow-auto p-4"
+					key={visibilityKey}
+				>
 					{columns
 						.filter((column) => column.columnDef.enableHiding !== false)
 						.map((column) => {

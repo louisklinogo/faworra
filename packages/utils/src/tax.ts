@@ -177,10 +177,10 @@ export function calculateTaxAmount(amount: number, taxRate: number): number {
  */
 export function calculateTaxAmountFromGross(
 	grossAmount: number,
-	taxRate: number,
+	taxRate: number
 ): number {
 	return Math.abs(
-		Math.round(grossAmount * (taxRate / (100 + taxRate)) * 100) / 100,
+		Math.round(grossAmount * (taxRate / (100 + taxRate)) * 100) / 100
 	);
 }
 
@@ -214,7 +214,7 @@ export function calculateBaseTaxAmount(params: {
 
 	if (taxRate != null) {
 		return Math.abs(
-			Math.round(baseAmount * (taxRate / (100 + taxRate)) * 100) / 100,
+			Math.round(baseAmount * (taxRate / (100 + taxRate)) * 100) / 100
 		);
 	}
 
@@ -236,11 +236,15 @@ export function calculateBaseTaxAmount(params: {
  */
 export function calculateTaxRateFromGross(
 	grossAmount: number,
-	taxAmount: number,
+	taxAmount: number
 ): number {
-	if (grossAmount === 0 || taxAmount === 0) return 0;
+	if (grossAmount === 0 || taxAmount === 0) {
+		return 0;
+	}
 	const netAmount = Math.abs(grossAmount) - taxAmount;
-	if (netAmount <= 0) return 0; // Prevent division by zero or negative
+	if (netAmount <= 0) {
+		return 0; // Prevent division by zero or negative
+	}
 	return Math.round((taxAmount / netAmount) * 100 * 100) / 100;
 }
 
@@ -255,7 +259,9 @@ export function calculateTaxRateFromGross(
  * @returns The calculated tax rate as a percentage rounded to 2 decimal places (always positive)
  */
 export function calculateTaxRate(amount: number, taxAmount: number): number {
-	if (amount === 0) return 0;
+	if (amount === 0) {
+		return 0;
+	}
 	return Math.round((taxAmount / Math.abs(amount)) * 100 * 100) / 100;
 }
 
@@ -302,7 +308,10 @@ export function resolveTaxValues(params: {
 	} else if (transactionTaxRate !== null && transactionTaxRate !== undefined) {
 		// Percentage mode - calculate from transaction's rate
 		taxRate = transactionTaxRate;
-		taxAmount = calculateTaxAmountFromGross(transactionAmount, transactionTaxRate);
+		taxAmount = calculateTaxAmountFromGross(
+			transactionAmount,
+			transactionTaxRate
+		);
 	} else if (categoryTaxRate !== null && categoryTaxRate !== undefined) {
 		// Inherited from category - calculate from category's rate
 		taxRate = categoryTaxRate;

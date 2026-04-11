@@ -1,0 +1,68 @@
+# Trigger.dev .env Loading Issue — Resolved
+
+## Status
+Fixed. `trigger dev` loads the project ref correctly; use `"dev": "trigger dev"` in `packages/jobs/package.json` (Midday parity).
+
+## Root Cause
+The Trigger.dev CLI merges `.env` for its own options but does **not** put those variables into `process.env` before Jiti evaluates `trigger.config.ts`. The line `project: process.env.TRIGGER_PROJECT_ID` therefore saw `undefined`, which surfaced as `Project not found: undefined`. The `--env-file .env` flag did not change that, because it only feeds the CLI merged env, not `process.env` at config evaluation time.
+
+The `dev` command also reads `TRIGGER_PROJECT_REF` for CLI overrides; Faworra `.env` files typically only set `TRIGGER_PROJECT_ID`. That is fine once `process.env` is populated before `defineConfig` runs.
+
+## Fix (in repo)
+1. **`packages/jobs/trigger.config.ts`** — Call `dotenv.config()` with `path` next to the config file (`dirname(fileURLToPath(import.meta.url))`) and `{ quiet: true }`, **before** `defineConfig(...)`.
+2. **`packages/jobs/package.json`** — Add direct dependency `"dotenv": "catalog:"` (and `bun install`).
+
+## Goal (unchanged)
+Trigger.dev background jobs connect to Supabase (`SUPABASE_SECRET_KEY`, etc.) and sync banking data.
+
+## Test Data IDs
+- Connection: `b68b9e5a-328e-4040-b867-ade12e973914`
+- Account: `61f368ef-46c0-4539-9d0e-71dd5b13d38c`
+
+## Environment
+- Keep `packages/jobs/.env` with at least `TRIGGER_PROJECT_ID`, `TRIGGER_SECRET_KEY`, and Supabase/DB vars required by tasks.
+- Optional: set `TRIGGER_PROJECT_REF` to the same value as `TRIGGER_PROJECT_ID` if you want alignment with CLI override behavior.
+
+## Key Files
+- `packages/jobs/package.json` — `"dev": "trigger dev"`
+- `packages/jobs/trigger.config.ts` — dotenv preload + `defineConfig`
+- `packages/jobs/src/tasks/bank/sync/connection.ts` — sync task
+- `turbo.json` — `passThroughEnv` / `globalDependencies` as before
+
+## Midday Source (Reference)
+- `midday/packages/jobs/package.json` — `"dev": "trigger dev"`
+- `midday/packages/jobs/trigger.config.ts` — same `project` env pattern; Midday does not ship the dotenv preload (often works via shell/IDE/cwd). Faworra adds the preload for reliable CLI behavior.
+
+## Test Commands
+```bash
+cd packages/jobs
+bun run dev
+```
+
+With inline env (if debugging without `.env`):
+```bash
+cd packages/jobs
+TRIGGER_PROJECT_ID="proj_..." bun run dev
+```
+
+Test sync once the worker is up:
+```bash
+curl -X POST http://api.faworra.localhost:1355/test/sync-bank \
+  -H "Content-Type: application/json" \
+  -d '{"connectionId": "b68b9e5a-328e-4040-b867-ade12e973914"}'
+```
+
+## Expected Behavior
+```
+Trigger.dev (4.4.3)
+------------------------------------------------------
+Key: Version | Task | Run
+------------------------------------------------------
+○ Building local worker…
+○ Local worker ready [bun] -> VERSION
+```
+
+## Success Criteria
+1. `trigger dev` starts without errors
+2. Banking sync updates `bank_connections.last_synced_at`
+3. `bank_accounts.sync_status` moves from pending to completed

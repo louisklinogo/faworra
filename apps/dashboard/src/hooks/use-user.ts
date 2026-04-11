@@ -42,7 +42,7 @@ export function useUserMutation() {
 				// Rollback on error
 				queryClient.setQueryData(
 					trpc.user.me.queryKey(),
-					context?.previousData,
+					context?.previousData
 				);
 			},
 			onSettled: () => {
@@ -51,6 +51,6 @@ export function useUserMutation() {
 					queryKey: trpc.user.me.queryKey(),
 				});
 			},
-		}),
+		})
 	);
 }

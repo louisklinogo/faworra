@@ -24,7 +24,7 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
  */
 // biome-ignore lint/suspicious/noExplicitAny: matching Midday's generic pattern
 export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
-	queryOptions: T,
+	queryOptions: T
 ) {
 	const queryClient = getQueryClient();
 

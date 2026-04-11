@@ -1,7 +1,7 @@
 /**
  * Base processor class for BullMQ jobs
  * Midday parity: error handling, logging, idempotency
- * 
+ *
  * Reference: midday/apps/worker/src/processors/base.ts
  */
 
@@ -53,7 +53,8 @@ export abstract class BaseProcessor<TData = unknown> {
 			return result;
 		} catch (error) {
 			const duration = Date.now() - startTime;
-			const errorMessage = error instanceof Error ? error.message : "Unknown error";
+			const errorMessage =
+				error instanceof Error ? error.message : "Unknown error";
 
 			this.logger.error("Job failed", {
 				jobId: job.id,

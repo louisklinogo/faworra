@@ -1,5 +1,5 @@
-import type { Database } from "@faworra-new/db/client";
-import { createJobDb } from "@faworra-new/db/job-client";
+import type { Database } from "@faworra-new/db";
+import { createJobDb } from "@faworra-new/db";
 import { locals, tasks } from "@trigger.dev/sdk";
 
 // Store the database instance
@@ -11,14 +11,18 @@ const DbLocal = locals.create<{
 // Helper function to get the database instance from locals
 export const getDb = (): Database => {
 	const dbObj = locals.get(DbLocal);
-	if (!dbObj) throw new Error("Database not initialized in middleware");
+	if (!dbObj) {
+		throw new Error("Database not initialized in middleware");
+	}
 	return dbObj.db;
 };
 
 // Helper function to get the disconnect function from locals
 const getDisconnect = () => {
 	const dbObj = locals.get(DbLocal);
-	if (!dbObj) throw new Error("Database not initialized in middleware");
+	if (!dbObj) {
+		throw new Error("Database not initialized in middleware");
+	}
 	return dbObj.disconnect();
 };
 

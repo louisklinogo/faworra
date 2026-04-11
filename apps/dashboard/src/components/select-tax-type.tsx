@@ -47,7 +47,9 @@ export const taxTypes = [
 ];
 
 export function getTaxTypeLabel(taxType: string | null): string {
-	if (!taxType) return "-";
+	if (!taxType) {
+		return "-";
+	}
 	return taxTypes.find((type) => type.value === taxType)?.label ?? taxType;
 }
 
@@ -58,7 +60,7 @@ type Props = {
 
 export function SelectTaxType({ value, onChange }: Props) {
 	return (
-		<Select value={value} onValueChange={onChange}>
+		<Select onValueChange={onChange} value={value}>
 			<SelectTrigger>
 				<SelectValue placeholder="Select a tax type" />
 			</SelectTrigger>

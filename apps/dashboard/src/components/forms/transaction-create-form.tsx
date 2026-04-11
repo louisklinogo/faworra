@@ -21,9 +21,9 @@ import {
 } from "@faworra-new/ui/components/form";
 import { Input } from "@faworra-new/ui/components/input";
 import { Label } from "@faworra-new/ui/components/label";
+import { SubmitButton } from "@faworra-new/ui/components/submit-button";
 import { Switch } from "@faworra-new/ui/components/switch";
 import { Textarea } from "@faworra-new/ui/components/textarea";
-import { SubmitButton } from "@faworra-new/ui/components/submit-button";
 import { cn } from "@faworra-new/ui/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatISO } from "date-fns";
@@ -481,7 +481,7 @@ export function TransactionCreateForm({
 					</AccordionItem>
 				</Accordion>
 
-				<div className="fixed bottom-8 right-8 w-full sm:max-w-[455px]">
+				<div className="fixed right-8 bottom-8 w-full sm:max-w-[455px]">
 					<SubmitButton
 						className="w-full"
 						disabled={!form.formState.isDirty}

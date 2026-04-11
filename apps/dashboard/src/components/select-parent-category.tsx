@@ -1,11 +1,11 @@
 "use client";
 
+import { ComboboxDropdown } from "@faworra-new/ui/components/combobox-dropdown";
 import { Spinner } from "@faworra-new/ui/components/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { getColorFromName } from "@/utils/categories";
 import { CategoryColor } from "./category";
-import { ComboboxDropdown } from "@faworra-new/ui/components/combobox-dropdown";
 
 type Selected = {
 	color: string;
@@ -54,14 +54,14 @@ export function SelectParentCategory({
 }: Props) {
 	const trpc = useTRPC();
 	const { data, isLoading } = useQuery(
-		trpc.transactions.categories.queryOptions(),
+		trpc.transactions.categories.queryOptions()
 	);
 
 	// Filter to only parent categories (no parentId) and exclude specified IDs
 	const parentCategories =
 		data
 			?.filter(
-				(category) => !category.parentId && !excludeIds.includes(category.id),
+				(category) => !(category.parentId || excludeIds.includes(category.id))
 			)
 			.map(transformCategory) ?? [];
 
@@ -83,10 +83,7 @@ export function SelectParentCategory({
 
 	return (
 		<ComboboxDropdown
-			placeholder="Select parent category"
-			searchPlaceholder="Search parent category"
 			items={parentCategories}
-			selectedItem={selectedValue}
 			onSelect={(item) => {
 				if (item.id === "none") {
 					onChange(null);
@@ -99,14 +96,7 @@ export function SelectParentCategory({
 					});
 				}
 			}}
-			renderSelectedItem={(selectedItem) => (
-				<div className="flex items-center space-x-2">
-					<CategoryColor color={selectedItem.color} />
-					<span className="max-w-[90%] truncate text-left font-normal">
-						{selectedItem.label}
-					</span>
-				</div>
-			)}
+			placeholder="Select parent category"
 			renderListItem={({ item }) => {
 				return (
 					<div className="flex items-center space-x-2">
@@ -115,6 +105,16 @@ export function SelectParentCategory({
 					</div>
 				);
 			}}
+			renderSelectedItem={(selectedItem) => (
+				<div className="flex items-center space-x-2">
+					<CategoryColor color={selectedItem.color} />
+					<span className="max-w-[90%] truncate text-left font-normal">
+						{selectedItem.label}
+					</span>
+				</div>
+			)}
+			searchPlaceholder="Search parent category"
+			selectedItem={selectedValue}
 		/>
 	);
 }

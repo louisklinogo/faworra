@@ -17,16 +17,16 @@ interface TransactionsState {
 	canDelete?: boolean;
 	// Clear selection for a specific tab
 	clearRowSelection: (tab: TransactionTab) => void;
-	columnVisibility: VisibilityState;
 	columns: Column<any, unknown>[];
+	columnVisibility: VisibilityState;
 	// Helper to get row selection for a specific tab
 	getRowSelection: (tab: TransactionTab) => Record<string, boolean>;
 	lastClickedIndex: number | null;
 	// Per-tab row selection
 	rowSelectionByTab: RowSelectionByTab;
 	setCanDelete: (canDelete?: boolean) => void;
-	setColumnVisibility: (visibility: VisibilityState) => void;
 	setColumns: (columns?: Column<any, unknown>[]) => void;
+	setColumnVisibility: (visibility: VisibilityState) => void;
 	setLastClickedIndex: (index: number | null) => void;
 	setRowSelection: (
 		tab: TransactionTab,

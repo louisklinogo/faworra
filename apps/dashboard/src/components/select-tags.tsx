@@ -46,7 +46,7 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 					queryKey: trpc.tags.get.queryKey(),
 				});
 			},
-		}),
+		})
 	);
 
 	const deleteTagMutation = useMutation(
@@ -56,7 +56,7 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 					queryKey: trpc.tags.get.queryKey(),
 				});
 			},
-		}),
+		})
 	);
 
 	const createTagMutation = useMutation(
@@ -64,7 +64,7 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: trpc.tags.get.queryKey() });
 			},
-		}),
+		})
 	);
 
 	const transformedTags = data
@@ -97,28 +97,32 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 		<Dialog onOpenChange={setIsOpen} open={isOpen}>
 			<div className="w-full">
 				<MultipleSelector
-					options={transformedTags ?? []}
-					value={selected}
-					placeholder="Select tags"
 					creatable
 					emptyIndicator={<p className="text-sm">No results found.</p>}
-					renderOption={(option) => (
-						<div className="flex w-full items-center justify-between group">
-							<span>{option.label}</span>
+					onChange={(options) => {
+						setSelected(options);
+						onChange?.(options);
 
-							<button
-								type="button"
-								className="text-xs opacity-0 group-hover:opacity-50"
-								onClick={(event) => {
-									event.stopPropagation();
-									setEditingTag(option);
-									setIsOpen(true);
-								}}
-							>
-								Edit
-							</button>
-						</div>
-					)}
+						const newTag = options.find(
+							(tag) => !selected.find((opt) => opt.value === tag.value)
+						);
+
+						if (newTag) {
+							onSelect?.(newTag);
+							return;
+						}
+
+						if (options.length < selected.length) {
+							const removedTag = selected.find(
+								(tag) => !options.find((opt) => opt.value === tag.value)
+							) as Option & { id: string };
+
+							if (removedTag) {
+								onRemove?.(removedTag);
+								setSelected(options);
+							}
+						}
+					}}
 					onCreate={(option) => {
 						createTagMutation.mutate(
 							{ name: option.value },
@@ -135,33 +139,29 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 										onSelect?.(newTagOption);
 									}
 								},
-							},
-						);
-					}}
-					onChange={(options) => {
-						setSelected(options);
-						onChange?.(options);
-
-						const newTag = options.find(
-							(tag) => !selected.find((opt) => opt.value === tag.value),
-						);
-
-						if (newTag) {
-							onSelect?.(newTag);
-							return;
-						}
-
-						if (options.length < selected.length) {
-							const removedTag = selected.find(
-								(tag) => !options.find((opt) => opt.value === tag.value),
-							) as Option & { id: string };
-
-							if (removedTag) {
-								onRemove?.(removedTag);
-								setSelected(options);
 							}
-						}
+						);
 					}}
+					options={transformedTags ?? []}
+					placeholder="Select tags"
+					renderOption={(option) => (
+						<div className="group flex w-full items-center justify-between">
+							<span>{option.label}</span>
+
+							<button
+								className="text-xs opacity-0 group-hover:opacity-50"
+								onClick={(event) => {
+									event.stopPropagation();
+									setEditingTag(option);
+									setIsOpen(true);
+								}}
+								type="button"
+							>
+								Edit
+							</button>
+						</div>
+					)}
+					value={selected}
 				/>
 			</div>
 
@@ -177,7 +177,6 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 					<div className="mt-4 flex w-full flex-col space-y-2">
 						<Label>Name</Label>
 						<Input
-							value={editingTag?.label}
 							onChange={(event) => {
 								if (editingTag) {
 									setEditingTag({
@@ -187,6 +186,7 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 									});
 								}
 							}}
+							value={editingTag?.label}
 						/>
 					</div>
 
@@ -201,8 +201,8 @@ export function SelectTags({ tags, onSelect, onRemove, onChange }: Props) {
 
 							<SubmitButton
 								isSubmitting={deleteTagMutation.isPending}
-								variant="outline"
 								onClick={handleDelete}
+								variant="outline"
 							>
 								Delete
 							</SubmitButton>

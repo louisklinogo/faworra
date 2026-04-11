@@ -6,103 +6,92 @@
 // ─── Institution ─────────────────────────────────────────────────────────────
 
 export interface Institution {
-	id: string;
-	name: string;
-	logo: string | null;
-	provider: string; // 'mono', 'plaid', 'gocardless', etc.
-	countries?: string[]; // e.g., ['NG', 'GH']
-	type?: string; // e.g., 'PERSONAL_BANKING'
 	bankCode?: string; // Mono-specific: e.g., '058' for GTBank
+	countries?: string[]; // e.g., ['NG', 'GH']
+	id: string;
+	logo: string | null;
+	name: string;
+	provider: string; // 'mono', 'plaid', 'gocardless', etc.
+	type?: string; // e.g., 'PERSONAL_BANKING'
 }
 
 // ─── Account ─────────────────────────────────────────────────────────────────
 
-export type AccountType = 
-	| "checking"
-	| "savings"
-	| "credit"
-	| "cash"
-	| "other";
+export type AccountType = "checking" | "savings" | "credit" | "cash" | "other";
 
 export interface Account {
-	id: string; // External provider account ID
-	name: string;
-	currency: string;
-	type: AccountType;
-	institutionId: string;
-	balance: number;
+	accountNumber?: string;
 	availableBalance: number;
+	balance: number;
+	bic?: string;
 	creditLimit?: number;
+	currency: string;
+	enrollmentId?: string;
+	expiresAt?: string;
 	// Regional identifiers (Midday parity)
 	iban?: string;
-	bic?: string;
-	sortCode?: string;
-	accountNumber?: string;
+	id: string; // External provider account ID
+	institutionId: string;
+	name: string;
 	// Provider metadata
 	provider: string;
 	resourceId?: string;
-	enrollmentId?: string;
-	expiresAt?: string;
+	sortCode?: string;
+	type: AccountType;
 }
 
 // ─── Transaction ─────────────────────────────────────────────────────────────
 
-export type TransactionStatus = 
-	| "posted"
-	| "pending"
-	| "excluded";
+export type TransactionStatus = "posted" | "pending" | "excluded";
 
 export interface Transaction {
-	id: string; // External provider transaction ID
 	accountId: string;
 	// Amount is SIGNED (Midday parity)
 	// Positive = income/credit, Negative = expense/debit
 	amount: number;
-	currency: string;
-	date: string;
-	status: TransactionStatus;
 	// Running balance at transaction time
 	balance?: number;
 	// Category (provider-specific or normalized)
 	category?: string;
 	// Counterparty
 	counterpartyName?: string;
-	merchantName?: string;
-	// Transaction details
-	name?: string;
-	description?: string;
-	method?: string; // e.g., 'transfer', 'card_purchase', 'momo'
+	currency: string;
 	// Multi-currency (Midday parity)
 	currencyRate?: number;
 	currencySource?: string;
+	date: string;
+	description?: string;
+	id: string; // External provider transaction ID
+	internalId?: string; // Mono-specific: MongoDB ObjectId
+	merchantName?: string;
+	method?: string; // e.g., 'transfer', 'card_purchase', 'momo'
+	// Transaction details
+	name?: string;
 	// Provider metadata
 	provider: string;
-	internalId?: string; // Mono-specific: MongoDB ObjectId
+	status: TransactionStatus;
 }
 
 // ─── Balance ─────────────────────────────────────────────────────────────────
 
 export interface Balance {
 	accountId: string;
-	current: number;
 	available: number;
 	creditLimit?: number;
 	currency: string;
+	current: number;
 	lastUpdated?: string;
 }
 
 // ─── Health Check ────────────────────────────────────────────────────────────
 
-export type HealthStatus = 
-	| "operational"
-	| "degraded"
-	| "down";
+export type HealthStatus = "operational" | "degraded" | "down";
 
 export interface HealthCheckResult {
-	provider: string;
-	status: HealthStatus;
 	latency?: number;
 	message?: string;
+	provider: string;
+	status: HealthStatus;
 }
 
 // ─── Connection Status ──────────────────────────────────────────────────────
@@ -115,10 +104,10 @@ export type ConnectionStatus =
 	| "expired";
 
 export interface ConnectionStatusResult {
-	status: ConnectionStatus;
-	lastSyncedAt?: string;
 	errorCount: number;
+	lastSyncedAt?: string;
 	message?: string;
+	status: ConnectionStatus;
 }
 
 // ─── Params Types ────────────────────────────────────────────────────────────
@@ -135,9 +124,9 @@ export interface GetAccountsParams {
 export interface GetTransactionsParams {
 	accountId: string;
 	fromDate?: string;
-	toDate?: string;
 	limit?: number;
 	offset?: number;
+	toDate?: string;
 }
 
 export interface GetBalanceParams {
@@ -159,8 +148,8 @@ export interface DeleteConnectionParams {
 // ─── Result Types ────────────────────────────────────────────────────────────
 
 export interface GetInstitutionsResult {
-	institutions: Institution[];
 	errors: Array<{ provider: string; error: string }>;
+	institutions: Institution[];
 	succeededProviders: string[];
 }
 
@@ -169,9 +158,9 @@ export interface GetAccountsResult {
 }
 
 export interface GetTransactionsResult {
-	transactions: Transaction[];
 	hasMore: boolean;
 	total?: number;
+	transactions: Transaction[];
 }
 
 export interface GetBalanceResult {
@@ -181,8 +170,6 @@ export interface GetBalanceResult {
 // ─── Mono-Specific Types ─────────────────────────────────────────────────────
 
 export interface MonoAccountResponse {
-	id: string;
-	status?: string;
 	data?: {
 		id: string;
 		name: string;
@@ -205,16 +192,18 @@ export interface MonoAccountResponse {
 			enrollment_id: string;
 		};
 	};
+	id: string;
+	status?: string;
 }
 
 export interface MonoTransactionResponse {
+	amount: number;
+	balance: number;
+	category: string;
+	date: string;
 	id: string;
 	narration: string;
-	amount: number;
 	type: "debit" | "credit";
-	balance: number;
-	date: string;
-	category: string;
 }
 
 export interface MonoLinkingResult {

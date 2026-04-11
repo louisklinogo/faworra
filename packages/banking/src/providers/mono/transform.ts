@@ -1,10 +1,10 @@
 /**
  * Transform Mono-specific responses to common types
- * 
+ *
  * Key transformation: amount normalization
  * - Mono returns: { type: 'debit'|'credit', amount: positive_number }
  * - We store: amount as signed number (negative for expenses)
- * 
+ *
  * Midday parity: same signed amount pattern
  */
 
@@ -20,7 +20,7 @@ import type {
 
 /**
  * Transform Mono transaction to normalized form
- * 
+ *
  * Mono: type = 'debit' | 'credit', amount = positive number
  * Faworra: amount = signed number (negative for expenses)
  */
@@ -28,9 +28,10 @@ export function transformMonoTransaction(
 	monoTx: MonoTransactionResponse
 ): Transaction {
 	// Normalize amount: debit = expense = negative, credit = income = positive
-	const normalizedAmount = monoTx.type === "debit" 
-		? -Math.abs(monoTx.amount) 
-		: Math.abs(monoTx.amount);
+	const normalizedAmount =
+		monoTx.type === "debit"
+			? -Math.abs(monoTx.amount)
+			: Math.abs(monoTx.amount);
 
 	return {
 		id: monoTx.id,
@@ -85,19 +86,19 @@ export function transformMonoAccount(
 function mapAccountType(monoType: string): Account["type"] {
 	const typeMap: Record<string, Account["type"]> = {
 		// Standard bank accounts
-		"current": "checking",
-		"checking": "checking",
-		"savings": "savings",
+		current: "checking",
+		checking: "checking",
+		savings: "savings",
 		// Credit accounts
-		"credit": "credit",
-		"credit_card": "credit",
+		credit: "credit",
+		credit_card: "credit",
 		// Mobile money
-		"mobile_money": "other",
-		"momo": "other",
+		mobile_money: "other",
+		momo: "other",
 		// Other
-		"investment": "other",
-		"loan": "other",
-		"other": "other",
+		investment: "other",
+		loan: "other",
+		other: "other",
 	};
 
 	return typeMap[monoType.toLowerCase()] ?? "other";

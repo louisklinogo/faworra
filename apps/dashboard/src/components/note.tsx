@@ -19,12 +19,12 @@ export function Note({ defaultValue, onChange }: Props) {
 
 	return (
 		<Textarea
-			defaultValue={defaultValue}
-			required
 			autoFocus
-			placeholder="Note"
 			className="min-h-[100px] resize-none"
+			defaultValue={defaultValue}
 			onChange={(evt) => setValue(evt.target.value)}
+			placeholder="Note"
+			required
 		/>
 	);
 }

@@ -16,12 +16,12 @@ import {
 	userContext as userContextSchema,
 } from "./schema/core";
 import {
+	bankAccountSyncStatus,
 	bankAccounts,
 	bankAccountsRelations,
+	bankConnectionStatus,
 	bankConnections,
 	bankConnectionsRelations,
-	bankConnectionStatus,
-	bankAccountSyncStatus,
 	numericCasted,
 	tags,
 	tagsRelations,
@@ -139,6 +139,11 @@ const schema = {
 };
 
 export const db = drizzle(env.DATABASE_URL, { schema });
+
+export type { Database } from "./client";
+// Export job client for document processing tasks
+// Midday parity: createJobDb returns {db, disconnect} for Trigger.dev middleware
+export { createJobDb } from "./client";
 
 // Export custom types for use in schema definitions
 export { numericCasted };

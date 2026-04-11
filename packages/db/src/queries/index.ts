@@ -1,4 +1,5 @@
 export * from "./bank-accounts";
+export * from "./bank-connections";
 export * from "./overview";
 export * from "./tags";
 export * from "./team";

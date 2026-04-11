@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@faworra-new/ui/lib/utils";
 import {
 	Table,
 	TableBody,
@@ -9,6 +8,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@faworra-new/ui/components/table";
+import { cn } from "@faworra-new/ui/lib/utils";
 import {
 	useMutation,
 	useQueryClient,
@@ -24,7 +24,6 @@ import { useCategoryParams } from "@/hooks/use-category-params";
 import { useTRPC } from "@/trpc/client";
 import {
 	type CategoriesTableMeta,
-	type Category,
 	columns,
 	flattenCategories,
 } from "./columns";
@@ -40,7 +39,7 @@ export function DataTable() {
 	const { setParams } = useCategoryParams();
 
 	const { data } = useSuspenseQuery(
-		trpc.transactions.categories.queryOptions(),
+		trpc.transactions.categories.queryOptions()
 	);
 
 	const deleteCategoryMutation = useMutation(
@@ -50,7 +49,7 @@ export function DataTable() {
 					queryKey: trpc.transactions.categories.queryKey(),
 				});
 			},
-		}),
+		})
 	);
 
 	// Flatten categories - include all parents and all children
@@ -84,9 +83,7 @@ export function DataTable() {
 					return true; // Always show parents
 				}
 				// Only show children if their parent is expanded
-				return (
-					category.parentId && expandedCategories.has(category.parentId)
-				);
+				return category.parentId && expandedCategories.has(category.parentId);
 			});
 		}
 
@@ -102,7 +99,7 @@ export function DataTable() {
 				// Check if any children match
 				const children = childrenByParentId.get(category.id) || [];
 				const hasMatchingChild = children.some((child) =>
-					child.name?.toLowerCase().includes(searchLower),
+					child.name?.toLowerCase().includes(searchLower)
 				);
 
 				// Show parent if it matches OR has matching children
@@ -151,7 +148,7 @@ export function DataTable() {
 											? null
 											: flexRender(
 													header.column.columnDef.header,
-													header.getContext(),
+													header.getContext()
 												)}
 									</TableHead>
 								);
@@ -169,13 +166,10 @@ export function DataTable() {
 						>
 							{row.getVisibleCells().map((cell, index) => (
 								<TableCell
-									key={cell.id}
 									className={cn(index === 3 && "w-[50px]")}
+									key={cell.id}
 								>
-									{flexRender(
-										cell.column.columnDef.cell,
-										cell.getContext(),
-									)}
+									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
 							))}
 						</TableRow>

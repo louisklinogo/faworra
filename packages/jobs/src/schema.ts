@@ -1,7 +1,7 @@
 /**
  * Trigger.dev job payload schemas
  * Midday parity: Zod schemas for all job types
- * 
+ *
  * Reference: midday-wiki/content/Shared Packages/Job Scheduling (@midday_jobs).md
  * Each job payload is defined with Zod for strict typing and validation
  */
@@ -12,8 +12,7 @@ import { z } from "zod";
 
 /** Sync a bank connection and all its accounts - Midday parity */
 export const syncConnectionSchema = z.object({
-	connectionId: z.string().uuid(),
-	teamId: z.string().uuid(),
+	connectionId: z.string(),
 	manualSync: z.boolean().optional(),
 });
 
@@ -25,7 +24,12 @@ export const syncAccountSchema = z.object({
 	accessToken: z.string().optional(),
 	provider: z.enum(["mono"]),
 	connectionId: z.string().uuid(),
-	accountType: z.enum(["credit", "other_asset", "other_liability", "depository", "loan"]),
+	accountType: z.enum([
+		"bank",
+		"momo",
+		"cash",
+		"other",
+	]),
 	currency: z.string().optional(),
 	manualSync: z.boolean().optional(),
 });
@@ -117,7 +121,9 @@ export const notificationEventSchema = z.discriminatedUnion("type", [
 export type SyncConnectionPayload = z.infer<typeof syncConnectionSchema>;
 export type SyncAccountPayload = z.infer<typeof syncAccountSchema>;
 export type InitialBankSetupPayload = z.infer<typeof initialBankSetupSchema>;
-export type ProcessMonoWebhookPayload = z.infer<typeof processMonoWebhookSchema>;
+export type ProcessMonoWebhookPayload = z.infer<
+	typeof processMonoWebhookSchema
+>;
 export type ProcessDocumentPayload = z.infer<typeof processDocumentSchema>;
 export type DailySyncPayload = z.infer<typeof dailySyncSchema>;
 export type WeeklySummaryPayload = z.infer<typeof weeklySummarySchema>;

@@ -1,15 +1,15 @@
 /**
  * Sync bank account transactions and balance
  * Midday parity: sync a single bank account with provider
- * 
+ *
  * Reference: midday/packages/jobs/src/tasks/bank/sync/account.ts
+ * Parity mode: ADAPTED (uses Supabase client like Midday, Mono provider instead of Plaid/GoCardless)
  */
 
-import { syncAccountSchema } from "../../../schema";
-import { bankAccounts, transactions, eq } from "@faworra-new/db";
-import { getDb } from "../../../init";
-import { logger, schemaTask } from "@trigger.dev/sdk";
 import { MonoProvider } from "@faworra-new/banking";
+import { createClient } from "@faworra-new/supabase/job";
+import { logger, schemaTask } from "@trigger.dev/sdk";
+import { syncAccountSchema } from "../../../schema";
 
 const BATCH_SIZE = 500;
 
@@ -28,7 +28,7 @@ export const syncAccount = schemaTask({
 		currency,
 		manualSync,
 	}) => {
-		const db = getDb();
+		const supabase = createClient();
 		const monoProvider = new MonoProvider();
 
 		logger.info("[syncAccount] Starting sync", {
@@ -45,22 +45,27 @@ export const syncAccount = schemaTask({
 
 		try {
 			// Get current bank account state
-			const [bankAccount] = await db
-				.select()
-				.from(bankAccounts)
-				.where(eq(bankAccounts.id, id))
-				.limit(1);
+			// Midday parity: use Supabase client
+			const { data: bankAccount, error: fetchError } = await supabase
+				.from("bank_accounts")
+				.select("id, last_synced_at, currency")
+				.eq("id", id)
+				.single()
+				.throwOnError();
 
-			if (!bankAccount) {
+			if (fetchError || !bankAccount) {
 				logger.error("[syncAccount] Bank account not found", { id });
 				throw new Error("Bank account not found");
 			}
 
 			// Determine date range for sync
 			let fromDate: string | undefined;
-			if (bankAccount.lastSyncedAt) {
-				fromDate = bankAccount.lastSyncedAt.toISOString().split("T")[0];
+			if (bankAccount.last_synced_at) {
+				fromDate = bankAccount.last_synced_at.split("T")[0];
 			}
+
+			// Get current currency - prefer the one passed in, then DB value
+			const currentCurrency = currency ?? bankAccount.currency ?? undefined;
 
 			// ─── Get Balance from Mono ────────────────────────────────────
 			try {
@@ -69,17 +74,18 @@ export const syncAccount = schemaTask({
 				});
 
 				// Update balance in database
-				await db
-					.update(bankAccounts)
-					.set({
+				// Midday parity: use Supabase client
+				await supabase
+					.from("bank_accounts")
+					.update({
 						balance: balance.current,
-						availableBalance: balance.available,
-						creditLimit: balance.creditLimit ?? null,
-						syncStatus: "available",
-						lastSyncedAt: new Date(),
-						updatedAt: new Date(),
+						available_balance: balance.available,
+						credit_limit: balance.creditLimit ?? null,
+						sync_status: "available",
+						last_synced_at: new Date().toISOString(),
+						updated_at: new Date().toISOString(),
 					})
-					.where(eq(bankAccounts.id, id));
+					.eq("id", id);
 
 				logger.info("[syncAccount] Updated balance", {
 					id,
@@ -89,7 +95,10 @@ export const syncAccount = schemaTask({
 			} catch (balanceError) {
 				logger.error("[syncAccount] Failed to get balance", {
 					id,
-					error: balanceError instanceof Error ? balanceError.message : String(balanceError),
+					error:
+						balanceError instanceof Error
+							? balanceError.message
+							: String(balanceError),
 				});
 				// Continue with transaction sync even if balance fails
 			}
@@ -102,48 +111,55 @@ export const syncAccount = schemaTask({
 				});
 
 				if (result.transactions.length === 0) {
-					logger.info("[syncAccount] No transactions to upsert", { id, accountId });
+					logger.info("[syncAccount] No transactions to upsert", {
+						id,
+						accountId,
+					});
 					return {
 						status: "completed" as const,
 						transactionsSynced: 0,
 					};
 				}
 
-				// Transform and upsert transactions in batches
+				// Transform transactions for upsert
+				const transactionsToUpsert = result.transactions.map((tx) => ({
+					id: tx.id,
+					team_id: teamId,
+					bank_account_id: id,
+					internal_id: tx.internalId ?? tx.id,
+					name: tx.name ?? "Unknown",
+					amount: tx.amount,
+					currency: currentCurrency ?? "GHS",
+					description: tx.description ?? null,
+					transaction_date: tx.date,
+					status: "posted" as const,
+					method: "other" as const,
+					manual: false,
+					created_at: new Date().toISOString(),
+					updated_at: new Date().toISOString(),
+				}));
+
+				// Upsert transactions in batches
 				let upsertedCount = 0;
-				for (let i = 0; i < result.transactions.length; i += BATCH_SIZE) {
-					const batch = result.transactions.slice(i, i + BATCH_SIZE);
-					
-					for (const tx of batch) {
-						await db
-							.insert(transactions)
-							.values({
-								id: tx.id,
-								teamId,
-								bankAccountId: id,
-								internalId: tx.internalId ?? tx.id,
-								name: tx.name ?? "Unknown",
-								amount: tx.amount,
-								currency: currency ?? "GHS",
-								description: tx.description,
-								transactionDate: new Date(tx.date),
-								status: "posted",
-								method: "other",
-								manual: false,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							})
-							.onConflictDoUpdate({
-								target: [transactions.teamId, transactions.internalId],
-								set: {
-									name: tx.name ?? "Unknown",
-									amount: tx.amount,
-									description: tx.description ?? null,
-									updatedAt: new Date(),
-								},
-							});
+				for (let i = 0; i < transactionsToUpsert.length; i += BATCH_SIZE) {
+					const batch = transactionsToUpsert.slice(i, i + BATCH_SIZE);
+
+					// Midday parity: use Supabase client upsert
+					const { error: upsertError } = await supabase
+						.from("transactions")
+						.upsert(batch, {
+							onConflict: "team_id,internal_id",
+						});
+
+					if (upsertError) {
+						logger.error("[syncAccount] Failed to upsert transaction batch", {
+							id,
+							batchIndex: i,
+							error: upsertError,
+						});
+						continue;
 					}
-					
+
 					upsertedCount += batch.length;
 				}
 
@@ -166,13 +182,14 @@ export const syncAccount = schemaTask({
 			}
 		} catch (error) {
 			// Update sync status to failed
-			await db
-				.update(bankAccounts)
-				.set({
-					syncStatus: "failed",
-					updatedAt: new Date(),
+			// Midday parity: use Supabase client
+			await supabase
+				.from("bank_accounts")
+				.update({
+					sync_status: "failed",
+					updated_at: new Date().toISOString(),
 				})
-				.where(eq(bankAccounts.id, id));
+				.eq("id", id);
 
 			throw error;
 		}

@@ -1,10 +1,11 @@
 /**
  * Mono Provider implementation
  * Midday parity: implements ProviderInterface with real Mono API calls
- * 
+ *
  * Reference: docs/mono/financial-data/*.md
  */
 
+import type { ProviderInterface } from "../../interface";
 import type {
 	Account,
 	Balance,
@@ -20,13 +21,12 @@ import type {
 	HealthCheckResult,
 	Institution,
 } from "../../types";
-import type { ProviderInterface } from "../../interface";
 import { MonoApi } from "./mono-api";
 import { transformMonoAccount, transformMonoTransaction } from "./transform";
 
 export interface MonoProviderConfig {
-	secretKey?: string;
 	baseUrl?: string;
+	secretKey?: string;
 }
 
 const PROVIDER_NAME = "mono";
@@ -77,7 +77,7 @@ export class MonoProvider implements ProviderInterface {
 		});
 
 		const account = await this._api.getAccount(params.accountId);
-		
+
 		if (!account.data?.balance) {
 			throw new Error("No balance data returned from Mono");
 		}
@@ -139,7 +139,7 @@ export class MonoProvider implements ProviderInterface {
 		try {
 			// Try to get account info - if it succeeds, connection is valid
 			await this._api.getAccount(params.connectionId);
-			
+
 			return {
 				status: "connected" as const,
 				lastSyncedAt: new Date().toISOString(),
@@ -159,7 +159,9 @@ export class MonoProvider implements ProviderInterface {
 	async deleteAccounts(_params: DeleteAccountsParams): Promise<void> {
 		// Mono doesn't have a direct delete accounts endpoint
 		// Use deleteConnection instead
-		console.log(`[${PROVIDER_NAME}] deleteAccounts - use deleteConnection instead`);
+		console.log(
+			`[${PROVIDER_NAME}] deleteAccounts - use deleteConnection instead`
+		);
 	}
 
 	async deleteConnection(params: DeleteConnectionParams): Promise<void> {

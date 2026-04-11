@@ -18,22 +18,22 @@ export function ColorPicker({ value, onSelect }: Props) {
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button
-					type="button"
-					variant="ghost"
 					className="absolute top-2.5 left-1 size-3.5 rounded-full p-0 hover:bg-transparent"
 					style={{ backgroundColor: value }}
+					type="button"
+					variant="ghost"
 				/>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-2" sideOffset={14}>
 				<div className="grid grid-cols-6 gap-1">
 					{COLORS.map((color) => (
 						<Button
+							className="size-5 rounded-sm p-0 transition-transform hover:scale-110"
+							key={color}
+							onClick={() => onSelect(color)}
+							style={{ backgroundColor: color }}
 							type="button"
 							variant="ghost"
-							key={color}
-							className="size-5 rounded-sm p-0 hover:scale-110 transition-transform"
-							style={{ backgroundColor: color }}
-							onClick={() => onSelect(color)}
 						/>
 					))}
 				</div>

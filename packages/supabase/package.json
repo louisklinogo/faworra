@@ -1,0 +1,22 @@
+{
+  "name": "@faworra-new/supabase",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "biome check .",
+    "lint:fix": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "supabase gen types --lang=typescript --project-id $SUPABASE_PROJECT_ID > src/types/db.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.101.1"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  },
+  "exports": {
+    "./job": "./src/client/job.ts",
+    "./types": "./src/types/index.ts"
+  }
+}

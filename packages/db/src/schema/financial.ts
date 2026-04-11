@@ -120,7 +120,15 @@ export const bankConnectionStatus = pgEnum("bank_connection_status", [
 // Bank connection detail status (provider-specific)
 export const bankConnectionDetailStatus = pgEnum(
 	"bank_connection_detail_status",
-	["linked", "processing", "available", "partial", "unavailable", "expired", "failed"]
+	[
+		"linked",
+		"processing",
+		"available",
+		"partial",
+		"unavailable",
+		"expired",
+		"failed",
+	]
 );
 
 // Sync status for bank accounts
@@ -193,6 +201,9 @@ export const bankAccounts = pgTable(
 		// Sync tracking
 		lastSyncedAt: timestamp("last_synced_at"),
 		syncStatus: bankAccountSyncStatus("sync_status").default("pending"),
+		// Error tracking (Midday parity)
+		errorRetries: integer("error_retries").default(0),
+		errorDetails: text("error_details"),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at")
 			.defaultNow()

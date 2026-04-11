@@ -1,13 +1,13 @@
 /**
  * Bank connection queries
  * Midday parity: query functions for bank_connections table
- * 
+ *
  * Reference: midday/packages/db/src/queries/bank-connections.ts
  */
 
 import { eq } from "drizzle-orm";
 import type { Database } from "../client";
-import { bankConnections, bankAccounts } from "../schema";
+import { bankAccounts, bankConnections } from "../schema";
 
 /**
  * Get bank connection by enrollment ID
@@ -42,10 +42,18 @@ export const getBankConnectionByEnrollmentId = async (
  */
 export const updateBankConnectionStatus = async (
 	db: Database,
-	params: { 
-		id: string; 
+	params: {
+		id: string;
 		status: "connected" | "disconnected" | "error";
-		detailStatus?: "linked" | "processing" | "available" | "partial" | "unavailable" | "expired" | "failed" | null;
+		detailStatus?:
+			| "linked"
+			| "processing"
+			| "available"
+			| "partial"
+			| "unavailable"
+			| "expired"
+			| "failed"
+			| null;
 	}
 ) => {
 	const [result] = await db

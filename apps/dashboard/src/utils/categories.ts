@@ -23,7 +23,9 @@ export const COLORS = [
 ];
 
 export function getColorFromName(name: string): string {
-	if (!name) return COLORS[0];
+	if (!name) {
+		return COLORS[0];
+	}
 
 	// Simple hash function
 	let hash = 0;

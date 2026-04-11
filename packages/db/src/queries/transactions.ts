@@ -539,7 +539,7 @@ const buildListTransactionsWhere = ({
 
 export const getTransactionCategories = async (
 	db: Database,
-	{ teamId }: { teamId: string },
+	{ teamId }: { teamId: string }
 ) => {
 	// First get all parent categories (categories with no parentId)
 	const parentCategories = await db
@@ -560,12 +560,12 @@ export const getTransactionCategories = async (
 		.where(
 			and(
 				eq(transactionCategories.teamId, teamId),
-				isNull(transactionCategories.parentId),
-			),
+				isNull(transactionCategories.parentId)
+			)
 		)
 		.orderBy(
 			desc(transactionCategories.system),
-			asc(transactionCategories.name),
+			asc(transactionCategories.name)
 		);
 
 	// Then get all child categories for these parents
@@ -587,16 +587,13 @@ export const getTransactionCategories = async (
 		.where(
 			and(
 				eq(transactionCategories.teamId, teamId),
-				isNotNull(transactionCategories.parentId),
-			),
+				isNotNull(transactionCategories.parentId)
+			)
 		)
 		.orderBy(asc(transactionCategories.name));
 
 	// Group children by parentId for efficient lookup
-	const childrenByParentId = new Map<
-		string,
-		typeof childCategories
-	>();
+	const childrenByParentId = new Map<string, typeof childCategories>();
 	for (const child of childCategories) {
 		if (child.parentId) {
 			if (!childrenByParentId.has(child.parentId)) {
@@ -659,8 +656,8 @@ export const getTransactionCategoryById = async (
 		.where(
 			and(
 				eq(transactionCategories.id, id),
-				eq(transactionCategories.teamId, teamId),
-			),
+				eq(transactionCategories.teamId, teamId)
+			)
 		)
 		.limit(1);
 
@@ -687,8 +684,8 @@ export const getTransactionCategoryById = async (
 		.where(
 			and(
 				eq(transactionCategories.parentId, id),
-				eq(transactionCategories.teamId, teamId),
-			),
+				eq(transactionCategories.teamId, teamId)
+			)
 		)
 		.orderBy(asc(transactionCategories.name));
 

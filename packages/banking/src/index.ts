@@ -1,12 +1,13 @@
 /**
  * Banking Provider Facade
  * Midday parity: strategy pattern for multi-provider support
- * 
+ *
  * Phase 1: Mono only
  * Future: Plaid, GoCardless, Teller, etc.
  */
 
 import type { ProviderInterface } from "./interface";
+import { MonoProvider } from "./providers/mono";
 import type {
 	Account,
 	Balance,
@@ -22,7 +23,6 @@ import type {
 	HealthCheckResult,
 	Institution,
 } from "./types";
-import { MonoProvider } from "./providers/mono";
 
 // ─── Supported Providers ─────────────────────────────────────────────────────
 
@@ -39,7 +39,7 @@ export interface ProviderFacadeParams {
 /**
  * Provider Facade
  * Meday parity: constructs the correct provider and forwards operations
- * 
+ *
  * Usage:
  * ```typescript
  * const provider = new ProviderFacade({ provider: 'mono' });
@@ -72,7 +72,9 @@ export class ProviderFacade implements ProviderInterface {
 
 	// ─── Core Operations ──────────────────────────────────────────────────────
 
-	async getTransactions(params: GetTransactionsParams): Promise<GetTransactionsResult> {
+	async getTransactions(
+		params: GetTransactionsParams
+	): Promise<GetTransactionsResult> {
 		return this.provider.getTransactions(params);
 	}
 
@@ -84,7 +86,9 @@ export class ProviderFacade implements ProviderInterface {
 		return this.provider.getAccountBalance(params);
 	}
 
-	async getInstitutions(params?: GetInstitutionsParams): Promise<Institution[]> {
+	async getInstitutions(
+		params?: GetInstitutionsParams
+	): Promise<Institution[]> {
 		return this.provider.getInstitutions(params);
 	}
 
@@ -94,7 +98,9 @@ export class ProviderFacade implements ProviderInterface {
 		return this.provider.getHealthCheck();
 	}
 
-	async getConnectionStatus(params: GetConnectionStatusParams): Promise<ConnectionStatusResult> {
+	async getConnectionStatus(
+		params: GetConnectionStatusParams
+	): Promise<ConnectionStatusResult> {
 		return this.provider.getConnectionStatus(params);
 	}
 
@@ -115,7 +121,9 @@ export class ProviderFacade implements ProviderInterface {
  * Fetch health check across all supported providers
  * Midday parity: concurrent health checks
  */
-export async function getAllProvidersHealthCheck(): Promise<HealthCheckResult[]> {
+export async function getAllProvidersHealthCheck(): Promise<
+	HealthCheckResult[]
+> {
 	const providers: SupportedProvider[] = ["mono"];
 	const results: HealthCheckResult[] = [];
 
@@ -141,7 +149,7 @@ export async function getAllProvidersHealthCheck(): Promise<HealthCheckResult[]>
 
 // ─── Re-exports ──────────────────────────────────────────────────────────────
 
-export { MonoProvider } from "./providers/mono";
 export type { ProviderInterface } from "./interface";
-export * from "./types";
 export * from "./interface";
+export { MonoProvider } from "./providers/mono";
+export * from "./types";
