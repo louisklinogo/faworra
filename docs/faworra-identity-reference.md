@@ -6,8 +6,6 @@ This file exists so that any future contributor, designer, engineer, operator, o
 
 This is not a speculative vision document. It is a practical interpretation of:
 
-- `faworra-architecture-prompt.md`
-- `faworra-monorepo-architecture.md`
 - the current Midday-first architectural stance of this repository
 
 If there is ambiguity between a clever idea and the product definition below, this document should win unless a newer intentional strategy document replaces it.
@@ -332,11 +330,11 @@ It must support internal operations, but the product also needs outward-facing u
 - customer communications,
 - investor or stakeholder visibility.
 
-### Faworra is not “build every feature for every business”
+### Faworra is not "build every feature for every business"
 
-It is generalized through **industry configuration**, not through undisciplined scope creep.
+Phase 1 is fashion-optimized first, industry config second.
 
-The product should adapt by industry while preserving a common platform.
+Industry configuration will enable the product to scale across industries later — not before validation.
 
 ### Faworra is not a fresh architecture experiment
 
@@ -375,7 +373,7 @@ Faworra extends that foundation into:
 - referrals and relationship memory,
 - supplier and product economics,
 - founder-brain workflows,
-- industry configuration,
+- fashion-first focus (industry config in Phase 2),
 - a more explicit AI operator model,
 - a West Africa-specific delivery context,
 - Mono rather than Midday's original banking-provider focus,
@@ -393,17 +391,17 @@ If Faworra needs more than Midday offers, it should extend Midday's pattern rath
 
 ### Primary delivery surface
 
-Faworra is web-first.
+Faworra is web-first, desktop-focused.
 
 The main delivery surface is:
 
-- **Next.js PWA**
+- **Next.js webapp** (responsive, works on mobile browsers but not a PWA)
 
 This choice fits:
 
-- the target market,
-- installable app-like delivery,
-- and the need to ship broadly without waiting for native platform distribution.
+- the target market (desktop/laptop usage common for business operations),
+- full-featured admin experience,
+- and the need to ship broadly without app store constraints.
 
 ### Mobile strategy
 
@@ -590,7 +588,7 @@ That means asynchronous infrastructure is not optional.
 
 These are not random implementation choices. They reflect product and architecture commitments.
 
-- **Next.js 15 App Router** for the primary product app and PWA experience
+- **Next.js 16 App Router** for the primary product app (web-first, desktop-focused)
 - **Hono + tRPC** for type-safe backend application APIs
 - **Supabase Postgres** as the data platform
 - **Drizzle** as ORM, especially because it fits RLS and the stack direction better than Prisma here
@@ -606,14 +604,12 @@ These are not random implementation choices. They reflect product and architectu
 
 Unless strategy changes, contributors should assume these are not first-wave priorities:
 
-- desktop-first product thinking,
+- mobile-first product thinking (Phase 1 is desktop-focused),
 - building a separate desktop client as a core product surface,
-- treating the website as the main application,
-- inventing a brand new architecture when Midday already covers the need,
-- overbuilding mobile-first flows before the PWA foundation is solid,
+- overbuilding mobile-first flows before the webapp foundation is solid,
 - building isolated niche features that do not connect to the Business OS mission,
 - adding AI gimmicks with no operational utility,
-- building industry-specific hard-coding that bypasses the industry-config model.
+- premature industry configuration before fashion is validated.
 
 ---
 
