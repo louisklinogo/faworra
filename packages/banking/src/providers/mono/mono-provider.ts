@@ -77,17 +77,17 @@ export class MonoProvider implements ProviderInterface {
 		});
 
 		const account = await this._api.getAccount(params.accountId);
+		const accountData = account.data?.account;
 
-		if (!account.data?.balance) {
+		if (typeof accountData?.balance !== "number") {
 			throw new Error("No balance data returned from Mono");
 		}
 
 		return {
 			accountId: params.accountId,
-			current: account.data.balance.amount ?? 0,
-			available: account.data.balance.available_balance ?? 0,
-			creditLimit: account.data.balance.credit_limit ?? undefined,
-			currency: account.data.balance.currency ?? account.data.currency ?? "NGN",
+			current: accountData.balance,
+			available: accountData.balance,
+			currency: accountData.currency ?? "NGN",
 		};
 	}
 
@@ -181,15 +181,20 @@ export class MonoProvider implements ProviderInterface {
 	 * Mono-specific: returns URL for Connect Link widget
 	 */
 	async initiateLinking(params: {
+		customer: {
+			email: string;
+			name: string;
+		};
 		meta?: Record<string, unknown>;
 		redirectUrl?: string;
 	}): Promise<{ monoUrl: string }> {
 		const result = await this._api.initiateLinking({
+			customer: params.customer,
 			meta: params.meta,
 			redirect_url: params.redirectUrl,
 		});
 
-		return { monoUrl: result.mono_url };
+		return { monoUrl: result.data.mono_url };
 	}
 
 	/**

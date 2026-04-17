@@ -10,6 +10,7 @@ import { logger } from "hono/logger";
 import { tasks } from "@trigger.dev/sdk";
 
 // Webhook routes (midday parity: /webhook/{provider})
+import monoConnect from "./routes/mono-connect";
 import monoWebhook from "./routes/mono";
 
 const app = new Hono();
@@ -30,6 +31,7 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 // ─── Webhook Routes ────────────────────────────────────────────────────────────
 // Mono banking provider webhooks
 app.route("/webhook/mono", monoWebhook);
+app.route("/mono", monoConnect);
 
 // ─── tRPC Routes ───────────────────────────────────────────────────────────────
 

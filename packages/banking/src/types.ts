@@ -171,29 +171,41 @@ export interface GetBalanceResult {
 
 export interface MonoAccountResponse {
 	data?: {
-		id: string;
-		name: string;
-		account_number: string;
-		currency: string;
-		type: string;
-		balance?: {
-			amount?: number;
-			currency?: string;
-			available_balance?: number;
-			credit_limit?: number;
-		};
-		institution?: {
-			id: string;
+		account?: {
+			id?: string;
+			_id?: string;
 			name: string;
-			bank_code: string;
+			account_number?: string;
+			accountNumber?: string;
+			currency: string;
 			type: string;
+			balance?: number;
+			bvn?: string;
+			institution?: {
+				id?: string;
+				name: string;
+				bank_code?: string;
+				bankCode?: string;
+				type: string;
+			};
+			created_at?: string;
+			updated_at?: string;
 		};
-		_meta?: {
-			enrollment_id: string;
+		customer?: {
+			id?: string;
+		};
+		meta?: {
+			auth_method?: string;
+			data_request_id?: string;
+			data_status?: string;
+			retrieved_data?: string[];
+			session_id?: string;
 		};
 	};
 	id: string;
+	message?: string;
 	status?: string;
+	timestamp?: string;
 }
 
 export interface MonoTransactionResponse {

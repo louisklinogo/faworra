@@ -12,6 +12,7 @@
   "dependencies": {
     "@faworra-new/api": "workspace:*",
     "@faworra-new/auth": "workspace:*",
+    "@faworra-new/banking": "workspace:*",
     "@faworra-new/db": "workspace:*",
     "@faworra-new/env": "workspace:*",
     "@faworra-new/jobs": "workspace:*",

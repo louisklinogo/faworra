@@ -22,6 +22,7 @@ export const env = createEnv({
 		// Phase 1: optional for scaffold, required in Phase 2 for real API calls
 		MONO_SECRET_KEY: z.string().min(1).optional(),
 		MONO_PUBLIC_KEY: z.string().min(1).optional(),
+		MONO_WEBHOOK_SECRET: z.string().min(1).optional(),
 		// Redis for BullMQ job queues
 		// Midday parity: required for job-client package
 		REDIS_QUEUE_URL: z.string().min(1).optional(),

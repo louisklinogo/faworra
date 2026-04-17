@@ -57,26 +57,26 @@ export function transformMonoTransaction(
 export function transformMonoAccount(
 	monoAccount: MonoAccountResponse
 ): Account {
-	const data = monoAccount.data;
+	const data = monoAccount.data?.account;
 	if (!data) {
 		throw new Error("Mono account response missing data");
 	}
 
-	const balance = data.balance;
 	const institution = data.institution;
+	const normalizedId = data.id ?? data._id ?? monoAccount.id;
+	const bankCode = institution?.bank_code ?? institution?.bankCode;
+	const balance = typeof data.balance === "number" ? data.balance : 0;
 
 	return {
-		id: monoAccount.id,
+		id: normalizedId,
 		name: data.name ?? "Unknown",
 		currency: data.currency ?? "NGN",
 		type: mapAccountType(data.type ?? "other"),
-		institutionId: institution?.bank_code ?? "unknown",
-		balance: balance?.amount ?? 0,
-		availableBalance: balance?.available_balance ?? 0,
-		creditLimit: balance?.credit_limit ?? undefined,
+		institutionId: bankCode ?? "unknown",
+		balance,
+		availableBalance: balance,
 		provider: "mono",
-		accountNumber: data.account_number,
-		enrollmentId: data._meta?.enrollment_id,
+		accountNumber: data.account_number ?? data.accountNumber,
 	};
 }
 
@@ -84,6 +84,20 @@ export function transformMonoAccount(
  * Map Mono account type strings to our standard types
  */
 function mapAccountType(monoType: string): Account["type"] {
+	const normalizedType = monoType.toLowerCase();
+
+	if (normalizedType.includes("savings")) {
+		return "savings";
+	}
+
+	if (normalizedType.includes("current") || normalizedType.includes("checking")) {
+		return "checking";
+	}
+
+	if (normalizedType.includes("credit")) {
+		return "credit";
+	}
+
 	const typeMap: Record<string, Account["type"]> = {
 		// Standard bank accounts
 		current: "checking",
@@ -101,7 +115,7 @@ function mapAccountType(monoType: string): Account["type"] {
 		other: "other",
 	};
 
-	return typeMap[monoType.toLowerCase()] ?? "other";
+	return typeMap[normalizedType] ?? "other";
 }
 
 // ─── Balance Transform ────────────────────────────────────────────────────────
@@ -112,14 +126,14 @@ function mapAccountType(monoType: string): Account["type"] {
 export function transformMonoBalance(
 	monoAccount: MonoAccountResponse
 ): Balance {
-	const data = monoAccount.data;
-	const balance = data?.balance;
+	const data = monoAccount.data?.account;
+	const balance = typeof data?.balance === "number" ? data.balance : 0;
+	const accountId = data?.id ?? data?._id ?? monoAccount.id;
 
 	return {
-		accountId: monoAccount.id,
-		current: balance?.amount ?? 0,
-		available: balance?.available_balance ?? 0,
-		creditLimit: balance?.credit_limit ?? undefined,
-		currency: balance?.currency ?? data?.currency ?? "NGN",
+		accountId,
+		current: balance,
+		available: balance,
+		currency: data?.currency ?? "NGN",
 	};
 }

@@ -68,13 +68,26 @@ export class MonoApi {
 	 * Mono docs reference: docs/mono/financial-data/connect-link.md
 	 */
 	async initiateLinking(params: {
+		customer: {
+			email: string;
+			name: string;
+		};
 		meta?: Record<string, unknown>;
 		redirect_url?: string;
-	}): Promise<{ mono_url: string }> {
-		return this.request<{ mono_url: string }>("/v2/accounts/initiate", {
+		scope?: "auth";
+	}): Promise<{ data: { mono_url: string } }> {
+		return this.request<{ data: { mono_url: string } }>(
+			"/v2/accounts/initiate",
+			{
 			method: "POST",
-			body: params,
-		});
+			body: {
+				customer: params.customer,
+				meta: params.meta,
+				redirect_url: params.redirect_url,
+				scope: params.scope ?? "auth",
+			},
+		}
+		);
 	}
 
 	/**
