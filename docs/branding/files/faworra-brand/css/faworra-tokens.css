@@ -1,0 +1,381 @@
+/* ============================================================
+   FAWORRA DESIGN TOKENS
+   Brand: Faworra — Business OS for West African SMEs
+   Aesthetic: Tech Brutalist Minimal
+   Version: 1.0.0
+   ============================================================ */
+
+:root {
+	/* --- COLOR PALETTE --- */
+
+	/* Primary */
+	--color-obsidian: #0a0a0a; /* Primary background / typography */
+	--color-ivory: #f8f7f2; /* Primary background / paper */
+	--color-forest: #0d3b2e; /* Brand accent — financial positive, live states */
+	--color-sandsong: #d4c5a8; /* Secondary accent — earth, warmth */
+
+	/* Grays */
+	--color-gray-100: #f0efe9;
+	--color-gray-200: #d8d7d0;
+	--color-gray-400: #999891;
+	--color-gray-600: #5a5a56;
+	--color-gray-800: #2c2c2a;
+
+	/* Semantic */
+	--color-positive: #0d3b2e; /* Revenue, profit, success */
+	--color-neutral: #999891; /* Metadata, labels */
+	--color-negative: #8b2500; /* Expenses, alerts */
+	--color-live: #0d3b2e; /* Live / active indicator */
+
+	/* --- TYPOGRAPHY --- */
+
+	--font-sans: "Inter", system-ui, -apple-system, sans-serif;
+	--font-mono: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+
+	/* Scale */
+	--text-xs: 10px;
+	--text-sm: 12px;
+	--text-base: 14px;
+	--text-md: 16px;
+	--text-lg: 20px;
+	--text-xl: 28px;
+	--text-2xl: 36px;
+	--text-3xl: 48px;
+
+	/* Weight */
+	--weight-regular: 400;
+	--weight-medium: 500;
+
+	/* Tracking */
+	--tracking-tight: -0.02em; /* Wordmark, large numerics */
+	--tracking-normal: 0em;
+	--tracking-wide: 0.06em; /* Mono labels, metadata */
+	--tracking-wider: 0.1em; /* Section labels, caps */
+
+	/* --- SPACING --- */
+
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 20px;
+	--space-6: 24px;
+	--space-8: 32px;
+	--space-10: 40px;
+	--space-12: 48px;
+	--space-16: 64px;
+
+	/* --- BORDERS --- */
+
+	--border-width: 1px; /* Hard 1px — brutalist, not 0.5px */
+	--border-color: #0a0a0a;
+	--border-color-muted: #d8d7d0;
+	--border-color-green: #0d3b2e;
+
+	/* --- BORDER RADIUS --- */
+
+	--radius-none: 0px; /* Default — brutalist */
+	--radius-sm: 2px; /* Tags, badges only */
+	--radius-md: 4px; /* Rare exceptions */
+
+	/* --- SHADOWS --- */
+
+	--shadow-none: none; /* No shadows — ever */
+
+	/* --- ANIMATION --- */
+
+	--duration-fast: 100ms;
+	--duration-base: 150ms;
+	--easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   DARK MODE TOKENS
+   ============================================================ */
+
+[data-theme="dark"],
+.dark {
+	--color-obsidian: #f8f7f2;
+	--color-ivory: #0a0a0a;
+	--color-gray-100: #1c1c1a;
+	--color-gray-200: #2c2c2a;
+	--color-gray-400: #5a5a56;
+	--color-gray-600: #999891;
+	--color-gray-800: #d8d7d0;
+	--border-color: #f8f7f2;
+	--border-color-muted: #2c2c2a;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: var(--font-sans);
+	font-size: var(--text-base);
+	font-weight: var(--weight-regular);
+	-webkit-font-smoothing: antialiased;
+	line-height: 1.6;
+	color: var(--color-obsidian);
+	background-color: var(--color-ivory);
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+
+/* Labels — always mono, always caps */
+.label {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	font-weight: var(--weight-regular);
+	color: var(--color-gray-400);
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-wider);
+}
+
+/* Numeric display — large financial figures */
+.numeric {
+	font-family: var(--font-sans);
+	font-size: var(--text-2xl);
+	font-weight: var(--weight-medium);
+	color: var(--color-obsidian);
+	letter-spacing: var(--tracking-tight);
+}
+
+.numeric--positive {
+	color: var(--color-forest);
+}
+.numeric--negative {
+	color: var(--color-negative);
+}
+
+/* Tag / badge */
+.tag {
+	display: inline-block;
+	padding: 2px var(--space-2);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	letter-spacing: var(--tracking-wide);
+	border: var(--border-width) solid var(--border-color-muted);
+	border-radius: var(--radius-sm);
+}
+
+.tag--active {
+	color: var(--color-forest);
+	border-color: var(--color-forest);
+}
+
+/* Live indicator dot */
+.dot-live {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	background: var(--color-forest);
+	border-radius: 50%;
+}
+
+/* ============================================================
+   COMPONENT: CARD
+   ============================================================ */
+
+.card {
+	padding: var(--space-6);
+	background: var(--color-ivory);
+	border: var(--border-width) solid var(--border-color);
+	border-radius: var(--radius-none);
+}
+
+.card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: var(--space-4);
+	margin-bottom: var(--space-4);
+	border-bottom: var(--border-width) solid var(--border-color);
+}
+
+/* ============================================================
+   COMPONENT: DATA ROW
+   ============================================================ */
+
+.data-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--space-3) 0;
+	border-bottom: 1px solid var(--border-color-muted);
+}
+
+.data-row:last-child {
+	border-bottom: none;
+}
+
+.data-row__label {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	color: var(--color-gray-400);
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-wide);
+}
+
+.data-row__value {
+	font-family: var(--font-sans);
+	font-size: var(--text-base);
+	font-weight: var(--weight-medium);
+	color: var(--color-obsidian);
+}
+
+/* ============================================================
+   COMPONENT: BUTTON
+   ============================================================ */
+
+.btn {
+	display: inline-flex;
+	gap: var(--space-2);
+	align-items: center;
+	padding: var(--space-2) var(--space-4);
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	color: var(--color-obsidian);
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-wide);
+	cursor: pointer;
+	background: transparent;
+	border: var(--border-width) solid var(--border-color);
+	border-radius: var(--radius-none);
+	transition:
+		background var(--duration-base) var(--easing-standard),
+		color var(--duration-base) var(--easing-standard);
+}
+
+.btn:hover {
+	color: var(--color-ivory);
+	background: var(--color-obsidian);
+}
+
+.btn--primary {
+	color: var(--color-ivory);
+	background: var(--color-obsidian);
+}
+
+.btn--primary:hover {
+	background: var(--color-forest);
+	border-color: var(--color-forest);
+}
+
+/* ============================================================
+   COMPONENT: INPUT
+   ============================================================ */
+
+.input {
+	width: 100%;
+	padding: var(--space-2) var(--space-3);
+	font-family: var(--font-sans);
+	font-size: var(--text-base);
+	color: var(--color-obsidian);
+	outline: none;
+	background: var(--color-ivory);
+	border: var(--border-width) solid var(--border-color);
+	border-radius: var(--radius-none);
+	transition: border-color var(--duration-fast);
+}
+
+.input:focus {
+	border-color: var(--color-forest);
+}
+
+.input::placeholder {
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	color: var(--color-gray-400);
+	letter-spacing: var(--tracking-wide);
+}
+
+/* ============================================================
+   COMPONENT: SIDEBAR NAV
+   ============================================================ */
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	width: 220px;
+	height: 100vh;
+	background: var(--color-ivory);
+	border-right: var(--border-width) solid var(--border-color);
+}
+
+.sidebar__logo {
+	padding: var(--space-5) var(--space-5);
+	border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.sidebar__nav {
+	flex: 1;
+	padding: var(--space-4) 0;
+}
+
+.sidebar__item {
+	display: flex;
+	gap: var(--space-3);
+	align-items: center;
+	padding: var(--space-2) var(--space-5);
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	color: var(--color-gray-600);
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-wide);
+	text-decoration: none;
+	transition: color var(--duration-fast);
+}
+
+.sidebar__item:hover,
+.sidebar__item--active {
+	color: var(--color-obsidian);
+}
+
+.sidebar__item--active {
+	padding-left: calc(var(--space-5) - 2px);
+	border-left: 2px solid var(--color-forest);
+}
+
+/* ============================================================
+   LAYOUT: DASHBOARD GRID
+   ============================================================ */
+
+.dashboard {
+	display: flex;
+	height: 100vh;
+	background: var(--color-ivory);
+}
+
+.dashboard__main {
+	flex: 1;
+	padding: var(--space-8);
+	overflow-y: auto;
+}
+
+.metrics-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0;
+	margin-bottom: var(--space-6);
+	border: var(--border-width) solid var(--border-color);
+}
+
+.metric {
+	padding: var(--space-5) var(--space-5);
+	border-right: var(--border-width) solid var(--border-color);
+}
+
+.metric:last-child {
+	border-right: none;
+}

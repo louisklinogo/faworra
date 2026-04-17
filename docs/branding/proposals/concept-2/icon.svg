@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <!-- Normal Lowercase f: Clean, professional, no artifacts -->
+  <path d="M32 70C32 70 25 70 25 60V30H15V20H25V15C25 5 32 0 45 0C52 0 58 3 58 3L55 13C55 13 50 10 46 10C42 10 35 13 35 20V20H52V30H35V60C35 70 48 70 48 70H55V78H48C35 78 32 70 32 70Z" fill="#0A0A0A" />
+  <!-- Brutalist Signal Block -->
+  <rect x="62" y="5" width="8" height="8" fill="#0D3B2E" />
+</svg>

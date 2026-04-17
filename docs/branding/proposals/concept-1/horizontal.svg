@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" fill="none">
+  <!-- Grid Icon: Architectural F -->
+  <path d="M20 15H60V25H30V35H55V45H30V65H20V15Z" fill="#0A0A0A" />
+  <rect x="65" y="15" width="10" height="10" fill="#0D3B2E" />
+  <text x="90" y="52" font-family="'Inter', sans-serif" font-size="44" font-weight="700" letter-spacing="-0.04em" fill="#0A0A0A">FAWORRA</text>
+</svg>

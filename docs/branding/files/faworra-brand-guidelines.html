@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Faworra — Brand Guidelines v1.0</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		>
+		<style>
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+			padding: 0;
+			margin: 0;
+		}
+
+		:root {
+			--obsidian: #0a0a0a;
+			--ivory: #f8f7f2;
+			--forest: #0d3b2e;
+			--sandsong: #d4c5a8;
+			--gray-100: #f0efe9;
+			--gray-200: #d8d7d0;
+			--gray-400: #999891;
+			--gray-600: #5a5a56;
+			--font-sans: "Inter", system-ui, sans-serif;
+			--font-mono: "JetBrains Mono", "Courier New", monospace;
+		}
+
+		body {
+			font-family: var(--font-sans);
+			font-size: 14px;
+			-webkit-font-smoothing: antialiased;
+			line-height: 1.6;
+			color: var(--obsidian);
+			background: var(--ivory);
+		}
+
+		/* Layout */
+		.page {
+			max-width: 900px;
+			padding: 80px 40px;
+			margin: 0 auto;
+		}
+		.section {
+			margin-bottom: 80px;
+		}
+		.rule {
+			margin: 48px 0;
+			border: none;
+			border-top: 1px solid var(--obsidian);
+		}
+
+		/* Type */
+		.overline {
+			margin-bottom: 12px;
+			font-family: var(--font-mono);
+			font-size: 10px;
+			color: var(--gray-400);
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+		}
+		h1 {
+			margin-bottom: 8px;
+			font-family: var(--font-sans);
+			font-size: 48px;
+			font-weight: 400;
+			line-height: 1.1;
+			letter-spacing: -0.02em;
+		}
+		h2 {
+			margin-bottom: 24px;
+			font-family: var(--font-sans);
+			font-size: 28px;
+			font-weight: 400;
+			letter-spacing: -0.01em;
+		}
+		p {
+			max-width: 560px;
+			line-height: 1.7;
+			color: var(--gray-600);
+		}
+		.mono {
+			font-family: var(--font-mono);
+		}
+
+		/* Cover */
+		.cover {
+			display: flex;
+			align-items: flex-end;
+			justify-content: space-between;
+			min-height: 260px;
+			padding: 64px;
+			margin-bottom: 80px;
+			background: var(--ivory);
+			border: 1px solid var(--obsidian);
+		}
+		.cover__meta {
+			font-family: var(--font-mono);
+			font-size: 10px;
+			color: var(--gray-400);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+
+		/* Logo displays */
+		.logo-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1px;
+			margin-bottom: 24px;
+			background: var(--obsidian);
+			border: 1px solid var(--obsidian);
+		}
+		.logo-cell {
+			display: flex;
+			align-items: center;
+			padding: 40px 48px;
+		}
+		.logo-cell--light {
+			background: var(--ivory);
+		}
+		.logo-cell--dark {
+			background: var(--obsidian);
+		}
+		.logo-cell--forest {
+			background: var(--forest);
+		}
+		.logo-cell--sand {
+			background: var(--sandsong);
+		}
+
+		/* Icon grid */
+		.icon-row {
+			display: flex;
+			gap: 1px;
+			margin-bottom: 24px;
+			background: var(--obsidian);
+			border: 1px solid var(--obsidian);
+		}
+		.icon-cell {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 80px;
+			height: 80px;
+		}
+
+		/* Palette */
+		.palette {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 0;
+			margin-bottom: 16px;
+			border: 1px solid var(--obsidian);
+		}
+		.swatch {
+			aspect-ratio: 1;
+			border-right: 1px solid var(--obsidian);
+		}
+		.swatch:last-child {
+			border-right: none;
+		}
+		.swatch-meta {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 0;
+			margin-bottom: 40px;
+		}
+		.swatch-info {
+			padding: 12px 0;
+		}
+		.swatch-info .name {
+			margin-bottom: 2px;
+			font-family: var(--font-sans);
+			font-size: 13px;
+			font-weight: 500;
+		}
+		.swatch-info .hex {
+			font-family: var(--font-mono);
+			font-size: 11px;
+			color: var(--gray-400);
+		}
+
+		/* Type specimen */
+		.type-row {
+			display: flex;
+			gap: 24px;
+			align-items: baseline;
+			padding: 20px 0;
+			border-bottom: 1px solid var(--gray-200);
+		}
+		.type-row:first-child {
+			border-top: 1px solid var(--gray-200);
+		}
+		.type-label {
+			min-width: 120px;
+			font-family: var(--font-mono);
+			font-size: 10px;
+			color: var(--gray-400);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+
+		/* Component: metric card */
+		.metrics {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			margin-bottom: 24px;
+			border: 1px solid var(--obsidian);
+		}
+		.metric {
+			padding: 24px;
+			border-right: 1px solid var(--obsidian);
+		}
+		.metric:last-child {
+			border-right: none;
+		}
+		.metric__label {
+			margin-bottom: 8px;
+			font-family: var(--font-mono);
+			font-size: 10px;
+			color: var(--gray-400);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+		.metric__value {
+			font-size: 28px;
+			font-weight: 500;
+			letter-spacing: -0.02em;
+		}
+
+		/* Component: data row */
+		.data-table {
+			margin-bottom: 24px;
+			border: 1px solid var(--obsidian);
+		}
+		.data-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 10px 20px;
+			background: var(--obsidian);
+			border-bottom: 1px solid var(--obsidian);
+		}
+		.data-header span {
+			font-family: var(--font-mono);
+			font-size: 10px;
+			color: var(--sandsong);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+		.data-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 14px 20px;
+			border-bottom: 1px solid var(--gray-200);
+		}
+		.data-row:last-child {
+			border-bottom: none;
+		}
+		.data-row__name {
+			font-size: 13px;
+		}
+		.data-row__amount {
+			font-family: var(--font-mono);
+			font-size: 13px;
+			font-weight: 500;
+		}
+		.data-row__amount--pos {
+			color: var(--forest);
+		}
+		.data-row__amount--neg {
+			color: #8b2500;
+		}
+		.data-row__tag {
+			padding: 2px 6px;
+			font-family: var(--font-mono);
+			font-size: 10px;
+			letter-spacing: 0.06em;
+			border: 1px solid;
+			border-radius: 2px;
+		}
+
+		/* Component: button row */
+		.btn-row {
+			display: flex;
+			gap: 1px;
+			align-items: center;
+			padding: 24px;
+			margin-bottom: 24px;
+			background: var(--obsidian);
+			border: 1px solid var(--obsidian);
+		}
+		.btn {
+			display: inline-flex;
+			gap: 8px;
+			align-items: center;
+			padding: 8px 16px;
+			font-family: var(--font-mono);
+			font-size: 11px;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			text-decoration: none;
+			cursor: pointer;
+			background: transparent;
+			border: 1px solid;
+		}
+		.btn--light {
+			color: var(--ivory);
+			border-color: var(--gray-200);
+		}
+		.btn--light:hover {
+			color: var(--obsidian);
+			background: var(--ivory);
+		}
+		.btn--primary-light {
+			color: var(--obsidian);
+			background: var(--ivory);
+			border-color: var(--ivory);
+		}
+		.btn--green {
+			color: var(--ivory);
+			background: var(--forest);
+			border-color: var(--forest);
+		}
+
+		/* Sidebar preview */
+		.sidebar-preview {
+			display: flex;
+			height: 320px;
+			margin-bottom: 24px;
+			overflow: hidden;
+			border: 1px solid var(--obsidian);
+		}
+		.sidebar {
+			display: flex;
+			flex-direction: column;
+			width: 200px;
+			border-right: 1px solid var(--obsidian);
+		}
+		.sidebar__logo {
+			padding: 20px;
+			border-bottom: 1px solid var(--obsidian);
+		}
+		.sidebar__nav {
+			padding: 12px 0;
+		}
+		.sidebar__item {
+			display: flex;
+			gap: 10px;
+			align-items: center;
+			padding: 8px 20px;
+			font-family: var(--font-mono);
+			font-size: 10px;
+			color: var(--gray-400);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+		}
+		.sidebar__item--active {
+			padding-left: 18px;
+			color: var(--obsidian);
+			border-left: 2px solid var(--forest);
+		}
+		.sidebar__main {
+			flex: 1;
+			padding: 24px;
+		}
+
+		/* Rules list */
+		.rules {
+			list-style: none;
+		}
+		.rules li {
+			display: flex;
+			gap: 12px;
+			padding: 14px 0;
+			font-size: 13px;
+			border-bottom: 1px solid var(--gray-200);
+		}
+		.rules li:first-child {
+			border-top: 1px solid var(--gray-200);
+		}
+		.rules .rule-key {
+			min-width: 100px;
+			padding-top: 2px;
+			font-family: var(--font-mono);
+			font-size: 10px;
+			color: var(--gray-400);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+		}
+
+		/* Usage: DO / DON'T */
+		.do-dont {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1px;
+			margin-bottom: 24px;
+			background: var(--obsidian);
+			border: 1px solid var(--obsidian);
+		}
+		.do-cell,
+		.dont-cell {
+			padding: 24px;
+		}
+		.do-cell {
+			background: var(--ivory);
+		}
+		.dont-cell {
+			background: var(--gray-100);
+		}
+		.cell-label {
+			margin-bottom: 16px;
+			font-family: var(--font-mono);
+			font-size: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+		.do-cell .cell-label {
+			color: var(--forest);
+		}
+		.dont-cell .cell-label {
+			color: #8b2500;
+		}
+		.cell-item {
+			padding-left: 12px;
+			margin-bottom: 8px;
+			font-size: 12px;
+			color: var(--gray-600);
+			border-left: 2px solid;
+		}
+		.do-cell .cell-item {
+			border-color: var(--forest);
+		}
+		.dont-cell .cell-item {
+			border-color: #8b2500;
+		}
+
+		/* Footer */
+		.footer {
+			display: flex;
+			align-items: flex-end;
+			justify-content: space-between;
+			padding-top: 32px;
+			border-top: 1px solid var(--obsidian);
+		}
+		</style>
+	</head>
+	<body>
+		<div class="page">
+			<!-- COVER -->
+			<div class="cover">
+				<div>
+					<div class="overline">Brand Guidelines — v1.0</div>
+					<h1>faworra<span style="color: var(--forest);">.</span></h1>
+					<p style="margin-top: 12px; font-size: 13px;">
+						Business OS for West African SMEs<br>Aesthetic Direction: Tech
+						Brutalist Minimal
+					</p>
+				</div>
+				<div class="cover__meta" style="text-align: right;">
+					<div>Studio Faworra / Berlin</div>
+					<div style="margin-top: 4px; color: var(--forest);">● APR 2026</div>
+				</div>
+			</div>
+
+			<!-- LOGO SYSTEM -->
+			<div class="section">
+				<div class="overline">01 — Logo System</div>
+				<h2>The mark</h2>
+				<p style="margin-bottom: 32px;">
+					A continuous lowercase 'f' that flows into itself — signifying
+					frictionless operation. The Forest Green dot is the living signal: the
+					one element of color in a strict monochrome system. It appears
+					wherever something is active, growing, or financially positive.
+				</p>
+
+				<div class="logo-grid">
+					<div class="logo-cell logo-cell--light">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 300 72"
+							fill="none"
+							height="56"
+						>
+							<path
+								d="M40 70C40 70 35 70 35 60V35H25V25H35V20C35 10 45 5 55 5C60 5 65 7 65 7L62 15C62 15 58 13 55 13C50 13 45 15 45 20V25H60V35H45V60C45 75 60 75 60 75H65V80H60C50 80 40 75 40 70Z"
+								fill="#0A0A0A"
+							/>
+							<circle cx="73" cy="14" r="4" fill="#0D3B2E" />
+							<text
+								x="90"
+								y="52"
+								font-family="Inter, system-ui, sans-serif"
+								font-size="38"
+								font-weight="400"
+								letter-spacing="-0.02em"
+								fill="#0A0A0A"
+							>
+								faworra
+							</text>
+						</svg>
+					</div>
+					<div class="logo-cell logo-cell--dark">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 300 72"
+							fill="none"
+							height="56"
+						>
+							<path
+								d="M40 70C40 70 35 70 35 60V35H25V25H35V20C35 10 45 5 55 5C60 5 65 7 65 7L62 15C62 15 58 13 55 13C50 13 45 15 45 20V25H60V35H45V60C45 75 60 75 60 75H65V80H60C50 80 40 75 40 70Z"
+								fill="#F8F7F2"
+							/>
+							<circle cx="73" cy="14" r="4" fill="#0D3B2E" />
+							<text
+								x="90"
+								y="52"
+								font-family="Inter, system-ui, sans-serif"
+								font-size="38"
+								font-weight="400"
+								letter-spacing="-0.02em"
+								fill="#F8F7F2"
+							>
+								faworra
+							</text>
+						</svg>
+					</div>
+					<div class="logo-cell logo-cell--forest">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 300 72"
+							fill="none"
+							height="56"
+						>
+							<path
+								d="M40 70C40 70 35 70 35 60V35H25V25H35V20C35 10 45 5 55 5C60 5 65 7 65 7L62 15C62 15 58 13 55 13C50 13 45 15 45 20V25H60V35H45V60C45 75 60 75 60 75H65V80H60C50 80 40 75 40 70Z"
+								fill="#F8F7F2"
+							/>
+							<circle cx="73" cy="14" r="4" fill="#D4C5A8" />
+							<text
+								x="90"
+								y="52"
+								font-family="Inter, system-ui, sans-serif"
+								font-size="38"
+								font-weight="400"
+								letter-spacing="-0.02em"
+								fill="#F8F7F2"
+							>
+								faworra
+							</text>
+						</svg>
+					</div>
+					<div class="logo-cell logo-cell--sand">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 300 72"
+							fill="none"
+							height="56"
+						>
+							<path
+								d="M40 70C40 70 35 70 35 60V35H25V25H35V20C35 10 45 5 55 5C60 5 65 7 65 7L62 15C62 15 58 13 55 13C50 13 45 15 45 20V25H60V35H45V60C45 75 60 75 60 75H65V80H60C50 80 40 75 40 70Z"
+								fill="#0A0A0A"
+							/>
+							<circle cx="73" cy="14" r="4" fill="#0D3B2E" />
+							<text
+								x="90"
+								y="52"
+								font-family="Inter, system-ui, sans-serif"
+								font-size="38"
+								font-weight="400"
+								letter-spacing="-0.02em"
+								fill="#0A0A0A"
+							>
+								faworra
+							</text>
+						</svg>
+					</div>
+				</div>
+
+				<div class="overline" style="margin-top: 40px;">
+					Icon — Favicon / App Icon
+				</div>
+				<div class="icon-row" style="margin-top: 12px;">
+					<div class="icon-cell" style="background: var(--ivory);">
+						<svg viewBox="0 0 44 58" fill="none" width="32">
+							<path
+								d="M22 54C22 54 19 54 19 48V30H13V22H19V18C19 10 26 5 32 5C35 5 38 6.5 38 6.5L36 13C36 13 33.5 11.5 31 11.5C27.5 11.5 24 13.5 24 18V22H34V30H24V48C24 56 33 56 33 56H37V58H33C27 58 22 54 22 54Z"
+								fill="#0A0A0A"
+							/>
+							<circle cx="37" cy="11" r="4" fill="#0D3B2E" />
+						</svg>
+					</div>
+					<div class="icon-cell" style="background: var(--obsidian);">
+						<svg viewBox="0 0 44 58" fill="none" width="32">
+							<path
+								d="M22 54C22 54 19 54 19 48V30H13V22H19V18C19 10 26 5 32 5C35 5 38 6.5 38 6.5L36 13C36 13 33.5 11.5 31 11.5C27.5 11.5 24 13.5 24 18V22H34V30H24V48C24 56 33 56 33 56H37V58H33C27 58 22 54 22 54Z"
+								fill="#F8F7F2"
+							/>
+							<circle cx="37" cy="11" r="4" fill="#0D3B2E" />
+						</svg>
+					</div>
+					<div class="icon-cell" style="background: var(--forest);">
+						<svg viewBox="0 0 44 58" fill="none" width="32">
+							<path
+								d="M22 54C22 54 19 54 19 48V30H13V22H19V18C19 10 26 5 32 5C35 5 38 6.5 38 6.5L36 13C36 13 33.5 11.5 31 11.5C27.5 11.5 24 13.5 24 18V22H34V30H24V48C24 56 33 56 33 56H37V58H33C27 58 22 54 22 54Z"
+								fill="#F8F7F2"
+							/>
+							<circle cx="37" cy="11" r="4" fill="#D4C5A8" />
+						</svg>
+					</div>
+					<div class="icon-cell" style="background: var(--sandsong);">
+						<svg viewBox="0 0 44 58" fill="none" width="32">
+							<path
+								d="M22 54C22 54 19 54 19 48V30H13V22H19V18C19 10 26 5 32 5C35 5 38 6.5 38 6.5L36 13C36 13 33.5 11.5 31 11.5C27.5 11.5 24 13.5 24 18V22H34V30H24V48C24 56 33 56 33 56H37V58H33C27 58 22 54 22 54Z"
+								fill="#0A0A0A"
+							/>
+							<circle cx="37" cy="11" r="4" fill="#0D3B2E" />
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<hr class="rule">
+
+			<!-- COLOR -->
+			<div class="section">
+				<div class="overline">02 — Color</div>
+				<h2>Palette</h2>
+				<p style="margin-bottom: 32px;">
+					Four colors. No more. Green is never decorative — it appears only to
+					signal growth, positive financial data, or live system state.
+					Everything else is Obsidian and Ivory.
+				</p>
+
+				<div class="palette">
+					<div class="swatch" style="background: var(--obsidian);"></div>
+					<div
+						class="swatch"
+						style="background: var(--ivory); border-left: 1px solid var(--obsidian); border-right: 1px solid var(--obsidian);"
+					></div>
+					<div
+						class="swatch"
+						style="background: var(--forest); border-right: 1px solid var(--obsidian);"
+					></div>
+					<div class="swatch" style="background: var(--sandsong);"></div>
+				</div>
+				<div class="swatch-meta">
+					<div class="swatch-info">
+						<div class="name">Obsidian</div>
+						<div class="hex">#0A0A0A</div>
+						<div class="hex" style="margin-top: 4px; font-size: 10px;">
+							Primary BG / Text
+						</div>
+					</div>
+					<div class="swatch-info" style="padding-left: 0;">
+						<div class="name">Ivory</div>
+						<div class="hex">#F8F7F2</div>
+						<div class="hex" style="margin-top: 4px; font-size: 10px;">
+							Primary surface / Paper
+						</div>
+					</div>
+					<div class="swatch-info">
+						<div class="name">Forest</div>
+						<div class="hex">#0D3B2E</div>
+						<div class="hex" style="margin-top: 4px; font-size: 10px;">
+							Data / Live / Positive
+						</div>
+					</div>
+					<div class="swatch-info">
+						<div class="name">Sandsong</div>
+						<div class="hex">#D4C5A8</div>
+						<div class="hex" style="margin-top: 4px; font-size: 10px;">
+							Secondary accent / Earth
+						</div>
+					</div>
+				</div>
+
+				<div class="do-dont">
+					<div class="do-cell">
+						<div class="cell-label">Use green for</div>
+						<div class="cell-item">Revenue, profit, net positive figures</div>
+						<div class="cell-item">Live / active status indicators</div>
+						<div class="cell-item">
+							Active navigation state (left border only)
+						</div>
+						<div class="cell-item">The dot in the logo mark</div>
+						<div class="cell-item">CTA button on dark backgrounds</div>
+					</div>
+					<div class="dont-cell">
+						<div class="cell-label">Never use green for</div>
+						<div class="cell-item">Decorative backgrounds or fills</div>
+						<div class="cell-item">Large text blocks or body copy</div>
+						<div class="cell-item">Neutral or ambiguous data states</div>
+						<div class="cell-item">Borders or dividers</div>
+						<div class="cell-item">Hover states (use Obsidian inversion)</div>
+					</div>
+				</div>
+			</div>
+
+			<hr class="rule">
+
+			<!-- TYPOGRAPHY -->
+			<div class="section">
+				<div class="overline">03 — Typography</div>
+				<h2>Type system</h2>
+				<p style="margin-bottom: 32px;">
+					Two fonts. Inter for human-readable content — amounts, names,
+					descriptions. JetBrains Mono for system metadata — labels, timestamps,
+					codes, identifiers. The contrast between them signals the difference
+					between information and data.
+				</p>
+
+				<div style="margin-bottom: 40px;">
+					<div class="type-row">
+						<div class="type-label">Display / 48px</div>
+						<div
+							style="font-size: 48px; font-weight: 400; letter-spacing: -0.02em; line-height: 1;"
+						>
+							faworra
+						</div>
+					</div>
+					<div class="type-row">
+						<div class="type-label">Heading / 28px</div>
+						<div
+							style="font-size: 28px; font-weight: 400; letter-spacing: -0.01em;"
+						>
+							Financial Overview
+						</div>
+					</div>
+					<div class="type-row">
+						<div class="type-label">Subheading / 20px</div>
+						<div style="font-size: 20px; font-weight: 500;">April 2026</div>
+					</div>
+					<div class="type-row">
+						<div class="type-label">Body / 14px</div>
+						<div style="font-size: 14px; color: var(--gray-600);">
+							Your business, operating. Faworra handles the infrastructure so
+							you can handle the vision.
+						</div>
+					</div>
+					<div class="type-row">
+						<div class="type-label">Mono label / 10px</div>
+						<div
+							style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-400);"
+						>
+							TOTAL REVENUE — APR 2026
+						</div>
+					</div>
+					<div class="type-row">
+						<div class="type-label">Mono data / 12px</div>
+						<div
+							style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;"
+						>
+							TXN-2026-04-001 · ₵4,200.00
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<hr class="rule">
+
+			<!-- COMPONENTS -->
+			<div class="section">
+				<div class="overline">04 — Components</div>
+				<h2>UI components</h2>
+				<p style="margin-bottom: 40px;">
+					Every component follows the same structural logic: hard 1px borders,
+					zero border radius, monospace labels above sans-serif values. The grid
+					IS the design.
+				</p>
+
+				<!-- Metrics -->
+				<div class="overline" style="margin-bottom: 12px;">Metric cards</div>
+				<div class="metrics">
+					<div class="metric">
+						<div class="metric__label">Revenue</div>
+						<div class="metric__value">₵84,200</div>
+					</div>
+					<div class="metric">
+						<div class="metric__label">Expenses</div>
+						<div class="metric__value">₵31,440</div>
+					</div>
+					<div class="metric">
+						<div class="metric__label">Net</div>
+						<div class="metric__value" style="color: var(--forest);">
+							₵52,760
+						</div>
+					</div>
+				</div>
+
+				<!-- Data table -->
+				<div class="overline" style="margin-bottom: 12px; margin-top: 32px;">
+					Transaction list
+				</div>
+				<div class="data-table">
+					<div class="data-header">
+						<span>Transactions — Apr 2026</span>
+						<span style="color: var(--forest);">● 14 entries</span>
+					</div>
+					<div class="data-row">
+						<div>
+							<div class="data-row__name">Kofi Boateng — Invoice #041</div>
+							<div
+								style="font-family: var(--font-mono); font-size: 10px; color: var(--gray-400); letter-spacing: 0.06em; margin-top: 2px;"
+							>
+								TXN-2026-04-014 · Apr 09
+							</div>
+						</div>
+						<div style="display: flex; align-items: center; gap: 12px;">
+							<span
+								class="data-row__tag"
+								style="color: var(--forest); border-color: var(--forest);"
+								>paid</span
+							>
+							<span class="data-row__amount data-row__amount--pos"
+								>+₵8,500</span
+							>
+						</div>
+					</div>
+					<div class="data-row">
+						<div>
+							<div class="data-row__name">AWS Infrastructure — Mar</div>
+							<div
+								style="font-family: var(--font-mono); font-size: 10px; color: var(--gray-400); letter-spacing: 0.06em; margin-top: 2px;"
+							>
+								TXN-2026-04-013 · Apr 08
+							</div>
+						</div>
+						<div style="display: flex; align-items: center; gap: 12px;">
+							<span
+								class="data-row__tag"
+								style="color: var(--gray-400); border-color: var(--gray-200);"
+								>expense</span
+							>
+							<span class="data-row__amount data-row__amount--neg"
+								>−₵1,240</span
+							>
+						</div>
+					</div>
+					<div class="data-row">
+						<div>
+							<div class="data-row__name">Accra Tech Hub — Retainer</div>
+							<div
+								style="font-family: var(--font-mono); font-size: 10px; color: var(--gray-400); letter-spacing: 0.06em; margin-top: 2px;"
+							>
+								TXN-2026-04-012 · Apr 07
+							</div>
+						</div>
+						<div style="display: flex; align-items: center; gap: 12px;">
+							<span
+								class="data-row__tag"
+								style="color: var(--forest); border-color: var(--forest);"
+								>paid</span
+							>
+							<span class="data-row__amount data-row__amount--pos"
+								>+₵12,000</span
+							>
+						</div>
+					</div>
+				</div>
+
+				<!-- Buttons -->
+				<div class="overline" style="margin-bottom: 12px; margin-top: 32px;">
+					Buttons
+				</div>
+				<div class="btn-row">
+					<a class="btn btn--light" href="#">Export</a>
+					<a
+						class="btn btn--light"
+						href="#"
+						style="border-color: var(--gray-600); background: var(--sandsong); color: var(--obsidian);"
+						>Filter</a
+					>
+					<a class="btn btn--green" href="#">+ New invoice</a>
+				</div>
+
+				<!-- Sidebar -->
+				<div class="overline" style="margin-bottom: 12px; margin-top: 32px;">
+					Dashboard sidebar
+				</div>
+				<div class="sidebar-preview">
+					<div class="sidebar">
+						<div class="sidebar__logo">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 160 36"
+								fill="none"
+								height="28"
+							>
+								<path
+									d="M18 32C18 32 16 32 16 28V18H12V14H16V12C16 8 20 5 24 5C26 5 28 6 28 6L27 9.5C27 9.5 25.5 8.5 24 8.5C22 8.5 20 9.5 20 12V14H26V18H20V28C20 33 26 33 26 33H28V35H26C22 35 18 32 18 32Z"
+									fill="#0A0A0A"
+								/>
+								<circle cx="29" cy="8" r="2.5" fill="#0D3B2E" />
+								<text
+									x="36"
+									y="26"
+									font-family="Inter, system-ui, sans-serif"
+									font-size="20"
+									font-weight="400"
+									letter-spacing="-0.02em"
+									fill="#0A0A0A"
+								>
+									faworra
+								</text>
+							</svg>
+						</div>
+						<div class="sidebar__nav">
+							<div class="sidebar__item sidebar__item--active">Vault</div>
+							<div class="sidebar__item">Invoices</div>
+							<div class="sidebar__item">Expenses</div>
+							<div class="sidebar__item">Payroll</div>
+							<div class="sidebar__item">Reports</div>
+						</div>
+					</div>
+					<div class="sidebar__main">
+						<div
+							style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 20px;"
+						>
+							Vault — Apr 2026
+						</div>
+						<div
+							style="font-size: 40px; font-weight: 500; letter-spacing: -0.02em; color: var(--forest);"
+						>
+							₵52,760
+						</div>
+						<div
+							style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--gray-400); margin-top: 4px;"
+						>
+							NET POSITION
+						</div>
+						<div style="margin-top: 28px; display: flex; gap: 0;">
+							<div
+								style="height: 3px; background: var(--obsidian); flex: 6;"
+							></div>
+							<div
+								style="height: 3px; background: var(--sandsong); flex: 3;"
+							></div>
+							<div
+								style="height: 3px; background: var(--forest); flex: 5;"
+							></div>
+						</div>
+						<div style="display: flex; gap: 16px; margin-top: 8px;">
+							<span
+								style="font-family: var(--font-mono); font-size: 9px; color: var(--gray-400); letter-spacing: 0.06em;"
+								>IN ₵84.2K</span
+							>
+							<span
+								style="font-family: var(--font-mono); font-size: 9px; color: var(--gray-400); letter-spacing: 0.06em;"
+								>PENDING ₵18.4K</span
+							>
+							<span
+								style="font-family: var(--font-mono); font-size: 9px; color: var(--forest); letter-spacing: 0.06em;"
+								>NET ₵52.8K</span
+							>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<hr class="rule">
+
+			<!-- RULES -->
+			<div class="section">
+				<div class="overline">05 — Rules</div>
+				<h2>Design rules</h2>
+				<p style="margin-bottom: 32px;">
+					These are not guidelines — they are constraints. The aesthetic only
+					holds when they are consistently applied.
+				</p>
+
+				<ul class="rules">
+					<li>
+						<span class="rule-key">Border radius</span>
+						<span
+							>Always 0px. No rounded corners anywhere in the product UI. Tags
+							and badges may use 2px maximum.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Borders</span>
+						<span
+							>Always 1px solid — never 0.5px. The hard line is structural, not
+							decorative.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Shadows</span>
+						<span
+							>None. Ever. Elevation is expressed through borders and background
+							contrast only.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Color</span>
+						<span
+							>Forest Green (#0D3B2E) appears only on positive data, live
+							states, and active navigation. Never as decoration.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Labels</span>
+						<span
+							>All metadata, field labels, timestamps, and identifiers use
+							JetBrains Mono, uppercase, 10px, letter-spacing 0.10em.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Values</span>
+						<span
+							>All human-readable values — amounts, names, descriptions — use
+							Inter, weight 400 or 500 only.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Hover states</span>
+						<span
+							>Inversion: Obsidian background → Ivory text. No color
+							transitions. No easing longer than 150ms.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Logo</span>
+						<span
+							>Never stretch, recolor, or add effects to the mark. The green dot
+							is always Forest (#0D3B2E) or Sandsong (#D4C5A8) on Forest
+							backgrounds.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Logo spacing</span>
+						<span
+							>Minimum clear space equal to the height of the lowercase 'f' on
+							all sides.</span
+						>
+					</li>
+					<li>
+						<span class="rule-key">Currency</span>
+						<span
+							>Use ₵ (Cedi) as default. Always mono, always tabular figures for
+							financial data.</span
+						>
+					</li>
+				</ul>
+			</div>
+
+			<!-- FOOTER -->
+			<div class="footer">
+				<div>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 120 28"
+						fill="none"
+						height="20"
+					>
+						<path
+							d="M14 26C14 26 12 26 12 22V14H8V10H12V8C12 4 16 2 20 2C22 2 24 3 24 3L23 6C23 6 21.5 5 20 5C18 5 16 6 16 8V10H22V14H16V22C16 27 21 27 21 27H23V28H21C17 28 14 26 14 26Z"
+							fill="#0A0A0A"
+						/>
+						<circle cx="23.5" cy="5.5" r="2" fill="#0D3B2E" />
+						<text
+							x="29"
+							y="20"
+							font-family="Inter, system-ui, sans-serif"
+							font-size="16"
+							font-weight="400"
+							letter-spacing="-0.02em"
+							fill="#0A0A0A"
+						>
+							faworra
+						</text>
+					</svg>
+				</div>
+				<div
+					style="font-family: var(--font-mono); font-size: 10px; color: var(--gray-400); letter-spacing: 0.08em; text-align: right;"
+				>
+					<div>BRAND GUIDELINES v1.0</div>
+					<div style="margin-top: 4px;">STUDIO FAWORRA / BERLIN — APR 2026</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" fill="none">
+  <!-- Normal Lowercase f: Clean, professional, no artifacts -->
+  <path d="M42 85C42 85 35 85 35 75V45H25V35H35V30C35 20 42 15 55 15C62 15 68 18 68 18L65 28C65 28 60 25 56 25C52 25 45 28 45 35V35H62V45H45V75C45 85 58 85 58 85H65V93H58C45 93 42 85 42 85Z" fill="#0A0A0A" />
+  <!-- Brutalist Signal Block -->
+  <rect x="72" y="20" width="6" height="6" fill="#0D3B2E" />
+  <text x="50" y="115" text-anchor="middle" font-family="'Inter', sans-serif" font-size="20" font-weight="500" letter-spacing="-0.02em" fill="#0A0A0A">faworra</text>
+</svg>
