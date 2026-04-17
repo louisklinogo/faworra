@@ -19,6 +19,7 @@ build
 !.vscode/launch.json
 !.vscode/extensions.json
 .idea
+.cursor/
 *.swp
 *.swo
 *~
@@ -53,5 +54,6 @@ temp
 .omx/
 .letta/
 ..playwright-mcp/
+skills/
 storage/
 packages/jobs/.trigger/

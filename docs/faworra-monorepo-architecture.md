@@ -2,7 +2,7 @@
 
 ### Purpose
 
-This document answers `faworra-architecture-prompt.md` using Midday as the architectural base and `faworra-master` as the domain reference. It keeps Midday's monorepo, App Router, Hono, tRPC, Drizzle, Supabase, and package-modularity patterns, while adapting the authentication layer to Better Auth for Faworra's business-operations product surface.
+This document answers the Faworra identity and architecture brief in [docs/faworra-identity-reference.md](/home/louis/developer/faworra/faworra-new/docs/faworra-identity-reference.md) using Midday as the architectural base and `faworra-master` as the domain reference. It keeps Midday's monorepo, App Router, Hono, tRPC, Drizzle, Supabase, and package-modularity patterns, while adapting the authentication layer to Better Auth for Faworra's business-operations product surface.
 
 ### Design stance
 
