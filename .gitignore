@@ -53,3 +53,5 @@ temp
 .omx/
 .letta/
 ..playwright-mcp/
+storage/
+packages/jobs/.trigger/

@@ -1,0 +1,442 @@
+[
+  {
+    "localPath": "brand-assets.md",
+    "sourceUrl": "https://docs.mono.co/docs/brand-assets",
+    "title": "Brand Assets"
+  },
+  {
+    "localPath": "changelog.md",
+    "sourceUrl": "https://docs.mono.co/docs/changelog",
+    "title": "Changelog"
+  },
+  {
+    "localPath": "coverage.md",
+    "sourceUrl": "https://docs.mono.co/docs/coverage",
+    "title": "Financial Data Coverage"
+  },
+  {
+    "localPath": "create-app.md",
+    "sourceUrl": "https://docs.mono.co/docs/create-app",
+    "title": "Creating an App"
+  },
+  {
+    "localPath": "customers.md",
+    "sourceUrl": "https://docs.mono.co/docs/customers",
+    "title": "Customers"
+  },
+  {
+    "localPath": "definitions.md",
+    "sourceUrl": "https://docs.mono.co/docs/definitions",
+    "title": "Definitions"
+  },
+  {
+    "localPath": "disburse/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/disburse/integration-guide",
+    "title": "Disburse Integration Guide"
+  },
+  {
+    "localPath": "disburse/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/disburse/overview",
+    "title": "Disburse Overview"
+  },
+  {
+    "localPath": "disburse/webhook-events.md",
+    "sourceUrl": "https://docs.mono.co/docs/disburse/webhook-events",
+    "title": "Disburse Webhooks"
+  },
+  {
+    "localPath": "environments.md",
+    "sourceUrl": "https://docs.mono.co/docs/environments",
+    "title": "Environments"
+  },
+  {
+    "localPath": "errors.md",
+    "sourceUrl": "https://docs.mono.co/docs/errors",
+    "title": "Errors"
+  },
+  {
+    "localPath": "faqs.md",
+    "sourceUrl": "https://docs.mono.co/docs/faqs",
+    "title": "FAQs"
+  },
+  {
+    "localPath": "financial-data/account-information.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/account-information",
+    "title": "Account Information"
+  },
+  {
+    "localPath": "financial-data/account-update.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/account-update",
+    "title": "Webhook Events"
+  },
+  {
+    "localPath": "financial-data/assets.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/assets",
+    "title": "Assets"
+  },
+  {
+    "localPath": "financial-data/auth-connection.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/auth-connection",
+    "title": "Webhook Events"
+  },
+  {
+    "localPath": "financial-data/authorization.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/authorization",
+    "title": "Authorization"
+  },
+  {
+    "localPath": "financial-data/connect-link.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/connect-link",
+    "title": "Connect Link Integration Guide"
+  },
+  {
+    "localPath": "financial-data/credit-worthiness.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/credit-worthiness",
+    "title": "Credit Worthiness Guide"
+  },
+  {
+    "localPath": "financial-data/earnings.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/earnings",
+    "title": "Earnings"
+  },
+  {
+    "localPath": "financial-data/enrichment/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/enrichment/overview",
+    "title": "Overview"
+  },
+  {
+    "localPath": "financial-data/enrichment/statement-insights.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/enrichment/statement-insights",
+    "title": "Statement Insights Guide"
+  },
+  {
+    "localPath": "financial-data/enrichment/transaction-categorisation.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/enrichment/transaction-categorisation",
+    "title": "Transaction Categorisation Guide"
+  },
+  {
+    "localPath": "financial-data/enrichment/transaction-metadata.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/enrichment/transaction-metadata",
+    "title": "Transaction Metadata Guide"
+  },
+  {
+    "localPath": "financial-data/identity.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/identity",
+    "title": "Identity"
+  },
+  {
+    "localPath": "financial-data/income.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/income",
+    "title": "Income Guide"
+  },
+  {
+    "localPath": "financial-data/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/integration-guide",
+    "title": "SDK Integration Guide"
+  },
+  {
+    "localPath": "financial-data/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/overview",
+    "title": "Overview"
+  },
+  {
+    "localPath": "financial-data/partners-api-guide/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/partners-api-guide/integration-guide",
+    "title": "Integration Guide"
+  },
+  {
+    "localPath": "financial-data/partners-api-guide/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/partners-api-guide/overview",
+    "title": "Overview"
+  },
+  {
+    "localPath": "financial-data/partners-api-guide/reauth-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/partners-api-guide/reauth-guide",
+    "title": "Reauthorisation Guide"
+  },
+  {
+    "localPath": "financial-data/partners-api-guide/sandbox-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/partners-api-guide/sandbox-guide",
+    "title": "Sandbox Guide"
+  },
+  {
+    "localPath": "financial-data/realtime-data.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/realtime-data",
+    "title": "Real-Time Data"
+  },
+  {
+    "localPath": "financial-data/realtime-data.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/realtime-data",
+    "title": "Real-Time Data"
+  },
+  {
+    "localPath": "financial-data/reauth-link.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/reauth-link",
+    "title": "Reauth Link Initiation Guide"
+  },
+  {
+    "localPath": "financial-data/sdk.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/sdk",
+    "title": "Financial Data SDK Guide"
+  },
+  {
+    "localPath": "financial-data/statements.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/statements",
+    "title": "Statements"
+  },
+  {
+    "localPath": "financial-data/transactions.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/transactions",
+    "title": "Transactions"
+  },
+  {
+    "localPath": "financial-data/unlink.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/unlink",
+    "title": "Webhook Events"
+  },
+  {
+    "localPath": "financial-data/webhook-introduction.md",
+    "sourceUrl": "https://docs.mono.co/docs/financial-data/webhook-introduction",
+    "title": "Webhook Events"
+  },
+  {
+    "localPath": "go-live.md",
+    "sourceUrl": "https://docs.mono.co/docs/go-live",
+    "title": "Go Live Checklist"
+  },
+  {
+    "localPath": "index.md",
+    "sourceUrl": "https://docs.mono.co/docs",
+    "title": "Mono Developer Documentation - Open Banking APIs"
+  },
+  {
+    "localPath": "libraries.md",
+    "sourceUrl": "https://docs.mono.co/docs/libraries",
+    "title": "Libraries"
+  },
+  {
+    "localPath": "lookup/account-number.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/account-number",
+    "title": "Account Number Integration Guide"
+  },
+  {
+    "localPath": "lookup/bvn-igree.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/bvn-igree",
+    "title": "BVN Lookup Integration Guide"
+  },
+  {
+    "localPath": "lookup/cac-lookup.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/cac-lookup",
+    "title": "CAC Lookup Integration Guide"
+  },
+  {
+    "localPath": "lookup/credit-history-lookup.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/credit-history-lookup",
+    "title": "Credit History Lookup Integration Guide"
+  },
+  {
+    "localPath": "lookup/drivers-license.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/drivers-license",
+    "title": "Drivers License Lookup Integration Guide"
+  },
+  {
+    "localPath": "lookup/house-address.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/house-address",
+    "title": "House Address Verification Integration Guide"
+  },
+  {
+    "localPath": "lookup/intl-passport.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/intl-passport",
+    "title": "Int'l Passport Lookup Integration Guide"
+  },
+  {
+    "localPath": "lookup/mashup.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/mashup",
+    "title": "Lookup Mashup API Integration Guide"
+  },
+  {
+    "localPath": "lookup/nin-lookup.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/nin-lookup",
+    "title": "NIN Lookup Integration Guide"
+  },
+  {
+    "localPath": "lookup/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/overview",
+    "title": "Overview"
+  },
+  {
+    "localPath": "lookup/prove/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/prove/integration-guide",
+    "title": "Mono Prove Integration Guide"
+  },
+  {
+    "localPath": "lookup/prove/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/prove/overview",
+    "title": "Overview"
+  },
+  {
+    "localPath": "lookup/tin-lookup.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/tin-lookup",
+    "title": "TIN Lookup Integration Guide"
+  },
+  {
+    "localPath": "lookup/watchlist-screening/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/watchlist-screening/integration-guide",
+    "title": "Watchlist Screening Integration Guide"
+  },
+  {
+    "localPath": "lookup/watchlist-screening/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/watchlist-screening/overview",
+    "title": "Watchlist Screening"
+  },
+  {
+    "localPath": "lookup/watchlist-screening/webhook-events.md",
+    "sourceUrl": "https://docs.mono.co/docs/lookup/watchlist-screening/webhook-events",
+    "title": "Watchlist Screening Webhook Events"
+  },
+  {
+    "localPath": "owo/webhook-events.md",
+    "sourceUrl": "https://docs.mono.co/docs/owo/webhook-events",
+    "title": "404: This page could not be found.Mono developer documentation"
+  },
+  {
+    "localPath": "payments/direct-debit/debit-an-account.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/debit-an-account",
+    "title": "Direct Debit Integration Guide- Debit Account"
+  },
+  {
+    "localPath": "payments/direct-debit/integration-guide-create-customers.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/integration-guide-create-customers",
+    "title": "Direct Debit Integration Guide: Customers"
+  },
+  {
+    "localPath": "payments/direct-debit/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/integration-guide",
+    "title": "Direct Debit Integration Guide"
+  },
+  {
+    "localPath": "payments/direct-debit/mandate-biometric-verification.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/mandate-biometric-verification",
+    "title": "Mandate Biometrics Verification"
+  },
+  {
+    "localPath": "payments/direct-debit/mandate-setup-explained.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/mandate-setup-explained",
+    "title": "Direct Debit Integration Guide: Mandate Setup"
+  },
+  {
+    "localPath": "payments/direct-debit/mandate-setup-fixed.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/mandate-setup-fixed",
+    "title": "Direct Debit Integration Guide: Mandate Setup(Fixed)"
+  },
+  {
+    "localPath": "payments/direct-debit/mandate-setup-variable.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/mandate-setup-variable",
+    "title": "Direct Debit Integration Guide- Mandate Setup (Variable)"
+  },
+  {
+    "localPath": "payments/direct-debit/mono-sweep.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/mono-sweep",
+    "title": "Mono Sweep (formerly GSM)"
+  },
+  {
+    "localPath": "payments/direct-debit/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/overview",
+    "title": "Direct Debit Overview"
+  },
+  {
+    "localPath": "payments/direct-debit/webhook-events.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/direct-debit/webhook-events",
+    "title": "Direct Debit Webhook Events"
+  },
+  {
+    "localPath": "payments/onetime/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/onetime/integration-guide",
+    "title": "One-time Payment Guide"
+  },
+  {
+    "localPath": "payments/onetime/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/onetime/overview",
+    "title": "One-time payments"
+  },
+  {
+    "localPath": "payments/onetime/payment-status.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/onetime/payment-status",
+    "title": "Payment Status"
+  },
+  {
+    "localPath": "payments/onetime/webhook-events.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/onetime/webhook-events",
+    "title": "Webhook Events"
+  },
+  {
+    "localPath": "payments/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/overview",
+    "title": "Overview"
+  },
+  {
+    "localPath": "payments/payouts.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/payouts",
+    "title": "Receiving Payouts"
+  },
+  {
+    "localPath": "payments/sdk-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/sdk-guide",
+    "title": "SDK Guide"
+  },
+  {
+    "localPath": "payments/split-payments.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/split-payments",
+    "title": "Split Payments Guide"
+  },
+  {
+    "localPath": "payments/webhook.md",
+    "sourceUrl": "https://docs.mono.co/docs/payments/webhook",
+    "title": "Webhook Events"
+  },
+  {
+    "localPath": "postman.md",
+    "sourceUrl": "https://docs.mono.co/docs/postman",
+    "title": "Postman"
+  },
+  {
+    "localPath": "quickstart.md",
+    "sourceUrl": "https://docs.mono.co/docs/quickstart",
+    "title": "Quickstart Guides"
+  },
+  {
+    "localPath": "sandbox.md",
+    "sourceUrl": "https://docs.mono.co/docs/sandbox",
+    "title": "Sandbox"
+  },
+  {
+    "localPath": "sdks.md",
+    "sourceUrl": "https://docs.mono.co/docs/sdks",
+    "title": "SDKs"
+  },
+  {
+    "localPath": "use-cases.md",
+    "sourceUrl": "https://docs.mono.co/docs/use-cases",
+    "title": "Use Cases"
+  },
+  {
+    "localPath": "webhooks.md",
+    "sourceUrl": "https://docs.mono.co/docs/webhooks",
+    "title": "Webhooks"
+  },
+  {
+    "localPath": "whatsapp-payment/integration-guide.md",
+    "sourceUrl": "https://docs.mono.co/docs/whatsapp-payment/integration-guide",
+    "title": "WhatsApp Payment Integration Guide"
+  },
+  {
+    "localPath": "whatsapp-payment/overview.md",
+    "sourceUrl": "https://docs.mono.co/docs/whatsapp-payment/overview",
+    "title": "WhatsApp Payment Overview"
+  },
+  {
+    "localPath": "whatsapp-payment/webhook-events.md",
+    "sourceUrl": "https://docs.mono.co/docs/whatsapp-payment/webhook-events",
+    "title": "WhatsApp Payment Webhooks"
+  }
+]
