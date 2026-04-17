@@ -108,6 +108,17 @@ async function main() {
 		console.log(`✓ Created account: ${account.id}`);
 	} else {
 		console.log(`✓ Using existing account: ${account.id}`);
+		// Provider-linked accounts must be manual=false or sync-connection skips them
+		if (
+			account.bankConnectionId === connection.id &&
+			account.manual !== false
+		) {
+			console.log("   Patching manual=false for provider-linked sync...");
+			await db
+				.update(bankAccounts)
+				.set({ manual: false })
+				.where(eq(bankAccounts.id, account.id));
+		}
 	}
 
 	// Summary - assert all data exists

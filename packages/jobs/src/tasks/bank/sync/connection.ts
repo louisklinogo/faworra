@@ -21,11 +21,9 @@ export const syncConnection = schemaTask({
 	},
 	schema: syncConnectionSchema,
 	run: async ({ connectionId, manualSync }, { ctx }) => {
-		// Debug: Check if env vars are set
 		logger.info("[syncConnection] Environment check", {
 			hasSupabaseUrl: !!process.env.SUPABASE_URL,
 			hasSupabaseSecretKey: !!process.env.SUPABASE_SECRET_KEY,
-			secretKeyPrefix: process.env.SUPABASE_SECRET_KEY?.substring(0, 20) + "...",
 		});
 
 		const supabase = createClient();
@@ -86,10 +84,26 @@ export const syncConnection = schemaTask({
 				);
 			}
 
-			if (!bankAccountsData || bankAccountsData.length === 0) {
-				logger.info("[syncConnection] No enabled accounts found", {
-					connectionId,
-				});
+			if (!filteredAccounts.length) {
+				logger.info(
+					"[syncConnection] No enabled, non-manual accounts to sync (check bank_accounts.manual=false for provider-linked accounts)",
+					{ connectionId, rawAccountCount: bankAccountsData?.length ?? 0 }
+				);
+				const { error: touchError } = await supabase
+					.from("bank_connections")
+					.update({
+						status: "connected",
+						last_synced_at: new Date().toISOString(),
+						updated_at: new Date().toISOString(),
+					})
+					.eq("id", connectionId);
+				if (touchError) {
+					logger.error("[syncConnection] Failed to touch connection timestamp", {
+						connectionId,
+						error: touchError,
+					});
+					throw touchError;
+				}
 				return {
 					status: "completed" as const,
 					accountsSynced: 0,
@@ -98,7 +112,7 @@ export const syncConnection = schemaTask({
 
 			logger.info("[syncConnection] Found accounts to sync", {
 				connectionId,
-				accountCount: bankAccountsData.length,
+				accountCount: filteredAccounts.length,
 			});
 
 			// Midday parity: use batchTriggerAndWait with staggered delays
@@ -108,7 +122,7 @@ export const syncConnection = schemaTask({
 			type BankAccountRow =
 				Database["public"]["Tables"]["bank_accounts"]["Row"];
 
-			const batchItems = (bankAccountsData as BankAccountRow[]).map(
+			const batchItems = (filteredAccounts as BankAccountRow[]).map(
 				(account, i) => ({
 					payload: {
 						id: account.id,
@@ -132,7 +146,7 @@ export const syncConnection = schemaTask({
 
 			// Update connection status and lastSyncedAt
 			// Midday parity: use Supabase client
-			await supabase
+			const { error: connectionUpdateError } = await supabase
 				.from("bank_connections")
 				.update({
 					status: "connected",
@@ -140,15 +154,22 @@ export const syncConnection = schemaTask({
 					updated_at: new Date().toISOString(),
 				})
 				.eq("id", connectionId);
+			if (connectionUpdateError) {
+				logger.error("[syncConnection] Connection update failed", {
+					connectionId,
+					error: connectionUpdateError,
+				});
+				throw connectionUpdateError;
+			}
 
 			logger.info("[syncConnection] Sync completed", {
 				connectionId,
-				accountsSynced: bankAccountsData.length,
+				accountsSynced: filteredAccounts.length,
 			});
 
 			return {
 				status: "completed" as const,
-				accountsSynced: bankAccountsData.length,
+				accountsSynced: filteredAccounts.length,
 			};
 		} catch (error) {
 			logger.error("[syncConnection] Sync failed", {
@@ -158,13 +179,19 @@ export const syncConnection = schemaTask({
 
 			// Update connection with error status
 			// Midday parity: use Supabase client
-			await supabase
+			const { error: errUpdateError } = await supabase
 				.from("bank_connections")
 				.update({
 					status: "error",
 					updated_at: new Date().toISOString(),
 				})
 				.eq("id", connectionId);
+			if (errUpdateError) {
+				logger.error("[syncConnection] Failed to persist error status", {
+					connectionId,
+					error: errUpdateError,
+				});
+			}
 
 			throw error;
 		}

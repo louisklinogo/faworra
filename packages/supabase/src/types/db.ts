@@ -1,3 +1,14 @@
+/**
+ * Supabase generated `Database` types.
+ *
+ * Regenerate after remote schema changes:
+ *   SUPABASE_PROJECT_ID=<ref> bun run supabase:types
+ *
+ * Drift guard: `bun run verify:supabase-types`
+ *
+ * Source of truth: hosted Postgres / Supabase — keep `packages/db` migrations aligned.
+ */
+
 export type Json =
 	| string
 	| number
@@ -150,6 +161,8 @@ export type Database = {
 					credit_limit: number | null;
 					currency: string;
 					enabled: boolean;
+					error_details: string | null;
+					error_retries: number | null;
 					external_id: string | null;
 					id: string;
 					last_synced_at: string | null;
@@ -171,6 +184,8 @@ export type Database = {
 					credit_limit?: number | null;
 					currency: string;
 					enabled?: boolean;
+					error_details?: string | null;
+					error_retries?: number | null;
 					external_id?: string | null;
 					id?: string;
 					last_synced_at?: string | null;
@@ -192,6 +207,8 @@ export type Database = {
 					credit_limit?: number | null;
 					currency?: string;
 					enabled?: boolean;
+					error_details?: string | null;
+					error_retries?: number | null;
 					external_id?: string | null;
 					id?: string;
 					last_synced_at?: string | null;

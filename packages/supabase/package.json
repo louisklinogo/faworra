@@ -7,7 +7,9 @@
     "lint": "biome check .",
     "lint:fix": "biome format --write .",
     "typecheck": "tsc --noEmit",
-    "db:generate": "supabase gen types --lang=typescript --project-id $SUPABASE_PROJECT_ID > src/types/db.ts"
+    "supabase:gen-types": "node ./scripts/generate-types.mjs",
+    "verify-supabase-types": "node ./scripts/verify-types.mjs",
+    "db:generate": "node ./scripts/generate-types.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1"

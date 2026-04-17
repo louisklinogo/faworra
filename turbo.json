@@ -27,12 +27,47 @@
         "SUPABASE_SECRET_KEY",
         "TRIGGER_PROJECT_ID",
         "TRIGGER_SECRET_KEY",
-        "DATABASE_URL"
+        "TRIGGER_PROJECT_REF",
+        "DATABASE_URL",
+        "DATABASE_PRIMARY_POOLER_URL",
+        "REDIS_QUEUE_URL",
+        "MONO_SECRET_KEY",
+        "MONO_PUBLIC_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "CORS_ORIGIN"
       ]
     },
     "jobs": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "passThroughEnv": [
+        "SUPABASE_URL",
+        "SUPABASE_SECRET_KEY",
+        "TRIGGER_PROJECT_ID",
+        "TRIGGER_SECRET_KEY",
+        "TRIGGER_PROJECT_REF",
+        "DATABASE_URL",
+        "DATABASE_PRIMARY_POOLER_URL",
+        "REDIS_QUEUE_URL",
+        "MONO_SECRET_KEY",
+        "MONO_PUBLIC_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "CORS_ORIGIN"
+      ]
+    },
+    "supabase:gen-types": {
+      "cache": false,
+      "passThroughEnv": ["SUPABASE_PROJECT_ID", "SUPABASE_ACCESS_TOKEN"]
+    },
+    "verify-supabase-types": {
+      "cache": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/types/db.ts",
+        "scripts/verify-types.mjs"
+      ]
     },
     "db:push": {
       "cache": false

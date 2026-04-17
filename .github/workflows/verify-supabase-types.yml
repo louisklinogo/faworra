@@ -1,0 +1,22 @@
+name: Verify Supabase types
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  verify-supabase-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.10"
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Drift guard (bank_accounts columns)
+        run: bun run verify:supabase-types

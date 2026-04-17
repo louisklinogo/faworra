@@ -46,7 +46,9 @@
     "db:generate": "turbo -F @faworra-new/db db:generate",
     "db:migrate": "turbo -F @faworra-new/db db:migrate",
     "check": "ultracite check",
-    "fix": "ultracite fix"
+    "fix": "ultracite fix",
+    "supabase:types": "turbo -F @faworra-new/supabase supabase:gen-types",
+    "verify:supabase-types": "turbo -F @faworra-new/supabase verify-supabase-types"
   },
   "dependencies": {
     "@faworra-new/env": "workspace:*",

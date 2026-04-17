@@ -43,6 +43,8 @@ export const syncAccount = schemaTask({
 		void connectionId;
 		void manualSync;
 
+		let balanceOk = false;
+
 		try {
 			// Get current bank account state
 			// Midday parity: use Supabase client
@@ -75,7 +77,7 @@ export const syncAccount = schemaTask({
 
 				// Update balance in database
 				// Midday parity: use Supabase client
-				await supabase
+				const { error: balanceUpdateError } = await supabase
 					.from("bank_accounts")
 					.update({
 						balance: balance.current,
@@ -86,6 +88,16 @@ export const syncAccount = schemaTask({
 						updated_at: new Date().toISOString(),
 					})
 					.eq("id", id);
+
+				if (balanceUpdateError) {
+					logger.error("[syncAccount] Balance DB update failed", {
+						id,
+						error: balanceUpdateError,
+					});
+					throw balanceUpdateError;
+				}
+
+				balanceOk = true;
 
 				logger.info("[syncAccount] Updated balance", {
 					id,
@@ -115,6 +127,27 @@ export const syncAccount = schemaTask({
 						id,
 						accountId,
 					});
+					// Balance path is the only place we set last_synced_at when it succeeds.
+					// If Mono balance failed but transactions fetch succeeded, persist sync attempt.
+					if (!balanceOk) {
+						const now = new Date().toISOString();
+						const { error: metaError } = await supabase
+							.from("bank_accounts")
+							.update({
+								last_synced_at: now,
+								// Transactions API succeeded (possibly empty); balance alone failed
+								sync_status: "available",
+								updated_at: now,
+							})
+							.eq("id", id);
+						if (metaError) {
+							logger.error("[syncAccount] Failed to persist sync metadata", {
+								id,
+								error: metaError,
+							});
+							throw metaError;
+						}
+					}
 					return {
 						status: "completed" as const,
 						transactionsSynced: 0,
@@ -168,6 +201,25 @@ export const syncAccount = schemaTask({
 					count: upsertedCount,
 				});
 
+				if (!balanceOk && upsertedCount > 0) {
+					const now = new Date().toISOString();
+					const { error: metaError } = await supabase
+						.from("bank_accounts")
+						.update({
+							last_synced_at: now,
+							sync_status: "available",
+							updated_at: now,
+						})
+						.eq("id", id);
+					if (metaError) {
+						logger.error("[syncAccount] Failed to persist post-tx sync metadata", {
+							id,
+							error: metaError,
+						});
+						throw metaError;
+					}
+				}
+
 				return {
 					status: "completed" as const,
 					transactionsSynced: upsertedCount,
@@ -183,13 +235,21 @@ export const syncAccount = schemaTask({
 		} catch (error) {
 			// Update sync status to failed
 			// Midday parity: use Supabase client
-			await supabase
+			const now = new Date().toISOString();
+			const { error: failUpdateError } = await supabase
 				.from("bank_accounts")
 				.update({
 					sync_status: "failed",
-					updated_at: new Date().toISOString(),
+					last_synced_at: now,
+					updated_at: now,
 				})
 				.eq("id", id);
+			if (failUpdateError) {
+				logger.error("[syncAccount] Failed to persist failed status", {
+					id,
+					error: failUpdateError,
+				});
+			}
 
 			throw error;
 		}
