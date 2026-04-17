@@ -2,7 +2,7 @@
  * BullMQ Queue Configuration
  * Midday parity: centralized queue creation with Redis connection handling
  *
- * Reference: midday-wiki/content/Advanced Topics/Background Jobs & Queue Processing.md
+ * Reference: .references/midday-wiki/content/Advanced Topics/Background Jobs & Queue Processing.md
  */
 
 import { env } from "@faworra-new/env/server";

@@ -91,6 +91,6 @@ DATABASE_URL=postgresql://postgres.nwhsdbihxxobasadahbq:XoBvB8M1CQmJGWLu@aws-0-e
 - `apps/worker/.env` - added `SUPABASE_SECRET_KEY`
 
 ## Wiki/Reference Locations
-- Midday wiki: `/home/louis/developer/faworra/faworra-new/midday-wiki/`
+- Midday wiki: `/home/louis/developer/faworra/faworra-new/.references/midday-wiki/`
 - Midday source: `/home/louis/developer/faworra/midday/`
 - Local Mono docs: `docs/mono/` (91 pages scraped)

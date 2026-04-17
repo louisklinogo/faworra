@@ -37,7 +37,7 @@ This is a **code-changing foundation phase**, not a docs-only phase. The intende
 - Added Windows fallback behavior for dev scripts while keeping real Portless support for Linux/macOS.
 - Verified the repo in WSL/Linux with `bun run check-types` and `bun run check` passing.
 - Verified real Portless routing in WSL/Linux for dashboard and docs.
-- Updated Midday reference guidance so the active repo can use `midday/` for code reference and `midday-wiki/` for local documentation lookup.
+- Updated Midday reference guidance so the active repo can use `midday/` for code reference and `.references/midday-wiki/` for local documentation lookup.
 
 #### Still open in Phase 1
 

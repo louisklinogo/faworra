@@ -19,7 +19,7 @@ if [ -z "$file_path" ]; then
 fi
 
 # Parity-sensitive directories (relative to repo root)
-# Based on Midday architecture from midday-wiki
+# Based on Midday architecture from .references/midday-wiki
 #
 # Dashboard Application (UI and routing):
 # - components/canvas, charts, forms, modals, sheets, tables, widgets, metrics

@@ -2,7 +2,7 @@
  * BullMQ Job Client API
  * Midday parity: provides triggerJob, triggerJobAndWait, getJobStatus
  *
- * Reference: midday-wiki/content/Advanced Topics/Background Jobs & Queue Processing.md
+ * Reference: .references/midday-wiki/content/Advanced Topics/Background Jobs & Queue Processing.md
  *
  * This is the client library for enqueueing jobs with BullMQ.
  * The actual job processors run in apps/worker.

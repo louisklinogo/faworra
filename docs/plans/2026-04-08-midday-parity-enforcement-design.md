@@ -796,7 +796,7 @@ The enforcement system is successful if:
 
 The following directories are considered parity-sensitive and subject to write-time enforcement.
 
-Based on Midday's architecture from `midday-wiki/`:
+Based on Midday's architecture from `.references/midday-wiki/`:
 
 ### Dashboard Application (UI and routing)
 

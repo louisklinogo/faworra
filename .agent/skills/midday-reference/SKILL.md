@@ -1,6 +1,6 @@
 ---
 name: midday-reference
-description: Comprehensive reference skill for navigating and understanding the Midday open-source financial OS codebase in the current Faworra workspace. Use `midday/` (WSL path: `/home/louis/developer/faworra/midday`) for source-code reference and `faworra-new/midday-wiki` for local Midday documentation lookups. Apply this whenever Midday is mentioned, when studying how a Midday feature works, when comparing architecture for Faworra, or when extracting patterns from Midday to use in Faworra. Covers package responsibilities, app structure, key files, architectural patterns, and where to find things.
+description: Comprehensive reference skill for navigating and understanding the Midday open-source financial OS codebase in the current Faworra workspace. Use `midday/` (WSL path: `/home/louis/developer/faworra/midday`) for source-code reference and `faworra-new/.references/midday-wiki` for local Midday documentation lookups. Apply this whenever Midday is mentioned, when studying how a Midday feature works, when comparing architecture for Faworra, or when extracting patterns from Midday to use in Faworra. Covers package responsibilities, app structure, key files, architectural patterns, and where to find things.
 ---
 
 # Midday Reference
@@ -8,10 +8,10 @@ description: Comprehensive reference skill for navigating and understanding the 
 Midday is an open-source financial OS for freelancers and small businesses. It is used as the primary reference architecture for Faworra.
 
 **Codebase location:** `midday/` (current WSL path: `/home/louis/developer/faworra/midday`)
-**Preferred local documentation copy:** `faworra-new/midday-wiki` (current WSL path: `/home/louis/developer/faworra/faworra-new/midday-wiki`)
+**Preferred local documentation copy:** `faworra-new/.references/midday-wiki` (current WSL path: `/home/louis/developer/faworra/faworra-new/.references/midday-wiki`)
 **Fallback shared repowiki:** `.qoder/repowiki` at the workspace root (current WSL path: `/home/louis/developer/faworra/.qoder/repowiki`)
 
-The local `midday-wiki` copy contains the Midday documentation needed for Faworra work. Use it first for doc lookups. Fall back to the workspace `.qoder/repowiki` copy only if needed. This skill is the navigation layer — use it to locate the right doc or codebase file quickly.
+The local `.references/midday-wiki` copy contains the Midday documentation needed for Faworra work. Use it first for doc lookups. Fall back to the workspace `.qoder/repowiki` copy only if needed. This skill is the navigation layer — use it to locate the right doc or codebase file quickly.
 
 ---
 
@@ -226,14 +226,14 @@ When you need deep knowledge on a topic, go directly to the repowiki:
 | Business features | `Business Features/` |
 | Deployment | `Deployment & Operations/` |
 
-All documentation paths in this skill are relative to: `faworra-new/midday-wiki/en/content/` by default. If a file is missing there, fall back to `.qoder/repowiki/en/content/` in the workspace root.
+All documentation paths in this skill are relative to: `faworra-new/.references/midday-wiki/en/content/` by default. If a file is missing there, fall back to `.qoder/repowiki/en/content/` in the workspace root.
 
 ---
 
 ## How to Use This Skill
 
 **"How does X work in Midday?"**
-→ Check `faworra-new/midday-wiki` using the path table above first. If not found, fall back to `.qoder/repowiki`, then search the workspace code copy under `midday/`.
+→ Check `faworra-new/.references/midday-wiki` using the path table above first. If not found, fall back to `.qoder/repowiki`, then search the workspace code copy under `midday/`.
 
 **"Where is X implemented?"**
 → Use the apps and packages tables above to identify the likely location, then `read_file` or `search_symbol` to drill in.

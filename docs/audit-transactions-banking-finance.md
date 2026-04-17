@@ -182,9 +182,9 @@ To add Mono for West Africa, you need:
 - `packages/api/src/routers/bank-accounts.ts` - Bank accounts router
 
 ### Wiki References
-- `midday-wiki/content/Business Features/Banking Integration/Banking Integration.md`
-- `midday-wiki/content/Shared Packages/Banking Integration (@midday_banking).md`
-- `midday-wiki/content/Core Applications/API Application/REST API Endpoints/Bank Account Management Endpoints.md`
+- `.references/midday-wiki/content/Business Features/Banking Integration/Banking Integration.md`
+- `.references/midday-wiki/content/Shared Packages/Banking Integration (@midday_banking).md`
+- `.references/midday-wiki/content/Core Applications/API Application/REST API Endpoints/Bank Account Management Endpoints.md`
 
 ---
 

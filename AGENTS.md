@@ -2,7 +2,7 @@
 
 **Faworra is a Midday-shaped, West Africa-focused Business OS that helps small and medium business owners run the business with less cognitive load by combining finance, operations, communications, documents, memory, and AI-assisted execution into one system.**
 
-Always read @faworra-identity-reference.md to understand the product definition and architectural stance.
+Always read docs/faworra-identity-reference.md to understand the product vision and architectural stance.
 
 # Ultracite Code Standards
 
@@ -114,8 +114,8 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 
 ### Midday Wiki (Non-Negotiable Reference)
 
-- **`midday-wiki/` is the authoritative reference for all Midday architecture decisions.**
-- Consult `midday-wiki/` before implementing any feature to understand Midday's patterns, package structure, and design decisions.
+- **`.references/midday-wiki/` is the authoritative reference for all Midday architecture decisions.**
+- Consult `.references/midday-wiki/` before implementing any feature to understand Midday's patterns, package structure, and design decisions.
 - This is non-negotiable for every work we do since we aim to achieve full parity with the Midday repo.
 - The wiki covers: database layer (`@midday/db`), UI components (`@midday/ui`), banking integration (`@midday/banking`), invoice processing (`@midday/invoice`), document management (`@midday/documents`), job scheduling (`@midday/jobs`), accounting logic (`@midday/accounting`), and utility functions (`@midday/utils`).
 

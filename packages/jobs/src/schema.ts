@@ -2,7 +2,7 @@
  * Trigger.dev job payload schemas
  * Midday parity: Zod schemas for all job types
  *
- * Reference: midday-wiki/content/Shared Packages/Job Scheduling (@midday_jobs).md
+ * Reference: .references/midday-wiki/content/Shared Packages/Job Scheduling (@midday_jobs).md
  * Each job payload is defined with Zod for strict typing and validation
  */
 

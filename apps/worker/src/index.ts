@@ -2,7 +2,7 @@
  * Worker Runtime - BullMQ Job Processor
  * Midday parity: registry-driven processor model
  *
- * Reference: midday-wiki/content/Core Applications/Worker Application/Worker Application.md
+ * Reference: .references/midday-wiki/content/Core Applications/Worker Application/Worker Application.md
  */
 
 import { db } from "@faworra-new/db";
